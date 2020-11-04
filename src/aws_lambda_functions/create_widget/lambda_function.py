@@ -51,7 +51,7 @@ def lambda_handler(event, context):
     channel_description = event["arguments"]["input"].get("channelDescription", None)
 
     # Generating a short technical identifier for the widget.
-    channel_technical_id = utils.ShortUUID.encode(uuid.uuid4())
+    channel_technical_id = utils.ShortUUID().encode(uuid.uuid4())
 
     # With a dictionary cursor, the data is sent in a form of Python dictionaries.
     cursor = postgresql_connection.cursor(cursor_factory=RealDictCursor)
