@@ -1,12 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Parameters:
-    EnvironmentName:
-        Type: String
-        Default: Test
-    BackendDependenciesStackName:
-        Type: String
-        Default: 3beepBackendDependencies
     CassandraUsername:
         Type: String
     CassandraPassword:
@@ -29,8 +23,15 @@ Parameters:
         Type: String
     PostgreSQLDBName:
         Type: String
+    EnvironmentName:
+        Type: String
+    DatabasesLayerARN:
+        Type: String
+    UtilsLayerARN:
+        Type: String
 Globals:
     Function:
+        Runtime: python3.8
         MemorySize: 3008
         Timeout: 900
         Environment:
@@ -65,12 +66,9 @@ Resources:
                 Fn::Sub: "${EnvironmentName}CreateWidget"
             CodeUri: src/aws_lambda_functions/create_widget
             Handler: lambda_function.lambda_handler
-            Runtime: python3.8
             Layers:
-                - Fn::ImportValue:
-                    Fn::Sub: "${EnvironmentName}${BackendDependenciesStackName}:${EnvironmentName}Databases"
-                - Fn::ImportValue:
-                    Fn::Sub: "${EnvironmentName}${BackendDependenciesStackName}:${EnvironmentName}Utils"
+                - Fn::Sub: "${DatabasesLayerARN}"
+                - Fn::Sub: "${UtilsLayerARN}"
 Outputs:
     CreateWidgetARN:
         Value:
