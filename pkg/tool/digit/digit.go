@@ -1,0 +1,5 @@
+package digit
+
+func Count()  {
+
+}
