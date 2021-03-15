@@ -28,7 +28,6 @@ create table organizations_settings (
     foreign key (timezone_id) references timezones (timezone_id)
 );
 
-
 /*
  * Данный sql запрос создает новую запись в таблице 'organizations_settings'.
  */
