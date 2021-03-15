@@ -3,6 +3,7 @@ module bitbucket.org/3beep-workspace/3beep_settings_service
 go 1.15
 
 require (
+	github.com/aws/aws-lambda-go v1.23.0
 	github.com/cockroachdb/apd v1.1.0 // indirect
 	github.com/gofrs/uuid v4.0.0+incompatible // indirect
 	github.com/google/uuid v1.2.0

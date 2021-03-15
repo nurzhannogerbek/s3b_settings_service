@@ -1,3 +1,4 @@
+bin/
 *~
 .fuse_hidden*
 .directory
@@ -19,9 +20,9 @@ Icon
 .AppleDesktop
 Network Trash Folder
 Temporary Items
-.vscode
+.vscode/
 .apdis
-.idea
+.idea/
 .idea/**/workspace.xml
 .idea/**/tasks.xml
 .idea/dictionaries

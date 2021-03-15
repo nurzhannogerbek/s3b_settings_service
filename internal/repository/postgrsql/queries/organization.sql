@@ -48,8 +48,56 @@ values (
     :organization_setting_address,
     :organization_setting_postal_code
     :organization_setting_work_time,
-    :organization_setting_privacy
+    :organization_setting_privacy,
     :timezone_id
 )
 returning
     organization_id;
+
+/*
+ * Данный sql запрос удаляет запись в таблице 'organizations_settings'.
+ */
+update
+    organizations_settings
+set
+    entry_deleted_date_time = now()
+where
+    organization_id = $1;
+
+/*
+ * Данный sql запрос запрашивает запись из таблицы 'organizations_settings'.
+ */
+select
+    organization_id,
+    country_id,
+    location_id,
+    organization_setting_address,
+    organization_setting_postal_code,
+    organization_setting_work_time,
+    organization_setting_privacy,
+    timezone_id
+from
+    organizations_settings
+where
+    entry_deleted_date_time = null
+and
+    organization_id = $1;
+/*
+ * Данный запрос обновляет запись в таблице 'organizations_settings'
+ */
+update
+    organizations_settings
+set
+    entry_updated_date_time = now(),
+    %s
+where
+    organization_id = :organization_id
+sreturning
+    organization_id,
+    country_id,
+    location_id,
+    organization_setting_address,
+    organization_setting_postal_code,
+    organization_setting_work_time,
+    organization_setting_privacy,
+    timezone_id;

@@ -32,8 +32,8 @@ func ConcurrencyValidate(stringSlice *[]string) error {
 }
 
 // Validate - validates uuid
-func Validate(uuidString string) error {
-	if _, err := uuid.Parse(uuidString); err != nil {
+func Validate(uuidString *string) error {
+	if _, err := uuid.Parse(*uuidString); err != nil {
 		return err
 	}
 	return nil
