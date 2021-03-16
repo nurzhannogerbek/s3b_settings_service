@@ -1,0 +1,51 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Parameters:
+  PostgreSQLUsername:
+    Type: String
+  PostgreSQLPassword:
+    Type: String
+  PostgreSQLHost:
+    Type: String
+  PostgreSQLPort:
+    Type: String
+  PostgreSQLDBName:
+    Type: String
+  EnvironmentName:
+    Type: String
+
+Globals:
+  Function:
+    Runtime: go1.x
+    MemorySize: 128
+    Timeout: 30
+    Environment:
+      Variables:
+        POSTGRESQL_USERNAME:
+          'Fn::Sub': '${PostgreSQLUsername}'
+        POSTGRESQL_PASSWORD:
+          'Fn::Sub': '${PostgreSQLPassword}'
+        POSTGRESQL_HOST:
+          'Fn::Sub': '${PostgreSQLHost}'
+        POSTGRESQL_PORT:
+          'Fn::Sub': '${PostgreSQLPort}'
+        POSTGRESQL_DB_NAME:
+          'Fn::Sub': '${PostgreSQLDBName}'
+
+Resources:
+  CreateOrganizationSettings:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName:
+        'Fn::Sub': '${EnvironmentName}CreateOrganizationSettings'
+      CodeUri: bin/organizationsettings/createorganizationsettings.zip
+      Handler: bin/organizationsettings/createorganizationsettings
+
+
+Outputs:
+  CreateOrganizationSettingsARN:
+    Value:
+      'Fn::GetAtt': CreateOrganizationSettings.Arn
+    Export:
+      Name:
+        'Fn::Sub': '${AWS::StackName}:${EnvironmentName}CreateOrganizationSettingsARN'
