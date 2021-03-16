@@ -13,7 +13,6 @@ import (
 
 var organizationService *service.Services
 
-
 func init() {
 	config, err := postgresql.NewConfig(
 		environment.PostgreSQLUserName,

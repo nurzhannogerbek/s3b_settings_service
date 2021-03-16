@@ -49,6 +49,7 @@ func (orgSetSer *OrganizationSettingsService) Get(organizationID *string) (*comm
 	if err != nil {
 		return nil, err
 	}
+
 	return organizationSettings, nil
 }
 

@@ -2,6 +2,7 @@ package common
 
 import (
 	"bitbucket.org/3beep-workspace/3beep_settings_service/pkg/tool/uuid"
+	"encoding/json"
 	"errors"
 	"unicode/utf8"
 )
@@ -35,6 +36,31 @@ type OrganizationSettings struct {
 	TimezoneID                    *string `db:"timezone_id" json:"timezoneId"`
 }
 
+type WeekWorkTime struct {
+	Monday    *DayWorkTime `json:"monday"`
+	Tuesday   *DayWorkTime `json:"tuesday"`
+	Wednesday *DayWorkTime `json:"wednesday"`
+	Friday    *DayWorkTime `json:"friday"`
+	Saturday  *DayWorkTime `json:"saturday"`
+	Sunday    *DayWorkTime `json:"sunday"`
+}
+
+type DayWorkTime struct {
+	BeginTime *int     `json:"beginTime"`
+	EndTime   *int     `json:"endTime"`
+	Break     *[]Break `json:"break"`
+}
+
+type Break struct {
+	BeginTime *int `json:"beginTime"`
+	EndTime   *int `json:"endTime"`
+}
+
+type Privacy struct {
+	DataTransferAndStorage *bool `json:"dataTransferAndStorage"`
+	SidePersonDataTransfer *bool `json:"sidePersonDataTransfer"`
+}
+
 func (orgSet OrganizationSettings) Validate() error {
 	if err := uuid.Validate(orgSet.OrganizationID); err != nil {
 		return err
@@ -66,25 +92,41 @@ func (orgSet OrganizationSettings) Validate() error {
 		}
 	}
 
-	if err := orgSet.ValidateWorkTime(); err != nil {
-		return err
+	if orgSet.OrganizationSettingWorkTime != nil {
+		if err := orgSet.ValidateWorkTime(); err != nil {
+			return err
+		}
 	}
 
-	if err := orgSet.ValidatePrivacy(); err != nil {
-		return err
+	if orgSet.OrganizationSettingPrivacy != nil {
+		if err := orgSet.ValidatePrivacy(); err != nil {
+			return err
+		}
 	}
 
-	if err := uuid.Validate(orgSet.TimezoneID); err != nil {
-		return err
+	if orgSet.TimezoneID != nil {
+		if err := uuid.Validate(orgSet.TimezoneID); err != nil {
+			return err
+		}
 	}
 
 	return nil
 }
 
 func (orgSet OrganizationSettings) ValidateWorkTime() error {
+	var weekWorkTime WeekWorkTime
+	if err := json.Unmarshal([]byte(*orgSet.OrganizationSettingWorkTime), &weekWorkTime); err != nil {
+		return err
+	}
+
 	return nil
 }
 
 func (orgSet OrganizationSettings) ValidatePrivacy() error {
+	var privacy Privacy
+	if err := json.Unmarshal([]byte(*orgSet.OrganizationSettingPrivacy), &privacy); err != nil {
+		return err
+	}
+
 	return nil
 }

@@ -24,8 +24,8 @@ func NewOrganizationSettingsRepo(newDB *sqlx.DB) *OrganizationSettingsRepo {
 	}
 }
 
-func (or *OrganizationSettingsRepo) Create(organization *common.OrganizationSettings) error {
-	rows, err := or.db.NamedQuery(`
+func (osr *OrganizationSettingsRepo) Create(organization *common.OrganizationSettings) error {
+	rows, err := osr.db.NamedQuery(`
 		insert into organizations_settings (
 			organization_id,
 		    country_id,
@@ -64,8 +64,8 @@ func (or *OrganizationSettingsRepo) Create(organization *common.OrganizationSett
 	return nil
 }
 
-func (or OrganizationSettingsRepo) Delete(organizationID *string) error {
-	_, err := or.db.Query(`
+func (osr OrganizationSettingsRepo) Delete(organizationID *string) error {
+	_, err := osr.db.Query(`
 		update 
 		    organizations_settings
 		set
@@ -80,9 +80,9 @@ func (or OrganizationSettingsRepo) Delete(organizationID *string) error {
 	return nil
 }
 
-func (or OrganizationSettingsRepo) Get(organizationID *string) (*common.OrganizationSettings, error) {
+func (osr OrganizationSettingsRepo) Get(organizationID *string) (*common.OrganizationSettings, error) {
 	var organizationSettings common.OrganizationSettings
-	err := or.db.Get(&organizationSettings, `
+	err := osr.db.Get(&organizationSettings, `
 		select 
 		    organization_id,
 		    country_id,
@@ -106,7 +106,7 @@ func (or OrganizationSettingsRepo) Get(organizationID *string) (*common.Organiza
 	return &organizationSettings, nil
 }
 
-func (or OrganizationSettingsRepo) Update(organization *common.OrganizationSettings) (*common.OrganizationSettings, error) {
+func (osr OrganizationSettingsRepo) Update(organization *common.OrganizationSettings) (*common.OrganizationSettings, error) {
 	updateCondition := postgresql.UpdateConditionFromStruct(organization)
 	queryString := fmt.Sprintf(`
 		update 
@@ -126,7 +126,7 @@ func (or OrganizationSettingsRepo) Update(organization *common.OrganizationSetti
 		    organization_setting_privacy,
 		    timezone_id;`, updateCondition)
 
-	rows, err := or.db.NamedQuery(queryString, *organization)
+	rows, err := osr.db.NamedQuery(queryString, *organization)
 	if err != nil {
 		return nil, err
 	}

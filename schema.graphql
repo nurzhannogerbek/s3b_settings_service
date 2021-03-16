@@ -1,67 +1,43 @@
-type Country {
+type GetCountryByIdOutput {
     countryId: String!
+    countryShortName: String!
+    countryOfficialName: String!
+    countryAlpha2Code: String!
+    countryAlpha3Code: String!
+    countryNumericCode: Int!
+    countryCodeTopLevelDomain: String!
 }
 
-type Location {
+type GetLocationByIdOutput {
+    country: GetCountryByIdOutput!
     locationId: String!
-}
-
-type BreakOutput {
-    begin: Int!
-    end: Int!
-}
-
-type OrganizationSettingWorkTimeOutput {
-    day: DayOfTheWeek!
-    begin: Int!
-    end: Int!
-    break: [BreakOutput!]
-}
-
-type OrganizationSettingPrivacyOutput {
-    privacyName: PrivacyName!
-    confirmed: Boolean!
+    locationAlpha3Code: String!
+    locationName: String!
+    locationAdministrativeDivisionCode: String!
+    locationCoordinates: String!
 }
 
 type TimezoneOutput {
     timezone: String!
 }
 
-type GetOrganizationSettingsOutput {
+type GetOrganizationSettingsByIdOutput {
     organizationId: String!
     countryId: String
-    country: Country
+    country: GetCountryByIdOutput
     locationId: String
-    location: Location
+    location: GetCountryByIdOutput
     organizationSettingAddress: String
     organizationSettingPostalCode: String
-    organizationSettingWorkTime: [OrganizationSettingWorkTimeOutput!]
-    organizationSettingPrivacy: [OrganizationSettingPrivacyOutput!]!
+    organizationSettingWorkTime: String
+    organizationSettingPrivacy: String!
     timezoneId: String
     timezone: TimezoneOutput
 }
 
-
 type Query {
     # Получить настройки компании по Id
-    getOrganizationSettingsById(organizationId: String!): GetOrganizationSettingsOutput!
-}
-
-type BreakInput {
-    begin: Int!
-    end: Int!
-}
-
-input OrganizationSettingWorkTimeInput {
-    day: DayOfTheWeek!
-    begin: Int!
-    end: Int!
-    break: [BreakInput!]
-}
-
-input OrganizationSettingPrivacyInput {
-    privacyName: PrivacyName!
-    confirmed: Boolean!
+    getOrganizationSettingsById(organizationId: String!): GetOrganizationSettingsByIdOutput!
 }
 
 input CreateOrganizationSettingsInput {
@@ -70,9 +46,58 @@ input CreateOrganizationSettingsInput {
     locationId: String
     organizationSettingAddress: String
     organizationSettingPostalCode: String
-    organizationSettingWorkTime: [OrganizationSettingWorkTimeInput!]
-    organizationSettingPrivacy: [OrganizationSettingPrivacyInput!]!
+    organizationSettingWorkTime: String
+    organizationSettingPrivacy: String!
     timezoneId: String
+}
+
+type CreateOrganizationSettingsOutput {
+    organizationId: String!
+    countryId: String
+    country: GetCountryByIdOutput
+    locationId: String
+    location: GetLocationByIdOutput
+    organizationSettingAddress: String
+    organizationSettingPostalCode: String
+    organizationSettingWorkTime: String
+    organizationSettingPrivacy: String!
+    timezoneId: String
+    timezone: TimezoneOutput
+}
+
+input UpdateOrganizationSettingsInput {
+    organizationId: String!
+    countryId: String
+    locationId: String
+    organizationSettingAddress: String
+    organizationSettingPostalCode: String
+    organizationSettingWorkTime: String
+    organizationSettingPrivacy: String
+    timezoneId: String
+}
+
+type UpdateOrganizationSettingsOutput {
+    organizationId: String!
+    countryId: String
+    country: GetLocationByIdOutput
+    locationId: String
+    location: GetLocationByIdOutput
+    organizationSettingAddress: String
+    organizationSettingPostalCode: String
+    organizationSettingWorkTime: String
+    organizationSettingPrivacy: String!
+    timezoneId: String
+    timezone: TimezoneOutput
+}
+
+type DeleteOrganizationSettingsOutput {
+    organizationId: String!
+    deleted: Boolean!
+}
+
+type RestoreDeletedOrganizationSettingsOutput {
+    organizationId: String!
+    restored: Boolean!
 }
 
 type Mutation {
@@ -81,27 +106,12 @@ type Mutation {
     # Обновить настройки компании
     updateOrganizationSettings(input: UpdateOrganizationSettingsInput!): UpdateOrganizationSettingsOutput!
     # Удалить настройки компании
-    deleteOrganizationSettings(organizationId: String!): DeleteOrganizationSettingsOutput!
+    deleteOrganizationSettings(osssrganizationId: String!): DeleteOrganizationSettingsOutput!
     # Восстановить настройки компании
     restoreDeletedOrganizationSettings(organizationId: String!): RestoreDeletedOrganizationSettingsOutput!
 }
 
-shema {
+schema {
     query: Query
     mutation: Mutation
-}
-
-enum DayOfTheWeek {
-    MONDAY
-    TUESDAY
-    WEDNESDAY
-    THURSDAY
-    FRIDAY
-    SATURDAY
-    SUNDAY
-}
-
-enum PrivacyName {
-    DATATRANSFERANDSTORAGE
-    SIDEPERSONDATATRANSFER
 }
