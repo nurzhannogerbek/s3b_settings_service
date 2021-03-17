@@ -7,24 +7,6 @@ import (
 	"unicode/utf8"
 )
 
-type OrganizationSettingPrivacy int
-
-const (
-	DataTransferAndStorage OrganizationSettingPrivacy = iota
-	SidePersonDataTransfer
-)
-
-func (orgSetPri OrganizationSettingPrivacy) String() string {
-	switch orgSetPri {
-	case DataTransferAndStorage:
-		return "dataTransferAndStorage"
-	case SidePersonDataTransfer:
-		return "SidePersonDataTransfer"
-	default:
-		return ""
-	}
-}
-
 type OrganizationSettings struct {
 	OrganizationID                *string `db:"organization_id" json:"organizationId"`
 	CountryID                     *string `db:"country_id" json:"countryId"`
@@ -37,28 +19,87 @@ type OrganizationSettings struct {
 }
 
 type WeekWorkTime struct {
-	Monday    *DayWorkTime `json:"monday"`
-	Tuesday   *DayWorkTime `json:"tuesday"`
-	Wednesday *DayWorkTime `json:"wednesday"`
-	Friday    *DayWorkTime `json:"friday"`
-	Saturday  *DayWorkTime `json:"saturday"`
-	Sunday    *DayWorkTime `json:"sunday"`
+	Monday    DayWorkTime `json:"monday"`
+	Tuesday   DayWorkTime `json:"tuesday"`
+	Wednesday DayWorkTime `json:"wednesday"`
+	Friday    DayWorkTime `json:"friday"`
+	Saturday  DayWorkTime `json:"saturday"`
+	Sunday    DayWorkTime `json:"sunday"`
+}
+
+func (wwt WeekWorkTime) Validate() error {
+	if err := wwt.Monday.Validate(); err != nil {
+		return err
+	}
+
+	if err := wwt.Tuesday.Validate(); err != nil {
+		return err
+	}
+
+	if err := wwt.Wednesday.Validate(); err != nil {
+		return err
+	}
+
+	if err := wwt.Friday.Validate(); err != nil {
+		return err
+	}
+
+	if err := wwt.Saturday.Validate(); err != nil {
+		return err
+	}
+
+	if err := wwt.Sunday.Validate(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 type DayWorkTime struct {
-	BeginTime *int     `json:"beginTime"`
-	EndTime   *int     `json:"endTime"`
-	Break     *[]Break `json:"break"`
+	BeginTime int         `json:"beginTime"`
+	EndTime   int         `json:"endTime"`
+	BreakTime []BreakTime `json:"breakTime"`
 }
 
-type Break struct {
-	BeginTime *int `json:"beginTime"`
-	EndTime   *int `json:"endTime"`
+func (dwt DayWorkTime) Validate() error {
+	if dwt.BeginTime < 0 || dwt.BeginTime > 86399 {
+		return errors.New("beginTime should be in range 0 - 86399")
+	}
+
+	if dwt.EndTime < 0 || dwt.EndTime > 86399 {
+		return errors.New("endTime should be in range 0 - 86399")
+	}
+
+
+	for _, i := range dwt.BreakTime {
+		if err := i.Validate(); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+type BreakTime struct {
+	BeginTime int `json:"beginTime"`
+	EndTime   int `json:"endTime"`
+}
+
+func (bt BreakTime) Validate() error {
+	if bt.BeginTime < 0 || bt.BeginTime > 86399 {
+		return errors.New("beginTime should be in range 0 - 86399")
+	}
+
+	if bt.EndTime < 0 || bt.EndTime > 86399 {
+		return errors.New("endTime should be in range 0 - 86399")
+	}
+
+	return nil
 }
 
 type Privacy struct {
-	DataTransferAndStorage *bool `json:"dataTransferAndStorage"`
-	SidePersonDataTransfer *bool `json:"sidePersonDataTransfer"`
+	DataTransferAndStorage bool `json:"dataTransferAndStorage"`
+	SidePersonDataTransfer bool `json:"sidePersonDataTransfer"`
 }
 
 func (orgSet OrganizationSettings) Validate() error {
@@ -116,6 +157,10 @@ func (orgSet OrganizationSettings) Validate() error {
 func (orgSet OrganizationSettings) ValidateWorkTime() error {
 	var weekWorkTime WeekWorkTime
 	if err := json.Unmarshal([]byte(*orgSet.OrganizationSettingWorkTime), &weekWorkTime); err != nil {
+		return err
+	}
+
+	if err := weekWorkTime.Validate(); err != nil {
 		return err
 	}
 

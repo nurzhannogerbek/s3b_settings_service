@@ -1,0 +1,382 @@
+CreateOrganizationSettingsRole:
+  Type: 'AWS::IAM::Role'
+  Properties:
+    AssumeRolePolicyDocument:
+      Version: '2012-10-17'
+      Statement:
+        - Effect: Allow
+          Principal:
+            Service: appsync.amazonaws.com
+          Action: 'sts:AssumeRole'
+    Policies:
+      - PolicyName: CreateOrganizationSettingsFunctionAccess
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action: 'lambda:InvokeFunction'
+              Resource:
+                'Fn::ImportValue':
+                  'Fn::Sub': >-
+                    ${EnvironmentName}${ReferenceDataServiceStackName}:${EnvironmentName}CreateOrganizationSettingsARN
+CreateOrganizationSettingsDataSource:
+  Type: 'AWS::AppSync::DataSource'
+  Properties:
+    ApiId:
+      'Fn::GetAtt': GraphQLApi.ApiId
+    Name:
+      'Fn::Sub': '${EnvironmentName}CreateOrganizationSettings'
+    Type: AWS_LAMBDA
+    LambdaConfig:
+      LambdaFunctionArn:
+        'Fn::ImportValue':
+          'Fn::Sub': >-
+            ${EnvironmentName}${ReferenceDataServiceStackName}:${EnvironmentName}CreateOrganizationSettingsARN
+    ServiceRoleArn:
+      'Fn::GetAtt': CreateOrganizationSettingsRole.Arn
+CreateOrganizationSettingsResolver:
+  Type: 'AWS::AppSync::Resolver'
+  Properties:
+    ApiId:
+      'Fn::GetAtt': GraphQLApi.ApiId
+    FieldName: createOrganizationSettings
+    TypeName: Mutation
+    DataSourceName:
+      'Fn::GetAtt': CreateOrganozationSettingsDataSource.Name
+DeleteOrganizationSettingsRole:
+  Type: 'AWS::IAM::Role'
+  Properties:
+    AssumeRolePolicyDocument:
+      Version: '2012-10-17'
+      Statement:
+        - Effect: Allow
+          Principal:
+            Service: appsync.amazonaws.com
+          Action: 'sts:AssumeRole'
+    Policies:
+      - PolicyName: DeleteOrganizationSettingsFunctionAccess
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action: 'lambda:InvokeFunction'
+              Resource:
+                'Fn::ImportValue':
+                  'Fn::Sub': >-
+                    ${EnvironmentName}${ReferenceDataServiceStackName}:${EnvironmentName}DeleteOrganizationSettingsARN
+DeleteOrganizationSettingsDataSource:
+  Type: 'AWS::AppSync::DataSource'
+  Properties:
+    ApiId:
+      'Fn::GetAtt': GraphQLApi.ApiId
+    Name:
+      'Fn::Sub': '${EnvironmentName}DeleteOrganizationSettings'
+    Type: AWS_LAMBDA
+    LambdaConfig:
+      LambdaFunctionArn:
+        'Fn::ImportValue':
+          'Fn::Sub': >-
+            ${EnvironmentName}${ReferenceDataServiceStackName}:${EnvironmentName}DeleteOrganizationSettingsARN
+    ServiceRoleArn:
+      'Fn::GetAtt': DeleteOrganizationSettingsRole.Arn
+DeleteOrganizationSettingsResolver:
+  Type: 'AWS::AppSync::Resolver'
+  Properties:
+    ApiId:
+      'Fn::GetAtt': GraphQLApi.ApiId
+    FieldName: deleteOrganizationSettings
+    TypeName: Mutation
+    DataSourceName:
+      'Fn::GetAtt': DeleteOrganozationSettingsDataSource.Name
+GetOrganizationSettingsRole:
+  Type: 'AWS::IAM::Role'
+  Properties:
+    AssumeRolePolicyDocument:
+      Version: '2012-10-17'
+      Statement:
+        - Effect: Allow
+          Principal:
+            Service: appsync.amazonaws.com
+          Action: 'sts:AssumeRole'
+    Policies:
+      - PolicyName: GetOrganizationSettingsFunctionAccess
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action: 'lambda:InvokeFunction'
+              Resource:
+                'Fn::ImportValue':
+                  'Fn::Sub': >-
+                    ${EnvironmentName}${ReferenceDataServiceStackName}:${EnvironmentName}GetOrganizationSettingsARN
+GetOrganizationSettingsDataSource:
+  Type: 'AWS::AppSync::DataSource'
+  Properties:
+    ApiId:
+      'Fn::GetAtt': GraphQLApi.ApiId
+    Name:
+      'Fn::Sub': '${EnvironmentName}GetOrganizationSettings'
+    Type: AWS_LAMBDA
+    LambdaConfig:
+      LambdaFunctionArn:
+        'Fn::ImportValue':
+          'Fn::Sub': >-
+            ${EnvironmentName}${ReferenceDataServiceStackName}:${EnvironmentName}GetOrganizationSettingsARN
+    ServiceRoleArn:
+      'Fn::GetAtt': GetOrganizationSettingsRole.Arn
+GetOrganizationSettingsResolver:
+  Type: 'AWS::AppSync::Resolver'
+  Properties:
+    ApiId:
+      'Fn::GetAtt': GraphQLApi.ApiId
+    FieldName: GetOrganizationSettings
+    TypeName: Mutation
+    DataSourceName:
+      'Fn::GetAtt': GetOrganozationSettingsDataSource.Name
+UpdateOrganizationSettingsRole:
+  Type: 'AWS::IAM::Role'
+  Properties:
+    AssumeRolePolicyDocument:
+      Version: '2012-10-17'
+      Statement:
+        - Effect: Allow
+          Principal:
+            Service: appsync.amazonaws.com
+          Action: 'sts:AssumeRole'
+    Policies:
+      - PolicyName: UpdateOrganizationSettingsFunctionAccess
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action: 'lambda:InvokeFunction'
+              Resource:
+                'Fn::ImportValue':
+                  'Fn::Sub': >-
+                    ${EnvironmentName}${ReferenceDataServiceStackName}:${EnvironmentName}UpdateOrganizationSettingsARN
+UpdateOrganizationSettingsDataSource:
+  Type: 'AWS::AppSync::DataSource'
+  Properties:
+    ApiId:
+      'Fn::GetAtt': GraphQLApi.ApiId
+    Name:
+      'Fn::Sub': '${EnvironmentName}UpdateOrganizationSettings'
+    Type: AWS_LAMBDA
+    LambdaConfig:
+      LambdaFunctionArn:
+        'Fn::ImportValue':
+          'Fn::Sub': >-
+            ${EnvironmentName}${ReferenceDataServiceStackName}:${EnvironmentName}UpdateOrganizationSettingsARN
+    ServiceRoleArn:
+      'Fn::GetAtt': UpdateOrganizationSettingsRole.Arn
+UpdateOrganizationSettingsResolver:
+  Type: 'AWS::AppSync::Resolver'
+  Properties:
+    ApiId:
+      'Fn::GetAtt': GraphQLApi.ApiId
+    FieldName: updateOrganizationSettings
+    TypeName: Mutation
+    DataSourceName:
+      'Fn::GetAtt': updateOrganozationSettingsDataSource.Name
+
+
+GetCountryByIdRole:
+  Type: 'AWS::IAM::Role'
+  Properties:
+    AssumeRolePolicyDocument:
+      Version: '2012-10-17'
+      Statement:
+        - Effect: Allow
+          Principal:
+            Service: appsync.amazonaws.com
+          Action: 'sts:AssumeRole'
+    Policies:
+      - PolicyName: GetCountryByIdFunctionAccess
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action: 'lambda:InvokeFunction'
+              Resource:
+                'Fn::ImportValue':
+                  'Fn::Sub': >-
+                    ${EnvironmentName}${ReferenceDataServiceStackName}:${EnvironmentName}GetCountryByIdARN
+GetCountryByIdDataSource:
+  Type: 'AWS::AppSync::DataSource'
+  Properties:
+    ApiId:
+      'Fn::GetAtt': GraphQLApi.ApiId
+    Name:
+      'Fn::Sub': '${EnvironmentName}GetCountryById'
+    Type: AWS_LAMBDA
+    LambdaConfig:
+      LambdaFunctionArn:
+        'Fn::ImportValue':
+          'Fn::Sub': >-
+            ${EnvironmentName}${ReferenceDataServiceStackName}:${EnvironmentName}GetCountryByIdARN
+    ServiceRoleArn:
+      'Fn::GetAtt': GetCountryById.Arn
+GetOrganizationSettingsCountryByIdResolver:
+  Type: 'AWS::AppSync::Resolver'
+  Properties:
+    ApiId:
+      'Fn::GetAtt': GraphQLApi.ApiId
+    FieldName: country
+    TypeName: GetOrganizationSettingsByIdOutput
+    DataSourceName:
+      'Fn::GetAtt': GetCountryByIdDataSource.Name
+    RequestMappingTemplate:  '{ "version" : "2017-02-28", "operation": "Invoke", "payload": { arguments: { $util.toJson($context.source) }'
+CreateOrganizationSettingsCountryByIdResolver:
+  Type: 'AWS::AppSync::Resolver'
+  Properties:
+    ApiId:
+      'Fn::GetAtt': GraphQLApi.ApiId
+    FieldName: country
+    TypeName: CreateOrganizationSettingsByIdOutput
+    DataSourceName:
+      'Fn::GetAtt': GetCountryByIdDataSource.Name
+    RequestMappingTemplate:  '{ "version" : "2017-02-28", "operation": "Invoke", "payload": { arguments: { $util.toJson($context.source) }'
+UpdateOrganizationSettingsCountryByIdResolver:
+  Type: 'AWS::AppSync::Resolver'
+  Properties:
+    ApiId:
+      'Fn::GetAtt': GraphQLApi.ApiId
+    FieldName: country
+    TypeName: UpdateOrganizationSettingsByIdOutput
+    DataSourceName:
+      'Fn::GetAtt': GetCountryByIdDataSource.Name
+    RequestMappingTemplate:  '{ "version" : "2017-02-28", "operation": "Invoke", "payload": { arguments: { $util.toJson($context.source) }'
+
+GetLocationByIdRole:
+  Type: 'AWS::IAM::Role'
+  Properties:
+    AssumeRolePolicyDocument:
+      Version: '2012-10-17'
+      Statement:
+        - Effect: Allow
+          Principal:
+            Service: appsync.amazonaws.com
+          Action: 'sts:AssumeRole'
+    Policies:
+      - PolicyName: GetLocationByIdFunctionAccess
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action: 'lambda:InvokeFunction'
+              Resource:
+                'Fn::ImportValue':
+                  'Fn::Sub': >-
+                    ${EnvironmentName}${ReferenceDataServiceStackName}:${EnvironmentName}GetLocationByIdARN
+GetLocationByIdDataSource:
+  Type: 'AWS::AppSync::DataSource'
+  Properties:
+    ApiId:
+      'Fn::GetAtt': GraphQLApi.ApiId
+    Name:
+      'Fn::Sub': '${EnvironmentName}GetLocationById'
+    Type: AWS_LAMBDA
+    LambdaConfig:
+      LambdaFunctionArn:
+        'Fn::ImportValue':
+          'Fn::Sub': >-
+            ${EnvironmentName}${ReferenceDataServiceStackName}:${EnvironmentName}GetLocationByIdARN
+    ServiceRoleArn:
+      'Fn::GetAtt': GetLocationById.Arn
+GetOrganizationSettingsLocationByIdResolver:
+  Type: 'AWS::AppSync::Resolver'
+  Properties:
+    ApiId:
+      'Fn::GetAtt': GraphQLApi.ApiId
+    FieldName: location
+    TypeName: GetOrganizationSettingsByIdOutput
+    DataSourceName:
+      'Fn::GetAtt': GetLocationByIdDataSource.Name
+    RequestMappingTemplate:  '{ "version" : "2017-02-28", "operation": "Invoke", "payload": { arguments: { $util.toJson($context.source) }'
+CreateOrganizationSettingsLocationByIdResolver:
+  Type: 'AWS::AppSync::Resolver'
+  Properties:
+    ApiId:
+      'Fn::GetAtt': GraphQLApi.ApiId
+    FieldName: location
+    TypeName: CreateOrganizationSettingsByIdOutput
+    DataSourceName:
+      'Fn::GetAtt': GetLocationByIdDataSource.Name
+    RequestMappingTemplate:  '{ "version" : "2017-02-28", "operation": "Invoke", "payload": { arguments: { $util.toJson($context.source) }'
+UpdateOrganizationSettingsLocationByIdResolver:
+  Type: 'AWS::AppSync::Resolver'
+  Properties:
+    ApiId:
+      'Fn::GetAtt': GraphQLApi.ApiId
+    FieldName: location
+    TypeName: UpdateOrganizationSettingsByIdOutput
+    DataSourceName:
+      'Fn::GetAtt': GetLocationByIdDataSource.Name
+    RequestMappingTemplate:  '{ "version" : "2017-02-28", "operation": "Invoke", "payload": { arguments: { $util.toJson($context.source) }'
+
+GetTimezoneByIdRole:
+  Type: 'AWS::IAM::Role'
+  Properties:
+    AssumeRolePolicyDocument:
+      Version: '2012-10-17'
+      Statement:
+        - Effect: Allow
+          Principal:
+            Service: appsync.amazonaws.com
+          Action: 'sts:AssumeRole'
+    Policies:
+      - PolicyName: GetTimezoneByIdFunctionAccess
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action: 'lambda:InvokeFunction'
+              Resource:
+                'Fn::ImportValue':
+                  'Fn::Sub': >-
+                    ${EnvironmentName}${ReferenceDataServiceStackName}:${EnvironmentName}GetTimezoneByIdARN
+GetTimezoneByIdDataSource:
+  Type: 'AWS::AppSync::DataSource'
+  Properties:
+    ApiId:
+      'Fn::GetAtt': GraphQLApi.ApiId
+    Name:
+      'Fn::Sub': '${EnvironmentName}GetTimezoneById'
+    Type: AWS_LAMBDA
+    LambdaConfig:
+      LambdaFunctionArn:
+        'Fn::ImportValue':
+          'Fn::Sub': >-
+            ${EnvironmentName}${ReferenceDataServiceStackName}:${EnvironmentName}GetTimezoneByIdARN
+    ServiceRoleArn:
+      'Fn::GetAtt': GetTimezoneById.Arn
+GetOrganizationSettingsTimezoneByIdResolver:
+  Type: 'AWS::AppSync::Resolver'
+  Properties:
+    ApiId:
+      'Fn::GetAtt': GraphQLApi.ApiId
+    FieldName: timezone
+    TypeName: GetOrganizationSettingsByIdOutput
+    DataSourceName:
+      'Fn::GetAtt': GetTimezoneByIdDataSource.Name
+    RequestMappingTemplate:  '{ "version" : "2017-02-28", "operation": "Invoke", "payload": { arguments: { $util.toJson($context.source) }'
+CreateOrganizationSettingsTimezoneByIdResolver:
+  Type: 'AWS::AppSync::Resolver'
+  Properties:
+    ApiId:
+      'Fn::GetAtt': GraphQLApi.ApiId
+    FieldName: timezone
+    TypeName: CreateOrganizationSettingsByIdOutput
+    DataSourceName:
+      'Fn::GetAtt': GetTimezoneByIdDataSource.Name
+    RequestMappingTemplate:  '{ "version" : "2017-02-28", "operation": "Invoke", "payload": { arguments: { $util.toJson($context.source) }'
+UpdateOrganizationSettingsTimezoneByIdResolver:
+  Type: 'AWS::AppSync::Resolver'
+  Properties:
+    ApiId:
+      'Fn::GetAtt': GraphQLApi.ApiId
+    FieldName: timezone
+    TypeName: UpdateOrganizationSettingsByIdOutput
+    DataSourceName:
+      'Fn::GetAtt': GetTimezoneByIdDataSource.Name
+    RequestMappingTemplate:  '{ "version" : "2017-02-28", "operation": "Invoke", "payload": { arguments: { $util.toJson($context.source) }'

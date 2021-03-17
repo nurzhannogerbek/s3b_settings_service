@@ -40,6 +40,27 @@ Resources:
         'Fn::Sub': '${EnvironmentName}CreateOrganizationSettings'
       CodeUri: bin/organizationsettings/createorganizationsettings.zip
       Handler: bin/organizationsettings/createorganizationsettings
+  DeleteOrganizationSettings:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName:
+        'Fn::Sub': '${EnvironmentName}DeleteOrganizationSettings'
+      CodeUri: bin/organizationsettings/deleteorganizationsettings.zip
+      Handler: bin/organizationsettings/deleteorganizationsettings
+  GetOrganizationSettings:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName:
+        'Fn::Sub': '${EnvironmentName}GetOrganizationSettings'
+      CodeUri: bin/organizationsettings/getorganizationsettings.zip
+      Handler: bin/organizationsettings/getorganizationsettings
+  UpdateOrganizationSettings:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName:
+        'Fn::Sub': '${EnvironmentName}UpdateOrganizationSettings'
+      CodeUri: bin/organizationsettings/updateorganizationsettings.zip
+      Handler: bin/organizationsettings/updeteorganizationsettings
 
 
 Outputs:
@@ -49,3 +70,21 @@ Outputs:
     Export:
       Name:
         'Fn::Sub': '${AWS::StackName}:${EnvironmentName}CreateOrganizationSettingsARN'
+  DeleteOrganizationSettingsARN:
+    Value:
+      'Fn::GetAtt': DeleteOrganizationSettings.Arn
+    Export:
+      Name:
+        'Fn::Sub': '${AWS::StackName}:${EnvironmentName}DeleteOrganizationSettingsARN'
+  GetOrganizationSettingsARN:
+    Value:
+      'Fn::GetAtt': GetOrganizationSettings.Arn
+    Export:
+      Name:
+        'Fn::Sub': '${AWS::StackName}:${EnvironmentName}GetOrganizationSettingsARN'
+  UpdateOrganizationSettingsARN:
+    Value:
+      'Fn::GetAtt': UpdateOrganizationSettings.Arn
+    Export:
+      Name:
+        'Fn::Sub': '${AWS::StackName}:${EnvironmentName}UpdateOrganizationSettingsARN'

@@ -17,8 +17,11 @@ type GetLocationByIdOutput {
     locationCoordinates: String!
 }
 
-type TimezoneOutput {
-    timezone: String!
+type GetTimezoneByIdOutput {
+    timezoneId: String!
+    countryAlpa2Code: String!
+    timezoneName: String!
+    utcOffset: String!
 }
 
 type GetOrganizationSettingsByIdOutput {
@@ -26,17 +29,17 @@ type GetOrganizationSettingsByIdOutput {
     countryId: String
     country: GetCountryByIdOutput
     locationId: String
-    location: GetCountryByIdOutput
+    location: GetLocationByIdOutput
     organizationSettingAddress: String
     organizationSettingPostalCode: String
     organizationSettingWorkTime: String
     organizationSettingPrivacy: String!
     timezoneId: String
-    timezone: TimezoneOutput
+    timezone: GetTimezoneByIdOutput
 }
 
 type Query {
-    # Получить настройки компании по Id
+    # Получить настройки компании по Id. Включает в себя архивированные компании.
     getOrganizationSettingsById(organizationId: String!): GetOrganizationSettingsByIdOutput!
 }
 
@@ -62,7 +65,7 @@ type CreateOrganizationSettingsOutput {
     organizationSettingWorkTime: String
     organizationSettingPrivacy: String!
     timezoneId: String
-    timezone: TimezoneOutput
+    timezone: GetTimezoneByIdOutput
 }
 
 input UpdateOrganizationSettingsInput {
@@ -79,7 +82,7 @@ input UpdateOrganizationSettingsInput {
 type UpdateOrganizationSettingsOutput {
     organizationId: String!
     countryId: String
-    country: GetLocationByIdOutput
+    country: GetCountryByIdOutput
     locationId: String
     location: GetLocationByIdOutput
     organizationSettingAddress: String
@@ -87,7 +90,7 @@ type UpdateOrganizationSettingsOutput {
     organizationSettingWorkTime: String
     organizationSettingPrivacy: String!
     timezoneId: String
-    timezone: TimezoneOutput
+    timezone: GetTimezoneByIdOutput
 }
 
 type DeleteOrganizationSettingsOutput {
