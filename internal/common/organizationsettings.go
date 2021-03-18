@@ -120,7 +120,7 @@ func (orgSet *OrganizationSettings) Validate() error {
 
 	if orgSet.OrganizationSettingAddress != nil {
 		orgSettAdd := utf8.RuneCountInString(*orgSet.OrganizationSettingAddress)
-		if orgSettAdd < 50 || orgSettAdd < 5 {
+		if orgSettAdd > 50 || orgSettAdd < 5 {
 			return errors.New("organizationSettingAddress length should be less than 50 and greater than 5")
 		}
 	}

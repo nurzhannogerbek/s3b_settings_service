@@ -46,11 +46,12 @@ func handleRequest(event common.Event) (interface{}, error) {
 		return nil, err
 	}
 
-	if err := organizationService.OrganizationSettings.Create(&organizationSettingsEvent.OrganizationSettings); err != nil {
+	newOrganizationSettings, err := organizationService.OrganizationSettings.Update(&organizationSettingsEvent.OrganizationSettings)
+	if err != nil {
 		return nil, err
 	}
 
-	return organizationSettingsEvent, nil
+	return newOrganizationSettings, nil
 }
 
 func main() {

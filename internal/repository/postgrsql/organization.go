@@ -138,7 +138,7 @@ func (osr OrganizationSettingsRepo) Update(organization *common.OrganizationSett
 			&organizationSettings.OrganizationSettingPostalCode,
 			&organizationSettings.OrganizationSettingWorkTime,
 			&organizationSettings.OrganizationSettingPrivacy,
-			&organizationSettings.LocationID); err != nil {
+			&organizationSettings.TimezoneID); err != nil {
 			return nil, err
 		}
 	}

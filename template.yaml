@@ -60,7 +60,7 @@ Resources:
       FunctionName:
         'Fn::Sub': '${EnvironmentName}UpdateOrganizationSettings'
       CodeUri: bin/organizationsettings/updateorganizationsettings.zip
-      Handler: bin/organizationsettings/updeteorganizationsettings
+      Handler: bin/organizationsettings/updateorganizationsettings
 
 
 Outputs:
