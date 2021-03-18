@@ -27,7 +27,7 @@ type WeekWorkTime struct {
 	Sunday    DayWorkTime `json:"sunday"`
 }
 
-func (wwt WeekWorkTime) Validate() error {
+func (wwt *WeekWorkTime) Validate() error {
 	if err := wwt.Monday.Validate(); err != nil {
 		return err
 	}
@@ -61,7 +61,7 @@ type DayWorkTime struct {
 	BreakTime []BreakTime `json:"breakTime"`
 }
 
-func (dwt DayWorkTime) Validate() error {
+func (dwt *DayWorkTime) Validate() error {
 	if dwt.BeginTime < 0 || dwt.BeginTime > 86399 {
 		return errors.New("beginTime should be in range 0 - 86399")
 	}
@@ -69,7 +69,6 @@ func (dwt DayWorkTime) Validate() error {
 	if dwt.EndTime < 0 || dwt.EndTime > 86399 {
 		return errors.New("endTime should be in range 0 - 86399")
 	}
-
 
 	for _, i := range dwt.BreakTime {
 		if err := i.Validate(); err != nil {
@@ -85,7 +84,7 @@ type BreakTime struct {
 	EndTime   int `json:"endTime"`
 }
 
-func (bt BreakTime) Validate() error {
+func (bt *BreakTime) Validate() error {
 	if bt.BeginTime < 0 || bt.BeginTime > 86399 {
 		return errors.New("beginTime should be in range 0 - 86399")
 	}
@@ -102,7 +101,7 @@ type Privacy struct {
 	SidePersonDataTransfer bool `json:"sidePersonDataTransfer"`
 }
 
-func (orgSet OrganizationSettings) Validate() error {
+func (orgSet *OrganizationSettings) Validate() error {
 	if err := uuid.Validate(orgSet.OrganizationID); err != nil {
 		return err
 	}
@@ -154,8 +153,31 @@ func (orgSet OrganizationSettings) Validate() error {
 	return nil
 }
 
-func (orgSet OrganizationSettings) ValidateWorkTime() error {
-	var weekWorkTime WeekWorkTime
+func (orgSet *OrganizationSettings) ValidateWorkTime() error {
+	var breakTimes []BreakTime
+	var breakTime BreakTime
+	breakTimes = append(breakTimes, breakTime)
+	weekWorkTime := WeekWorkTime{
+		Monday: DayWorkTime{
+			BreakTime: breakTimes,
+		},
+		Tuesday: DayWorkTime{
+			BreakTime: breakTimes,
+		},
+		Wednesday: DayWorkTime{
+			BreakTime: breakTimes,
+		},
+		Friday: DayWorkTime{
+			BreakTime: breakTimes,
+		},
+		Saturday: DayWorkTime{
+			BreakTime: breakTimes,
+		},
+		Sunday: DayWorkTime{
+			BreakTime: breakTimes,
+		},
+	}
+
 	if err := json.Unmarshal([]byte(*orgSet.OrganizationSettingWorkTime), &weekWorkTime); err != nil {
 		return err
 	}
@@ -164,10 +186,17 @@ func (orgSet OrganizationSettings) ValidateWorkTime() error {
 		return err
 	}
 
+	b, err := json.Marshal(weekWorkTime)
+	if err != nil {
+		return err
+	}
+
+	*orgSet.OrganizationSettingWorkTime = string(b)
+
 	return nil
 }
 
-func (orgSet OrganizationSettings) ValidatePrivacy() error {
+func (orgSet *OrganizationSettings) ValidatePrivacy() error {
 	var privacy Privacy
 	if err := json.Unmarshal([]byte(*orgSet.OrganizationSettingPrivacy), &privacy); err != nil {
 		return err
