@@ -95,8 +95,6 @@ func (osr OrganizationSettingsRepo) Get(organizationID *string) (*common.Organiz
 		from 
 		    organizations_settings
 		where 
-		    entry_deleted_date_time = null 
-		and
 			organization_id = $1;`, *organizationID)
 
 	if err != nil {
