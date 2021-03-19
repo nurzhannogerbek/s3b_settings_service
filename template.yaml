@@ -65,7 +65,7 @@ Resources:
     Type: 'AWS::Serverless::Function'
     Properties:
       FunctionName:
-        'Fn::Sub': '${EnvironmentName}UpdateOrganizationSettings'
+        'Fn::Sub': '${EnvironmentName}RestoreDeletedOrganizationSettings'
       CodeUri: bin/organizationsettings/restoredeletedorganizationsettings.zip
       Handler: bin/organizationsettings/restoredeletedorganizationsettings
 
