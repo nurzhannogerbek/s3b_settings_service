@@ -2,29 +2,29 @@ package postgrsql
 
 import (
 	"bitbucket.org/3beep-workspace/3beep_settings_service/internal/common"
-	"bitbucket.org/3beep-workspace/3beep_settings_service/internal/repository"
 	"bitbucket.org/3beep-workspace/3beep_settings_service/pkg/database/postgresql"
 	"fmt"
+
 	"github.com/jmoiron/sqlx"
 )
 
-func NewRepositories(newDB *sqlx.DB) *repository.Repositories {
-	return &repository.Repositories{
-		Organization: NewOrganizationSettingsRepo(newDB),
-	}
-}
-
-type OrganizationSettingsRepo struct {
+// OrganizationSettingsRepository
+// Contains information about organization settings repository.
+type OrganizationSettingsRepository struct {
 	db *sqlx.DB
 }
 
-func NewOrganizationSettingsRepo(newDB *sqlx.DB) *OrganizationSettingsRepo {
-	return &OrganizationSettingsRepo{
-		db: newDB,
+// NewOrganizationSettingsRepository
+// Creates new OrganizationSettingsRepository.
+func NewOrganizationSettingsRepository(db *sqlx.DB) *OrganizationSettingsRepository {
+	return &OrganizationSettingsRepository{
+		db: db,
 	}
 }
 
-func (osr *OrganizationSettingsRepo) Create(organization *common.OrganizationSettings) error {
+// Create
+// Creates new organization settings record in database.
+func (osr *OrganizationSettingsRepository) Create(os *common.OrganizationSettings) error {
 	rows, err := osr.db.NamedQuery(`
 		insert into organizations_settings (
 			organization_id,
@@ -47,7 +47,7 @@ func (osr *OrganizationSettingsRepo) Create(organization *common.OrganizationSet
 			:timezone_id
 		)
 		returning
-			organization_id;`, *organization)
+			organization_id;`, *os)
 	if err != nil {
 		return err
 	}
@@ -59,12 +59,14 @@ func (osr *OrganizationSettingsRepo) Create(organization *common.OrganizationSet
 		}
 	}
 
-	organization.OrganizationID = &lastInsertedID
+	os.OrganizationID = &lastInsertedID
 
 	return nil
 }
 
-func (osr OrganizationSettingsRepo) Delete(organizationID *string) error {
+// Delete
+// Deletes organization settings from database by ID.
+func (osr *OrganizationSettingsRepository) Delete(organizationID *string) error {
 	_, err := osr.db.Query(`
 		update 
 		    organizations_settings
@@ -80,7 +82,9 @@ func (osr OrganizationSettingsRepo) Delete(organizationID *string) error {
 	return nil
 }
 
-func (osr OrganizationSettingsRepo) Get(organizationID *string) (*common.OrganizationSettings, error) {
+// GetByID
+// Queries organization settings by ID from database.
+func (osr *OrganizationSettingsRepository) GetByID(organizationID *string) (*common.OrganizationSettings, error) {
 	var organizationSettings common.OrganizationSettings
 	err := osr.db.Get(&organizationSettings, `
 		select 
@@ -104,8 +108,10 @@ func (osr OrganizationSettingsRepo) Get(organizationID *string) (*common.Organiz
 	return &organizationSettings, nil
 }
 
-func (osr OrganizationSettingsRepo) Update(organization *common.OrganizationSettings) (*common.OrganizationSettings, error) {
-	updateCondition := postgresql.UpdateConditionFromStruct(organization)
+// Update
+// Updates organization settings record in database.
+func (osr *OrganizationSettingsRepository) Update(os *common.OrganizationSettings) (*common.OrganizationSettings, error) {
+	updateCondition := postgresql.UpdateConditionFromStruct(os)
 	queryString := fmt.Sprintf(`
 		update 
 			organizations_settings
@@ -124,7 +130,7 @@ func (osr OrganizationSettingsRepo) Update(organization *common.OrganizationSett
 		    organization_setting_privacy,
 		    timezone_id;`, updateCondition)
 
-	rows, err := osr.db.NamedQuery(queryString, *organization)
+	rows, err := osr.db.NamedQuery(queryString, *os)
 	if err != nil {
 		return nil, err
 	}

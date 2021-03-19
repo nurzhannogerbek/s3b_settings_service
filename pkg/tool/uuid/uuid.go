@@ -16,7 +16,8 @@ func uuidValidate(uuidString *string, invalid chan string) {
 	}
 }
 
-// ConcurrencyValidate - validates a slice of uuid strings
+// ConcurrencyValidate
+// Validates a slice of UUID strings.
 func ConcurrencyValidate(stringSlice *[]string) error {
 	var invalidString string
 	invalidUUIDs := make(chan string)
@@ -31,7 +32,8 @@ func ConcurrencyValidate(stringSlice *[]string) error {
 	return nil
 }
 
-// Validate - validates uuid
+// Validate
+// Validates uuid.
 func Validate(uuidString *string) error {
 	if _, err := uuid.Parse(*uuidString); err != nil {
 		return err

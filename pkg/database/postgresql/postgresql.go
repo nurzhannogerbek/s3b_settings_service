@@ -5,8 +5,8 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func NewClient(connString *string) *sqlx.DB {
-	db, err := sqlx.Connect("pgx", *connString)
+func NewClient(connectionString *string) *sqlx.DB {
+	db, err := sqlx.Connect("pgx", *connectionString)
 	if err != nil {
 		panic(err)
 	}

@@ -5,15 +5,16 @@ import (
 	"strings"
 )
 
-// UpdateConditionFromStruct - creates condition string (valueOfTag = :valueOfTag) for updating record in database
-func UpdateConditionFromStruct(in interface{}) string {
+// UpdateConditionFromStruct
+// Creates condition string (valueOfTag = :valueOfTag) for updating record in database.
+func UpdateConditionFromStruct(i interface{}) string {
 	var updateConditionString string
-	valuesOfStruct := reflect.ValueOf(in).Elem()
-	typeOfStruct := reflect.TypeOf(in).Elem()
+	valuesOfStruct := reflect.ValueOf(i).Elem()
+	typeOfStruct := reflect.TypeOf(i).Elem()
 	for i := 0; i < valuesOfStruct.NumField(); i++ {
 		f1 := valuesOfStruct.Field(i)
 		if f1.IsZero() == false {
-			t := reflect.TypeOf(in).Elem()
+			t := reflect.TypeOf(i).Elem()
 			fieldOfStruct, _ := t.FieldByName(typeOfStruct.Field(i).Name)
 			valueOfTag, _ := fieldOfStruct.Tag.Lookup("db")
 			updateConditionString += valueOfTag + " = :" + valueOfTag + ", "

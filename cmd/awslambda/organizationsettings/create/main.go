@@ -3,18 +3,18 @@ package main
 import (
 	"bitbucket.org/3beep-workspace/3beep_settings_service/internal/common"
 	"bitbucket.org/3beep-workspace/3beep_settings_service/internal/environment"
+	"bitbucket.org/3beep-workspace/3beep_settings_service/internal/repository"
 	"bitbucket.org/3beep-workspace/3beep_settings_service/internal/service"
 	"bitbucket.org/3beep-workspace/3beep_settings_service/pkg/database/postgresql"
-	postgresqlrepo "bitbucket.org/3beep-workspace/3beep_settings_service/internal/repository/postgrsql"
 	"encoding/json"
 
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
-var organizationService *service.Services
+var Services *service.Services
 
 func init() {
-	config, err := postgresql.NewConfig(
+	config := postgresql.NewConfig(
 		environment.PostgreSQLUserName,
 		environment.PostgreSQLPassword,
 		environment.PostgreSQLHost,
@@ -22,31 +22,25 @@ func init() {
 		environment.PostgreSQLDBName,
 		"require",
 	)
-	if err != nil {
-		panic(err)
-	}
 
-	connString, err := config.GetConnectionString()
-	if err != nil {
-		panic(err)
-	}
+	postgresqlDB := postgresql.NewClient(config.GetConnectionString())
+	repositories := repository.NewRepositories()
+	repositories.SetPostgresqlRepositories(postgresqlDB)
 
-	db := postgresql.NewClient(connString)
-	organizationRepository := postgresqlrepo.NewRepositories(db)
-	organizationService = service.NewServices(service.Dependencies{Repositories: organizationRepository})
+	Services = service.NewServices(service.Dependencies{Repositories: repositories})
 }
 
 type OrganizationSettingsEvent struct {
 	OrganizationSettings common.OrganizationSettings `json:"input"`
 }
 
-func handleRequest(event common.Event) (interface{}, error) {
+func handleRequest(e common.Event) (interface{}, error) {
 	var organizationSettingsEvent OrganizationSettingsEvent
-	if err := json.Unmarshal(event.Arguments, &organizationSettingsEvent); err != nil {
+	if err := json.Unmarshal(e.Arguments, &organizationSettingsEvent); err != nil {
 		return nil, err
 	}
 
-	if err := organizationService.OrganizationSettings.Create(&organizationSettingsEvent.OrganizationSettings); err != nil {
+	if err := Services.OrganizationSettings.Create(&organizationSettingsEvent.OrganizationSettings); err != nil {
 		return nil, err
 	}
 

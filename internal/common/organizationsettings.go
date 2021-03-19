@@ -7,6 +7,8 @@ import (
 	"unicode/utf8"
 )
 
+// OrganizationSettings
+// Contains information about organization settings
 type OrganizationSettings struct {
 	OrganizationID                *string `db:"organization_id" json:"organizationId"`
 	CountryID                     *string `db:"country_id" json:"countryId"`
@@ -18,6 +20,8 @@ type OrganizationSettings struct {
 	TimezoneID                    *string `db:"timezone_id" json:"timezoneId"`
 }
 
+// WeekWorkTime
+// Contains information about organization week work time.
 type WeekWorkTime struct {
 	Monday    DayWorkTime `json:"monday"`
 	Tuesday   DayWorkTime `json:"tuesday"`
@@ -27,6 +31,8 @@ type WeekWorkTime struct {
 	Sunday    DayWorkTime `json:"sunday"`
 }
 
+// Validate
+// Validates WeekWorkTime struct.
 func (wwt *WeekWorkTime) Validate() error {
 	if err := wwt.Monday.Validate(); err != nil {
 		return err
@@ -55,12 +61,16 @@ func (wwt *WeekWorkTime) Validate() error {
 	return nil
 }
 
+// DayWorkTime
+// Contains information about day work time of the week (WeekWorkTime).
 type DayWorkTime struct {
 	BeginTime int         `json:"beginTime"`
 	EndTime   int         `json:"endTime"`
 	BreakTime []BreakTime `json:"breakTime"`
 }
 
+// Validate
+// Validates DayWorkTime struct.
 func (dwt *DayWorkTime) Validate() error {
 	if dwt.BeginTime < 0 || dwt.BeginTime > 86399 {
 		return errors.New("beginTime should be in range 0 - 86399")
@@ -79,11 +89,15 @@ func (dwt *DayWorkTime) Validate() error {
 	return nil
 }
 
+// BreakTime
+// Contains information about break time of the day (DayWorkTime).
 type BreakTime struct {
 	BeginTime int `json:"beginTime"`
 	EndTime   int `json:"endTime"`
 }
 
+// Validate
+// Validates BreakTime struct.
 func (bt *BreakTime) Validate() error {
 	if bt.BeginTime < 0 || bt.BeginTime > 86399 {
 		return errors.New("beginTime should be in range 0 - 86399")
@@ -96,56 +110,60 @@ func (bt *BreakTime) Validate() error {
 	return nil
 }
 
+// Privacy
+// Contains information about privacy of the organization (OrganizationSettings).
 type Privacy struct {
 	DataTransferAndStorage bool `json:"dataTransferAndStorage"`
 	SidePersonDataTransfer bool `json:"sidePersonDataTransfer"`
 }
 
-func (orgSet *OrganizationSettings) Validate() error {
-	if err := uuid.Validate(orgSet.OrganizationID); err != nil {
+// Validate
+// Validates OrganizationSettings struct.
+func (os *OrganizationSettings) Validate() error {
+	if err := uuid.Validate(os.OrganizationID); err != nil {
 		return err
 	}
 
-	if orgSet.CountryID != nil {
-		if err := uuid.Validate(orgSet.CountryID); err != nil {
+	if os.CountryID != nil {
+		if err := uuid.Validate(os.CountryID); err != nil {
 			return err
 		}
 	}
 
-	if orgSet.CountryID != nil {
-		if err := uuid.Validate(orgSet.LocationID); err != nil {
+	if os.CountryID != nil {
+		if err := uuid.Validate(os.LocationID); err != nil {
 			return err
 		}
 	}
 
-	if orgSet.OrganizationSettingAddress != nil {
-		orgSettAdd := utf8.RuneCountInString(*orgSet.OrganizationSettingAddress)
-		if orgSettAdd > 50 || orgSettAdd < 5 {
+	if os.OrganizationSettingAddress != nil {
+		ostAdd := utf8.RuneCountInString(*os.OrganizationSettingAddress)
+		if ostAdd > 50 || ostAdd < 5 {
 			return errors.New("organizationSettingAddress length should be less than 50 and greater than 5")
 		}
 	}
 
-	if orgSet.OrganizationSettingPostalCode != nil {
-		orgSetPosCod := utf8.RuneCountInString(*orgSet.OrganizationSettingPostalCode)
-		if orgSetPosCod > 50 || orgSetPosCod < 5 {
+	if os.OrganizationSettingPostalCode != nil {
+		osPosCod := utf8.RuneCountInString(*os.OrganizationSettingPostalCode)
+		if osPosCod > 50 || osPosCod < 5 {
 			return errors.New("organizationSettingPostalCode length should be less than 50 and greater than 5")
 		}
 	}
 
-	if orgSet.OrganizationSettingWorkTime != nil {
-		if err := orgSet.ValidateWorkTime(); err != nil {
+	if os.OrganizationSettingWorkTime != nil {
+		if err := os.ValidateWorkTime(); err != nil {
 			return err
 		}
 	}
 
-	if orgSet.OrganizationSettingPrivacy != nil {
-		if err := orgSet.ValidatePrivacy(); err != nil {
+	if os.OrganizationSettingPrivacy != nil {
+		if err := os.ValidatePrivacy(); err != nil {
 			return err
 		}
 	}
 
-	if orgSet.TimezoneID != nil {
-		if err := uuid.Validate(orgSet.TimezoneID); err != nil {
+	if os.TimezoneID != nil {
+		if err := uuid.Validate(os.TimezoneID); err != nil {
 			return err
 		}
 	}
@@ -153,7 +171,9 @@ func (orgSet *OrganizationSettings) Validate() error {
 	return nil
 }
 
-func (orgSet *OrganizationSettings) ValidateWorkTime() error {
+// ValidateWorkTime
+// Validates work time of the organization (OrganizationSettings).
+func (os *OrganizationSettings) ValidateWorkTime() error {
 	var breakTimes []BreakTime
 	var breakTime BreakTime
 	breakTimes = append(breakTimes, breakTime)
@@ -178,7 +198,7 @@ func (orgSet *OrganizationSettings) ValidateWorkTime() error {
 		},
 	}
 
-	if err := json.Unmarshal([]byte(*orgSet.OrganizationSettingWorkTime), &weekWorkTime); err != nil {
+	if err := json.Unmarshal([]byte(*os.OrganizationSettingWorkTime), &weekWorkTime); err != nil {
 		return err
 	}
 
@@ -191,14 +211,16 @@ func (orgSet *OrganizationSettings) ValidateWorkTime() error {
 		return err
 	}
 
-	*orgSet.OrganizationSettingWorkTime = string(b)
+	*os.OrganizationSettingWorkTime = string(b)
 
 	return nil
 }
 
-func (orgSet *OrganizationSettings) ValidatePrivacy() error {
+// ValidatePrivacy
+// Validates privacy of the organization (OrganizationSettings).
+func (os *OrganizationSettings) ValidatePrivacy() error {
 	var privacy Privacy
-	if err := json.Unmarshal([]byte(*orgSet.OrganizationSettingPrivacy), &privacy); err != nil {
+	if err := json.Unmarshal([]byte(*os.OrganizationSettingPrivacy), &privacy); err != nil {
 		return err
 	}
 

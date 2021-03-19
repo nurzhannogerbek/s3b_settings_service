@@ -1,6 +1,7 @@
 package digit
 
-// Count - counts number of digits in number
+// Count
+// Counts number of digits in number.
 func Count(number int) int {
 	count := 0
 	for number != 0 {

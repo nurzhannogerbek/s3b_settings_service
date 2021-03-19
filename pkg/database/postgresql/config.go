@@ -1,11 +1,12 @@
 package postgresql
 
 import (
-	"errors"
 	"fmt"
 	"strconv"
 )
 
+// config
+// Contains configuration data for postgresql.s
 type config struct {
 	PostgreSQLUserName *string
 	PostgreSQLPassword *string
@@ -15,11 +16,12 @@ type config struct {
 	SSLMode            *string
 }
 
-// NewConfig - Creates new config of database, returns pointer to config and error
-func NewConfig(userName, userPassword, host, port, dbName, sslMode string) (*config, error) {
+// NewConfig
+// Creates new config of database, returns pointer to config or panics on error.
+func NewConfig(userName, userPassword, host, port, dbName, sslMode string) *config {
 	port16, err := strconv.ParseInt(port, 10, 16)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
 
 	newConfig := config{
@@ -30,21 +32,18 @@ func NewConfig(userName, userPassword, host, port, dbName, sslMode string) (*con
 		PostgreSQLDBName:   &dbName,
 		SSLMode:            &sslMode,
 	}
-	return &newConfig, nil
+	return &newConfig
 }
 
-// GetConnectionString - Creates connection string from config struct and returns pointer to string
-func (c *config) GetConnectionString() (*string, error) {
-	if c.PostgreSQLUserName == nil {
-		return nil, errors.New("Configure database (NewConfig) before calling GetConnectionString")
-	}
+// GetConnectionString
+// Creates connection string from config struct and returns pointer to string.
+func (c *config) GetConnectionString() *string {
 	connectionString := fmt.Sprintf("user=%s password=%s host=%s port=%d dbname=%s sslmode=%s",
 		*c.PostgreSQLUserName,
 		*c.PostgreSQLPassword,
 		*c.PostgreSQLHost,
 		*c.PostgreSQLPort,
 		*c.PostgreSQLDBName,
-		*c.SSLMode,
-	)
-	return &connectionString, nil
+		*c.SSLMode)
+	return &connectionString
 }
