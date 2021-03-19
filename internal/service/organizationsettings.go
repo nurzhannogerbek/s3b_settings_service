@@ -79,7 +79,7 @@ func (oss *OrganizationSettingsService) Update(os *common.OrganizationSettings) 
 }
 
 // RestoreDeleted
-// Validates and Deletes organization settings record by ID in database.
+// Validates and Restores deleted organization settings record by ID in database.
 func (oss *OrganizationSettingsService) RestoreDeleted(organizationID *string) error {
 	if err := uuid.Validate(organizationID); err != nil {
 		return err
