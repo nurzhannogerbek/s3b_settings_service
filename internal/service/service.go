@@ -16,6 +16,7 @@ type OrganizationSettings interface {
 	Delete(organizationID *string) error
 	GetByID(organizationID *string) (*common.OrganizationSettings, error)
 	Update(organization *common.OrganizationSettings) (*common.OrganizationSettings, error)
+	RestoreDeleted(organizationID *string) error
 }
 
 // Services

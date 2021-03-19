@@ -151,3 +151,21 @@ func (osr *OrganizationSettingsRepository) Update(os *common.OrganizationSetting
 
 	return &organizationSettings, err
 }
+
+// RestoreDeleted
+// Restores deleted organization settings from database by ID.
+func (osr *OrganizationSettingsRepository) RestoreDeleted(organizationID *string) error {
+	_, err := osr.db.Query(`
+		update 
+		    organizations_settings
+		set
+			entry_deleted_date_time = null
+		where 
+			organization_id = $1;`, *organizationID)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

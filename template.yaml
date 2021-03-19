@@ -61,6 +61,13 @@ Resources:
         'Fn::Sub': '${EnvironmentName}UpdateOrganizationSettings'
       CodeUri: bin/organizationsettings/updateorganizationsettings.zip
       Handler: bin/organizationsettings/updateorganizationsettings
+  RestoreDeletedOrganizationSettings:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName:
+        'Fn::Sub': '${EnvironmentName}UpdateOrganizationSettings'
+      CodeUri: bin/organizationsettings/restoredeletedorganizationsettings.zip
+      Handler: bin/organizationsettings/restoredeletedorganizationsettings
 
 
 Outputs:
@@ -88,3 +95,9 @@ Outputs:
     Export:
       Name:
         'Fn::Sub': '${AWS::StackName}:${EnvironmentName}UpdateOrganizationSettingsARN'
+  RestoreDeletedOrganizationSettingsARN:
+    Value:
+      'Fn::GetAtt': RestoreDeletedOrganizationSettings.Arn
+    Export:
+      Name:
+        'Fn::Sub': '${AWS::StackName}:${EnvironmentName}RestoreDeletedOrganizationSettingsARN'
