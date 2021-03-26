@@ -15,14 +15,14 @@ import (
 
 const facebookGraphApiUrl string = "https://graph.facebook.com/v9.0"
 
-type FacebookMessengerSettingsEvent struct {
+type Event struct {
 	UserId                    string `json:"userId"`
 	ShortLivedUserAccessToken string `json:"shortLivedUserAccessToken"`
 }
 
 func handleRequest(e common.Event) (*common.FacebookPages, error) {
-	var facebookMessengerSettingsEvent FacebookMessengerSettingsEvent
-	if err := json.Unmarshal(e.Arguments, &facebookMessengerSettingsEvent); err != nil {
+	var event Event
+	if err := json.Unmarshal(e.Arguments, &event); err != nil {
 		return nil, err
 	}
 
@@ -30,7 +30,7 @@ func handleRequest(e common.Event) (*common.FacebookPages, error) {
 	parameters.Add("grant_type", "fb_exchange_token")
 	parameters.Add("client_id", environment.FacebookAppId)
 	parameters.Add("client_secret", environment.FacebookAppSecret)
-	parameters.Add("fb_exchange_token", facebookMessengerSettingsEvent.ShortLivedUserAccessToken)
+	parameters.Add("fb_exchange_token", event.ShortLivedUserAccessToken)
 
 	request, err := http.NewRequest("GET", fmt.Sprintf("%s/oauth/access_token", facebookGraphApiUrl), strings.NewReader(parameters.Encode()))
 	if err != nil {
