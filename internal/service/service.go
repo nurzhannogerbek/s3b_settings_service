@@ -19,17 +19,17 @@ type OrganizationSettings interface {
 	RestoreDeleted(organizationID *string) error
 }
 
-// FacebookMessengerSettings
-// Facebook messenger settings service interface.
-type FacebookMessengerSettings interface {
-	Create(facebookMessengerSettings *common.FacebookMessengerSettings) error
+// Channel
+// Channel service interface.
+type Channel interface {
+	Create(channel *common.Channel) error
 }
 
 // Services
 // Contains all services available in the package.
 type Services struct {
 	OrganizationSettings OrganizationSettings
-	FacebookMessengerSettings FacebookMessengerSettings
+	Channel Channel
 }
 
 // Dependencies
@@ -42,10 +42,10 @@ type Dependencies struct {
 // Creates new services based on Dependencies.
 func NewServices(d Dependencies) *Services {
 	organizationSettingsService := NewOrganizationSettingsService(d.Repositories.OrganizationSettings)
-	facebookMessengerSettingsService := NewFacebookMessengerSettingsService(d.Repositories.FacebookMessengerSettings)
+	channelService := NewChannelService(d.Repositories.Channel)
 
 	return &Services{
 		OrganizationSettings: organizationSettingsService,
-		FacebookMessengerSettings: facebookMessengerSettingsService,
+		Channel: channelService,
 	}
 }

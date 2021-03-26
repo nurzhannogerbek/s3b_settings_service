@@ -78,21 +78,22 @@ Resources:
     Properties:
       FunctionName:
         'Fn::Sub': '${EnvironmentName}GetFacebookPages'
-      CodeUri: bin/facebookmessengersettings/getfacebookpages.zip
-      Handler: bin/facebookmessengersettings/getfacebookpages
+      CodeUri: bin/facebookmessenger/getfacebookpages.zip
+      Handler: bin/facebookmessenger/getfacebookpages
       Environment:
         Variables:
           FACEBOOK_APP_ID:
             'Fn::Sub': '${FacebookAppId}'
           FACEBOOK_APP_SECRET:
             'Fn::Sub': '${FacebookAppSecret}'
-  CreateFacebookMessengerSettings:
+
+  CreateChannel:
     Type: 'AWS::Serverless::Function'
     Properties:
       FunctionName:
-        'Fn::Sub': '${EnvironmentName}CreateFacebookMessengerSettings'
-      CodeUri: bin/facebookmessengersettings/createfacebookmessengersettings.zip
-      Handler: bin/facebookmessengersettings/createfacebookmessengersettings
+        'Fn::Sub': '${EnvironmentName}CreateChannel'
+      CodeUri: bin/channel/createchannel.zip
+      Handler: bin/channel/createchannel
 
 Outputs:
   CreateOrganizationSettingsARN:
@@ -132,9 +133,10 @@ Outputs:
     Export:
       Name:
         'Fn::Sub': '${AWS::StackName}:${EnvironmentName}GetFacebookPagesARN'
-  CreateFacebookMessengerSettingsARN:
+
+  CreateChannelARN:
     Value:
-      'Fn::GetAtt': CreateFacebookMessengerSettings.Arn
+      'Fn::GetAtt': CreateChannel.Arn
     Export:
       Name:
-        'Fn::Sub': '${AWS::StackName}:${EnvironmentName}CreateFacebookMessengerSettingsARN'
+        'Fn::Sub': '${AWS::StackName}:${EnvironmentName}CreateChannelARN'

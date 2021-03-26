@@ -16,7 +16,7 @@ import (
 const facebookGraphApiUrl string = "https://graph.facebook.com/v9.0"
 
 type FacebookMessengerSettingsEvent struct {
-	UserId string `json:"userId"`
+	UserId                    string `json:"userId"`
 	ShortLivedUserAccessToken string `json:"shortLivedUserAccessToken"`
 }
 

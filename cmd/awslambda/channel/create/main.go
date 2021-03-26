@@ -30,21 +30,21 @@ func init() {
 	Services = service.NewServices(service.Dependencies{Repositories: repositories})
 }
 
-type FacebookMessengerSettingsEvent struct {
-	FacebookMessengerSettings common.FacebookMessengerSettings `json:"input"`
+type ChannelEvent struct {
+	Channel common.Channel `json:"input"`
 }
 
 func handleRequest(e common.Event) (interface{}, error) {
-	var facebookMessengerSettingsEvent FacebookMessengerSettingsEvent
-	if err := json.Unmarshal(e.Arguments, &facebookMessengerSettingsEvent); err != nil {
+	var channelEvent ChannelEvent
+	if err := json.Unmarshal(e.Arguments, &channelEvent); err != nil {
 		return nil, err
 	}
 
-	if err := Services.FacebookMessengerSettings.Create(&facebookMessengerSettingsEvent.FacebookMessengerSettings); err != nil {
+	if err := Services.Channel.Create(&channelEvent.Channel); err != nil {
 		return nil, err
 	}
 
-	return facebookMessengerSettingsEvent, nil
+	return channelEvent, nil
 }
 
 func main() {
