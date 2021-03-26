@@ -8,7 +8,7 @@ import (
 )
 
 // OrganizationSettings
-// Contains information about organization settings
+// Contains information about organization settings.
 type OrganizationSettings struct {
 	OrganizationID                *string `db:"organization_id" json:"organizationId"`
 	CountryID                     *string `db:"country_id" json:"countryId"`

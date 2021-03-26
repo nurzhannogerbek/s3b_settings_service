@@ -55,8 +55,12 @@ definitions:
                     "ParameterValue": "${POSTGRESQL_DB_NAME}"
                   },
                   {
-                    "ParameterKey": "EnvironmentName",
-                    "ParameterValue": "${ENVIRONMENT_NAME}"
+                    "ParameterKey": "FacebookAppId",
+                    "ParameterValue": "${FACEBOOK_APP_ID}"
+                  },
+                  {
+                    "ParameterKey": "FacebookAppSecret",
+                    "ParameterValue": "${FACEBOOK_APP_SECRET}"
                   }
                 ]
 

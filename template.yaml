@@ -69,6 +69,19 @@ Resources:
       CodeUri: bin/organizationsettings/restoredeletedorganizationsettings.zip
       Handler: bin/organizationsettings/restoredeletedorganizationsettings
 
+  GetFacebookPages:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName:
+        'Fn::Sub': '${EnvironmentName}GetFacebookPages'
+      CodeUri: bin/facebookmessengersettings/getfacebookpages.zip
+      Handler: bin/facebookmessengersettings/getfacebookpages
+      Environment:
+        Variables:
+          FACEBOOK_APP_ID:
+            'Fn::Sub': '${FacebookAppId}'
+          FACEBOOK_APP_SECRET:
+            'Fn::Sub': '${FacebookAppSecret}'
 
 Outputs:
   CreateOrganizationSettingsARN:
@@ -101,3 +114,10 @@ Outputs:
     Export:
       Name:
         'Fn::Sub': '${AWS::StackName}:${EnvironmentName}RestoreDeletedOrganizationSettingsARN'
+
+  GetFacebookPagesARN:
+    Value:
+      'Fn::GetAtt': GetFacebookPages.Arn
+    Export:
+      Name:
+        'Fn::Sub': '${AWS::StackName}:${EnvironmentName}GetFacebookPagesARN'
