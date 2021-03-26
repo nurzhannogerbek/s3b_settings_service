@@ -26,6 +26,7 @@ type WeekWorkTime struct {
 	Monday    DayWorkTime `json:"monday"`
 	Tuesday   DayWorkTime `json:"tuesday"`
 	Wednesday DayWorkTime `json:"wednesday"`
+	Thursday  DayWorkTime `json:"thursday"`
 	Friday    DayWorkTime `json:"friday"`
 	Saturday  DayWorkTime `json:"saturday"`
 	Sunday    DayWorkTime `json:"sunday"`
@@ -43,6 +44,10 @@ func (wwt *WeekWorkTime) Validate() error {
 	}
 
 	if err := wwt.Wednesday.Validate(); err != nil {
+		return err
+	}
+
+	if err := wwt.Thursday.Validate(); err != nil {
 		return err
 	}
 
@@ -67,6 +72,7 @@ type DayWorkTime struct {
 	BeginTime int         `json:"beginTime"`
 	EndTime   int         `json:"endTime"`
 	BreakTime []BreakTime `json:"breakTime"`
+	IsActive  bool        `json:"isActive"`
 }
 
 // Validate
@@ -130,22 +136,22 @@ func (os *OrganizationSettings) Validate() error {
 		}
 	}
 
-	if os.CountryID != nil {
+	if os.LocationID != nil {
 		if err := uuid.Validate(os.LocationID); err != nil {
 			return err
 		}
 	}
 
 	if os.OrganizationSettingAddress != nil {
-		ostAdd := utf8.RuneCountInString(*os.OrganizationSettingAddress)
-		if ostAdd > 50 || ostAdd < 5 {
+		organizationSettingAddress := utf8.RuneCountInString(*os.OrganizationSettingAddress)
+		if organizationSettingAddress > 50 || organizationSettingAddress < 5 {
 			return errors.New("organizationSettingAddress length should be less than 50 and greater than 5")
 		}
 	}
 
 	if os.OrganizationSettingPostalCode != nil {
-		osPosCod := utf8.RuneCountInString(*os.OrganizationSettingPostalCode)
-		if osPosCod > 50 || osPosCod < 5 {
+		organizationSettingPostalCode := utf8.RuneCountInString(*os.OrganizationSettingPostalCode)
+		if organizationSettingPostalCode > 50 || organizationSettingPostalCode < 5 {
 			return errors.New("organizationSettingPostalCode length should be less than 50 and greater than 5")
 		}
 	}
@@ -179,22 +185,46 @@ func (os *OrganizationSettings) ValidateWorkTime() error {
 	breakTimes = append(breakTimes, breakTime)
 	weekWorkTime := WeekWorkTime{
 		Monday: DayWorkTime{
+			BeginTime: 0,
+			EndTime:   86399,
 			BreakTime: breakTimes,
+			IsActive:  true,
 		},
 		Tuesday: DayWorkTime{
+			BeginTime: 0,
+			EndTime:   86399,
 			BreakTime: breakTimes,
+			IsActive:  true,
 		},
 		Wednesday: DayWorkTime{
+			BeginTime: 0,
+			EndTime:   86399,
 			BreakTime: breakTimes,
+			IsActive:  true,
+		},
+		Thursday: DayWorkTime{
+			BeginTime: 0,
+			EndTime:   86399,
+			BreakTime: breakTimes,
+			IsActive:  true,
 		},
 		Friday: DayWorkTime{
+			BeginTime: 0,
+			EndTime:   86399,
 			BreakTime: breakTimes,
+			IsActive:  true,
 		},
 		Saturday: DayWorkTime{
+			BeginTime: 0,
+			EndTime:   86399,
 			BreakTime: breakTimes,
+			IsActive:  true,
 		},
 		Sunday: DayWorkTime{
+			BeginTime: 0,
+			EndTime:   86399,
 			BreakTime: breakTimes,
+			IsActive:  true,
 		},
 	}
 
