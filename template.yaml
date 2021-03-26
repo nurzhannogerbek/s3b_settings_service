@@ -86,6 +86,13 @@ Resources:
             'Fn::Sub': '${FacebookAppId}'
           FACEBOOK_APP_SECRET:
             'Fn::Sub': '${FacebookAppSecret}'
+  CreateFacebookMessengerSettings:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName:
+        'Fn::Sub': '${EnvironmentName}CreateFacebookMessengerSettings'
+      CodeUri: bin/facebookmessengersettings/createfacebookmessengersettings.zip
+      Handler: bin/facebookmessengersettings/createfacebookmessengersettings
 
 Outputs:
   CreateOrganizationSettingsARN:
@@ -125,3 +132,9 @@ Outputs:
     Export:
       Name:
         'Fn::Sub': '${AWS::StackName}:${EnvironmentName}GetFacebookPagesARN'
+  CreateFacebookMessengerSettingsARN:
+    Value:
+      'Fn::GetAtt': CreateFacebookMessengerSettings.Arn
+    Export:
+      Name:
+        'Fn::Sub': '${AWS::StackName}:${EnvironmentName}CreateFacebookMessengerSettingsARN'

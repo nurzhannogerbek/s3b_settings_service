@@ -9,6 +9,7 @@ build:
 	env GOOS=linux go build -ldflags="-s -w" -o bin/organizationsettings/restoredeletedorganizationsettings cmd/awslambda/organizationsettings/restoredeleted/main.go
 
 	env GOOS=linux go build -ldflags="-s -w" -o bin/facebookmessengersettings/getfacebookpages cmd/awslambda/facebookmessengersettings/facebookpages/get/main.go
+	env GOOS=linux go build -ldflags="-s -w" -o bin/facebookmessengersettings/createfacebookmessengersettings cmd/awslambda/facebookmessengersettings/create/main.go
 
 
 zip:
@@ -19,6 +20,7 @@ zip:
 	zip -r bin/organizationsettings/restoredeletedorganizationsettings.zip bin/organizationsettings/restoredeletedorganizationsettings
 
 	zip -r bin/facebookmessengersettings/getfacebookpages.zip bin/facebookmessengersettings/getfacebookpages
+	zip -r bin/facebookmessengersettings/createfacebookmessengersettings.zip bin/facebookmessengersettings/createfacebookmessengersettings
 
 
 deploy: build zip

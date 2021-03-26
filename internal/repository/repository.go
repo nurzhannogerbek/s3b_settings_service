@@ -21,10 +21,17 @@ type OrganizationSettings interface {
 	RestoreDeleted(organizationID *string) error
 }
 
+// FacebookMessengerSettings
+// Facebook messenger settings repository interface.
+type FacebookMessengerSettings interface {
+	Create(facebookMessengerSettings *common.FacebookMessengerSettings) error
+}
+
 // Repositories
 // Contains all repositories available in the package.
 type Repositories struct {
 	OrganizationSettings OrganizationSettings
+	FacebookMessengerSettings FacebookMessengerSettings
 }
 
 // NewRepositories
@@ -37,4 +44,5 @@ func NewRepositories() *Repositories {
 // Sets postgresql repositories in Repositories struct.
 func (r *Repositories) SetPostgresqlRepositories(db *sqlx.DB) {
 	r.OrganizationSettings = postgresql.NewOrganizationSettingsRepository(db)
+	r.FacebookMessengerSettings = postgresql.NewFacebookMessengerSettingsRepository(db)
 }
