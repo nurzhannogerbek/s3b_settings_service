@@ -5,9 +5,9 @@ type CategoryList struct {
 	Name *string `json:"name"`
 }
 type Data struct {
-	AccessToken *string `json:"access_token"`
+	AccessToken *string `json:"accessToken"`
 	Category *string `json:"category"`
-	CategoryList []*CategoryList `json:"category_list"`
+	CategoryList []*CategoryList `json:"categoryList"`
 	Name *string `json:"name"`
 	Id *string `json:"id"`
 	Tasks []*string
