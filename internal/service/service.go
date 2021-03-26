@@ -25,11 +25,27 @@ type Channel interface {
 	Create(channel *common.Channel) error
 }
 
+// Organization
+// Organization service interface.
+type Organization interface {
+	Create(organization *common.OrganizationCreateInput) (*common.Organization, error)
+	CreateDepartment(department *common.OrganizationCreateDepartmentInput) (*common.Organization, error)
+	Delete(organizationsIDs *[]string) error
+	GetByID(organizationID *string) (*common.Organization, error)
+	Update(organization *common.OrganizationUpdateInput) (*common.Organization, error)
+	RestoreDeleted(organizationsIDs *[]string) error
+	GetByIDDepartments(parentOrganizationID *string) (*[]common.Organization, error)
+	GetAllDepartments(rootOrganizationID *string) (*[]common.Organization, error)
+	GetByIDArchived(parentOrganizationID *string) (*[]common.Organization, error)
+	GetAllArchived(rootOrganizationID *string) (*[]common.Organization, error)
+}
+
 // Services
 // Contains all services available in the package.
 type Services struct {
 	OrganizationSettings OrganizationSettings
-	Channel Channel
+	Channel              Channel
+	Organization         Organization
 }
 
 // Dependencies
@@ -43,9 +59,11 @@ type Dependencies struct {
 func NewServices(d Dependencies) *Services {
 	organizationSettingsService := NewOrganizationSettingsService(d.Repositories.OrganizationSettings)
 	channelService := NewChannelService(d.Repositories.Channel)
+	organizationService := NewOrganizationService(d.Repositories.Organization)
 
 	return &Services{
 		OrganizationSettings: organizationSettingsService,
-		Channel: channelService,
+		Channel:              channelService,
+		Organization:         organizationService,
 	}
 }

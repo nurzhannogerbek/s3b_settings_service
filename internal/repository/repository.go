@@ -27,11 +27,27 @@ type Channel interface {
 	Create(channel *common.Channel) error
 }
 
+// Organization
+// Organization repository interface.
+type Organization interface {
+	Create(organization *common.OrganizationCreateInput) (*common.Organization, error)
+	CreateDepartment(department *common.OrganizationCreateDepartmentInput) (*common.Organization, error)
+	Delete(organizationsIDs *[]string) error
+	GetByID(organizationID *string) (*common.Organization, error)
+	Update(organization *common.OrganizationUpdateInput) (*common.Organization, error)
+	RestoreDeleted(organizationsIDs *[]string) error
+	GetByIDDepartments(parentOrganizationID *string) (*[]common.Organization, error)
+	GetAllDepartments(rootOrganizationID *string) (*[]common.Organization, error)
+	GetByIDArchived(parentOrganizationID *string) (*[]common.Organization, error)
+	GetAllArchived(rootOrganizationID *string) (*[]common.Organization, error)
+}
+
 // Repositories
 // Contains all repositories available in the package.
 type Repositories struct {
 	OrganizationSettings OrganizationSettings
-	Channel Channel
+	Channel              Channel
+	Organization         Organization
 }
 
 // NewRepositories
@@ -45,4 +61,5 @@ func NewRepositories() *Repositories {
 func (r *Repositories) SetPostgresqlRepositories(db *sqlx.DB) {
 	r.OrganizationSettings = postgresql.NewOrganizationSettingsRepository(db)
 	r.Channel = postgresql.NewChannelRepository(db)
+	r.Organization = postgresql.NewOrganizationRepository(db)
 }
