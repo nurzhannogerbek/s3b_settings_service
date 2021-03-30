@@ -131,14 +131,18 @@ func (os *OrganizationSettings) Validate() error {
 	}
 
 	if os.CountryID != nil {
-		if err := uuid.Validate(os.CountryID); err != nil {
-			return err
+		if *os.CountryID != "null" {
+			if err := uuid.Validate(os.CountryID); err != nil {
+				return err
+			}
 		}
 	}
 
 	if os.LocationID != nil {
-		if err := uuid.Validate(os.LocationID); err != nil {
-			return err
+		if *os.LocationID != "null" {
+			if err := uuid.Validate(os.LocationID); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -169,8 +173,10 @@ func (os *OrganizationSettings) Validate() error {
 	}
 
 	if os.TimezoneID != nil {
-		if err := uuid.Validate(os.TimezoneID); err != nil {
-			return err
+		if *os.TimezoneID != "null" {
+			if err := uuid.Validate(os.TimezoneID); err != nil {
+				return err
+			}
 		}
 	}
 
