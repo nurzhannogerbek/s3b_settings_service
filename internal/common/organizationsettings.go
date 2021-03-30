@@ -173,7 +173,7 @@ func (os *OrganizationSettings) Validate() error {
 	}
 
 	if os.TimezoneID != nil {
-		if *os.TimezoneID != "null" {
+		if *os.TimezoneID != "delete" {
 			if err := uuid.Validate(os.TimezoneID); err != nil {
 				return err
 			}
