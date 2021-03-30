@@ -131,7 +131,7 @@ func (os *OrganizationSettings) Validate() error {
 	}
 
 	if os.CountryID != nil {
-		if *os.CountryID != "null" {
+		if *os.CountryID != "delete" {
 			if err := uuid.Validate(os.CountryID); err != nil {
 				return err
 			}
@@ -139,7 +139,7 @@ func (os *OrganizationSettings) Validate() error {
 	}
 
 	if os.LocationID != nil {
-		if *os.LocationID != "null" {
+		if *os.LocationID != "delete" {
 			if err := uuid.Validate(os.LocationID); err != nil {
 				return err
 			}

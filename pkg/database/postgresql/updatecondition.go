@@ -1,6 +1,7 @@
 package postgresql
 
 import (
+	"fmt"
 	"reflect"
 	"strings"
 )
@@ -17,7 +18,11 @@ func UpdateConditionFromStruct(in interface{}) string {
 			t := reflect.TypeOf(in).Elem()
 			fieldOfStruct, _ := t.FieldByName(typeOfStruct.Field(i).Name)
 			valueOfTag, _ := fieldOfStruct.Tag.Lookup("db")
-			updateConditionString += valueOfTag + " = :" + valueOfTag + ", "
+			if fmt.Sprintf("%+v", f1.Elem()) == "delete" {
+				updateConditionString += valueOfTag + " = null, "
+			} else {
+				updateConditionString += valueOfTag + " = :" + valueOfTag + ", "
+			}
 		}
 	}
 	updateConditionString = strings.TrimSuffix(updateConditionString, ", ")
