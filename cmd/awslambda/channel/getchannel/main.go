@@ -31,7 +31,7 @@ func init() {
 }
 
 type ChannelEvent struct {
-	Channel common.Channel `json:"input"`
+	ChannelId string `json:"channelId"`
 }
 
 func handleRequest(e common.Event) (interface{}, error) {
@@ -40,11 +40,12 @@ func handleRequest(e common.Event) (interface{}, error) {
 		return nil, err
 	}
 
-	if err := Services.Channel.Create(&channelEvent.Channel); err != nil {
+	channel, err := Services.Channel.GetChannel(&channelEvent.ChannelId)
+	if err != nil {
 		return nil, err
 	}
 
-	return channelEvent, nil
+	return channel, nil
 }
 
 func main() {

@@ -17,9 +17,11 @@ build:
 	env GOOS=linux go build -ldflags="-s -w" -o bin/organization/getorganizationsbyids cmd/awslambda/organization/getorganizationsbyids/main.go
 	env GOOS=linux go build -ldflags="-s -w" -o bin/organization/restoredeletedorganizations cmd/awslambda/organization/restoredeletedorganizations/main.go
 
-	env GOOS=linux go build -ldflags="-s -w" -o bin/facebookmessenger/getfacebookpages cmd/awslambda/facebookmessenger/facebookpages/get/main.go
+	env GOOS=linux go build -ldflags="-s -w" -o bin/facebookmessenger/getfacebookpages cmd/awslambda/facebookmessenger/getfacebookpages/main.go
 
-	env GOOS=linux go build -ldflags="-s -w" -o bin/channel/createchannel cmd/awslambda/channel/create/main.go
+	env GOOS=linux go build -ldflags="-s -w" -o bin/channel/createchannel cmd/awslambda/channel/createchannel/main.go
+	env GOOS=linux go build -ldflags="-s -w" -o bin/channel/getchannel cmd/awslambda/channel/getchannel/main.go
+	env GOOS=linux go build -ldflags="-s -w" -o bin/channel/getchannels cmd/awslambda/channel/getchannels/main.go
 
 
 zip:
@@ -41,6 +43,8 @@ zip:
 	zip -r bin/facebookmessenger/getfacebookpages.zip bin/facebookmessenger/getfacebookpages
 
 	zip -r bin/channel/createchannel.zip bin/channel/createchannel
+	zip -r bin/channel/getchannel.zip bin/channel/getchannel
+	zip -r bin/channel/getchannels.zip bin/channel/getchannels
 
 
 deploy: build zip
