@@ -8,6 +8,15 @@ build:
 	env GOOS=linux go build -ldflags="-s -w" -o bin/organizationsettings/updateorganizationsettings cmd/awslambda/organizationsettings/update/main.go
 	env GOOS=linux go build -ldflags="-s -w" -o bin/organizationsettings/restoredeletedorganizationsettings cmd/awslambda/organizationsettings/restoredeleted/main.go
 
+	env GOOS=linux go build -ldflags="-s -w" -o bin/organization/deleteorganizations cmd/awslambda/organization/deleteorganizations/main.go
+	env GOOS=linux go build -ldflags="-s -w" -o bin/organization/getallarchivedorganizationdepartments cmd/awslambda/organization/getallarchivedorganizationdepartments/main.go
+	env GOOS=linux go build -ldflags="-s -w" -o bin/organization/getallorganizationdepartments cmd/awslambda/organization/getallorganizationdepartments/main.go
+	env GOOS=linux go build -ldflags="-s -w" -o bin/organization/getarchivedorganizationdepartmentsbyid cmd/awslambda/organization/getarchivedorganizationdepartmentsbyid/main.go
+	env GOOS=linux go build -ldflags="-s -w" -o bin/organization/getorganizationbyid cmd/awslambda/organization/getorganizationbyid/main.go
+	env GOOS=linux go build -ldflags="-s -w" -o bin/organization/getorganizationdepartmentsbyid cmd/awslambda/organization/getorganizationdepartmentsbyid/main.go
+	env GOOS=linux go build -ldflags="-s -w" -o bin/organization/getorganizationsbyids cmd/awslambda/organization/getorganizationsbyids/main.go
+	env GOOS=linux go build -ldflags="-s -w" -o bin/organization/restoredeletedorganizations cmd/awslambda/organization/restoredeletedorganizations/main.go
+
 	env GOOS=linux go build -ldflags="-s -w" -o bin/facebookmessenger/getfacebookpages cmd/awslambda/facebookmessenger/facebookpages/get/main.go
 
 	env GOOS=linux go build -ldflags="-s -w" -o bin/channel/createchannel cmd/awslambda/channel/create/main.go
@@ -19,6 +28,15 @@ zip:
 	zip -r bin/organizationsettings/getorganizationsettings.zip bin/organizationsettings/getorganizationsettings
 	zip -r bin/organizationsettings/updateorganizationsettings.zip bin/organizationsettings/updateorganizationsettings
 	zip -r bin/organizationsettings/restoredeletedorganizationsettings.zip bin/organizationsettings/restoredeletedorganizationsettings
+
+	zip -r bin/organization/deleteorganizations.zip bin/organization/deleteorganizations
+	zip -r bin/organization/getallarchivedorganizationdepartments.zip bin/organization/getallarchivedorganizationdepartments
+	zip -r bin/organization/getallorganizationdepartments.zip bin/organization/getallorganizationdepartments
+	zip -r bin/organization/getarchivedorganizationdepartmentsbyid.zip bin/organization/getarchivedorganizationdepartmentsbyid
+	zip -r bin/organization/getorganizationbyid.zip bin/organization/getorganizationbyid
+	zip -r bin/organization/getorganizationdepartmentsbyid.zip bin/organization/getorganizationdepartmentsbyid
+	zip -r bin/organization/getorganizationsbyids.zip bin/organization/getorganizationsbyids
+	zip -r bin/organization/restoredeletedorganizations.zip bin/organization/restoredeletedorganizations
 
 	zip -r bin/facebookmessenger/getfacebookpages.zip bin/facebookmessenger/getfacebookpages
 

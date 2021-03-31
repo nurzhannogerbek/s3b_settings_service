@@ -17,6 +17,7 @@ type Organization struct {
 	RootOrganizationName    *string `db:"root_organization_name" json:"rootOrganizationName"`
 	OrganizationLevel       *int    `db:"organization_level" json:"organizationLevel"`
 	ParentOrganizationLevel *int    `db:"parent_organization_level" json:"parentOrganizationLevel"`
+	RootOrganizationLevel   *int    `db:"root_organization_level" json:"rootOrganizationLevel"`
 	TreeOrganizationID      *string `db:"tree_organization_id" json:"treeOrganizationId"`
 	TreeOrganizationName    *string `db:"tree_organization_name" json:"treeOrganizationName"`
 }
@@ -40,7 +41,7 @@ func (o *OrganizationCreateInput) Validate() error {
 
 // OrganizationCreateDepartmentInput
 type OrganizationCreateDepartmentInput struct {
-	OrganizationName       *string `db:"organization_name" json:"organizationName"`
+	OrganizationName     *string `db:"organization_name" json:"organizationName"`
 	ParentOrganizationID *string `dbg:"parent_organization_id" json:"parentOrganizationId"`
 }
 

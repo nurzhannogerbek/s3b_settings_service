@@ -73,6 +73,63 @@ Resources:
       CodeUri: bin/organizationsettings/restoredeletedorganizationsettings.zip
       Handler: bin/organizationsettings/restoredeletedorganizationsettings
 
+  DeleteOrganizations:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName:
+        'Fn::Sub': '${EnvironmentName}DeleteOrganizations'
+      CodeUri: bin/organization/deleteorganizations.zip
+      Handler: bin/organization/deleteorganizations
+  GetAllArchivedOrganizationDepartments:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName:
+        'Fn::Sub': '${EnvironmentName}GetAllArchivedOrganizationDepartments'
+      CodeUri: bin/organization/getallarchivedorganizationdepartments.zip
+      Handler: bin/organization/getallarchivedorganizationdepartments
+  GetAllOrganizationDepartments:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName:
+        'Fn::Sub': '${EnvironmentName}GetAllOrganizationDepartments'
+      CodeUri: bin/organization/getallorganizationdepartments.zip
+      Handler: bin/organization/getallorganizationdepartments
+  GetArchivedOrganizationDepartmentsById:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName:
+        'Fn::Sub': '${EnvironmentName}GetArchivedOrganizationDepartmentsById'
+      CodeUri: bin/organization/getarchivedorganizationdepartmentsbyid.zip
+      Handler: bin/organization/getarchivedorganizationdepartmentsbyid
+  GetOrganizationById:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName:
+        'Fn::Sub': '${EnvironmentName}GetOrganizationById'
+      CodeUri: bin/organization/getorganizationbyid.zip
+      Handler: bin/organization/getorganizationbyid
+  GetOrganizationDepartmentsById:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName:
+        'Fn::Sub': '${EnvironmentName}GetOrganizationDepartmentsById'
+      CodeUri: bin/organization/getorganizationdepartmentsbyid.zip
+      Handler: bin/organization/getorganizationdepartmentsbyid
+  GetOrganizationsByIds:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName:
+        'Fn::Sub': '${EnvironmentName}GetOrganizationsByIds'
+      CodeUri: bin/organization/getorganizationsbyids.zip
+      Handler: bin/organization/getorganizationsbyids
+  RestoreDeletedOrganizations:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName:
+        'Fn::Sub': '${EnvironmentName}RestoreDeletedOrganizations'
+      CodeUri: bin/organization/restoredeletedorganizations.zip
+      Handler: bin/organization/restoredeletedorganizations
+
   GetFacebookPages:
     Type: 'AWS::Serverless::Function'
     Properties:
@@ -126,6 +183,55 @@ Outputs:
     Export:
       Name:
         'Fn::Sub': '${AWS::StackName}:${EnvironmentName}RestoreDeletedOrganizationSettingsARN'
+
+  DeleteOrganizations:
+    Value:
+      'Fn::GetAtt': DeleteOrganizations.Arn
+    Export:
+      Name:
+        'Fn::Sub': '${AWS::StackName}:${EnvironmentName}DeleteOrganizations'
+  GetAllArchivedOrganizationDepartments:
+    Value:
+      'Fn::GetAtt': GetAllArchivedOrganizationDepartments.Arn
+    Export:
+      Name:
+        'Fn::Sub': '${AWS::StackName}:${EnvironmentName}GetAllArchivedOrganizationDepartmentsARN'
+  GetAllOrganizationDepartments:
+    Value:
+      'Fn::GetAtt': GetAllOrganizationDepartments.Arn
+    Export:
+      Name:
+        'Fn::Sub': '${AWS::StackName}:${EnvironmentName}GetAllOrganizationDepartmentsARN'
+  GetArchivedOrganizationDepartmentsById:
+    Value:
+      'Fn::GetAtt': GetArchivedOrganizationDepartmentsById.Arn
+    Export:
+      Name:
+        'Fn::Sub': '${AWS::StackName}:${EnvironmentName}GetArchivedOrganizationDepartmentsByIdARN'
+  GetOrganizationById:
+    Value:
+      'Fn::GetAtt': GetOrganizationById.Arn
+    Export:
+      Name:
+        'Fn::Sub': '${AWS::StackName}:${EnvironmentName}GetOrganizationByIdARN'
+  GetOrganizationDepartmentsById:
+    Value:
+      'Fn::GetAtt': GetOrganizationDepartmnetsById.Arn
+    Export:
+      Name:
+        'Fn::Sub': '${AWS::StackName}:${EnvironmentName}GetOrganizationDepartmentsByIdARN'
+  GetOrganizationsByIds:
+    Value:
+      'Fn::GetAtt': GetOrganizationsByIds.Arn
+    Export:
+      Name:
+        'Fn::Sub': '${AWS::StackName}:${EnvironmentName}GetOrganizationsByIdsARN'
+  RestoreDeletedOrganizations:
+    Value:
+      'Fn::GetAtt': RestoreDeletedOrganizations.Arn
+    Export:
+      Name:
+        'Fn::Sub': '${AWS::StackName}:${EnvironmentName}RestoreDeletedOrganizationsARN'
 
   GetFacebookPagesARN:
     Value:
