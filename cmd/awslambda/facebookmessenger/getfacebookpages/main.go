@@ -17,11 +17,6 @@ type Event struct {
 	ShortLivedUserAccessToken string `json:"shortLivedUserAccessToken"`
 }
 
-type User struct {
-	AccessToken string `json:"access_token"`
-	TokenType   string `json:"token_type"`
-}
-
 func handleRequest(e common.Event) (*common.FacebookPages, error) {
 	var event Event
 	if err := json.Unmarshal(e.Arguments, &event); err != nil {
@@ -52,7 +47,7 @@ func handleRequest(e common.Event) (*common.FacebookPages, error) {
 		return nil, err
 	}
 
-	var user User
+	var user common.FacebookMessengerUser
 	var longLivedUserAccessToken string
 	if err := json.Unmarshal(body, &user); err != nil {
 		return nil, err
