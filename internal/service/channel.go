@@ -19,16 +19,28 @@ func NewChannelService(c repository.Channel) *ChannelService {
 	}
 }
 
-// Create
+// CreateChannel
 // Validates and Creates new channel record in database.
-func (cs *ChannelService) Create(c *common.Channel) error {
+func (cs *ChannelService) CreateChannel(c *common.Channel) error {
 	if err := c.Validate(); err != nil {
 		return err
 	}
 
-	if err := cs.repository.Create(c); err != nil {
+	if err := cs.repository.CreateChannel(c); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+// GetChannels
+// Get the list of all channels of the specific organization.
+func (cs *ChannelService) GetChannels(rootOrganizationId *string) (*[]common.Channel, error) {
+	return nil, nil
+}
+
+// GetChannels
+// Get the information about the specific channel.
+func (cs *ChannelService) GetChannel(channelId *string) (*common.Channel, error) {
+	return nil, nil
 }

@@ -22,7 +22,9 @@ type OrganizationSettings interface {
 // Channel
 // Channel service interface.
 type Channel interface {
-	Create(channel *common.Channel) error
+	CreateChannel(channel *common.Channel) error
+	GetChannels(rootOrganizationId *string) (*[]common.Channel, error)
+	GetChannel(channelId *string) (*common.Channel, error)
 }
 
 // Organization

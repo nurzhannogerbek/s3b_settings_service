@@ -20,9 +20,9 @@ func NewChannelRepository(db *sqlx.DB) *ChannelRepository {
 	}
 }
 
-// Create
+// CreateChannel
 // Creates new channel record in database.
-func (cr *ChannelRepository) Create(c *common.Channel) error {
+func (cr *ChannelRepository) CreateChannel(c *common.Channel) error {
 	rows, err := cr.db.NamedQuery(`
 		insert into channels (
 			channel_name,
@@ -56,3 +56,16 @@ func (cr *ChannelRepository) Create(c *common.Channel) error {
 
 	return nil
 }
+
+// GetChannels
+// Get the list of all channels of the specific organization.
+func (cr *ChannelRepository) GetChannels(rootOrganizationId *string) (*[]common.Channel, error) {
+	return nil, nil
+}
+
+// GetChannels
+// Get the information about the specific channel.
+func (cr *ChannelRepository) GetChannel(channelId *string) (*common.Channel, error) {
+	return nil, nil
+}
+
