@@ -216,7 +216,7 @@ Outputs:
         'Fn::Sub': '${AWS::StackName}:${EnvironmentName}GetOrganizationByIdARN'
   GetOrganizationDepartmentsById:
     Value:
-      'Fn::GetAtt': GetOrganizationDepartmnetsById.Arn
+      'Fn::GetAtt': GetOrganizationDepartmentsById.Arn
     Export:
       Name:
         'Fn::Sub': '${AWS::StackName}:${EnvironmentName}GetOrganizationDepartmentsByIdARN'
