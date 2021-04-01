@@ -184,49 +184,49 @@ Outputs:
       Name:
         'Fn::Sub': '${AWS::StackName}:${EnvironmentName}RestoreDeletedOrganizationSettingsARN'
 
-  DeleteOrganizations:
+  DeleteOrganizationsARN:
     Value:
       'Fn::GetAtt': DeleteOrganizations.Arn
     Export:
       Name:
         'Fn::Sub': '${AWS::StackName}:${EnvironmentName}DeleteOrganizationsARN'
-  GetAllArchivedOrganizationDepartments:
+  GetAllArchivedOrganizationDepartmentsARN:
     Value:
       'Fn::GetAtt': GetAllArchivedOrganizationDepartments.Arn
     Export:
       Name:
         'Fn::Sub': '${AWS::StackName}:${EnvironmentName}GetAllArchivedOrganizationDepartmentsARN'
-  GetAllOrganizationDepartments:
+  GetAllOrganizationDepartmentsARN:
     Value:
       'Fn::GetAtt': GetAllOrganizationDepartments.Arn
     Export:
       Name:
         'Fn::Sub': '${AWS::StackName}:${EnvironmentName}GetAllOrganizationDepartmentsARN'
-  GetArchivedOrganizationDepartmentsById:
+  GetArchivedOrganizationDepartmentsByIdARN:
     Value:
       'Fn::GetAtt': GetArchivedOrganizationDepartmentsById.Arn
     Export:
       Name:
         'Fn::Sub': '${AWS::StackName}:${EnvironmentName}GetArchivedOrganizationDepartmentsByIdARN'
-  GetOrganizationById:
+  GetOrganizationByIdARN:
     Value:
       'Fn::GetAtt': GetOrganizationById.Arn
     Export:
       Name:
         'Fn::Sub': '${AWS::StackName}:${EnvironmentName}GetOrganizationByIdARN'
-  GetOrganizationDepartmentsById:
+  GetOrganizationDepartmentsByIdARN:
     Value:
       'Fn::GetAtt': GetOrganizationDepartmentsById.Arn
     Export:
       Name:
         'Fn::Sub': '${AWS::StackName}:${EnvironmentName}GetOrganizationDepartmentsByIdARN'
-  GetOrganizationsByIds:
+  GetOrganizationsByIdsARN:
     Value:
       'Fn::GetAtt': GetOrganizationsByIds.Arn
     Export:
       Name:
         'Fn::Sub': '${AWS::StackName}:${EnvironmentName}GetOrganizationsByIdsARN'
-  RestoreDeletedOrganizations:
+  RestoreDeletedOrganizationsARN:
     Value:
       'Fn::GetAtt': RestoreDeletedOrganizations.Arn
     Export:
