@@ -189,7 +189,7 @@ Outputs:
       'Fn::GetAtt': DeleteOrganizations.Arn
     Export:
       Name:
-        'Fn::Sub': '${AWS::StackName}:${EnvironmentName}DeleteOrganizations'
+        'Fn::Sub': '${AWS::StackName}:${EnvironmentName}DeleteOrganizationsARN'
   GetAllArchivedOrganizationDepartments:
     Value:
       'Fn::GetAtt': GetAllArchivedOrganizationDepartments.Arn
