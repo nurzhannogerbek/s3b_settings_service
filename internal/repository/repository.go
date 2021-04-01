@@ -32,17 +32,17 @@ type Channel interface {
 // Organization
 // Organization repository interface.
 type Organization interface {
-	CreateOrganization(organization *common.OrganizationCreateInput) (*common.Organization, error)
-	CreateOrganizationDepartment(department *common.OrganizationCreateDepartmentInput) (*common.Organization, error)
-	DeleteOrganizations(organizationsIDs *[]string) error
-	GetOrganizationByID(organizationID *string) (*common.Organization, error)
-	GetOrganizationsByIDs(organizationsIDs *[]string) (*[]common.Organization, error)
-	UpdateOrganization(organization *common.OrganizationUpdateInput) (*common.Organization, error)
-	RestoreDeletedOrganizations(organizationsIDs *[]string) error
-	GetOrganizationDepartmentsByID(parentOrganizationID *string) (*[]common.Organization, error)
+	CreateOrganization(organization common.OrganizationCreateInput) (*common.Organization, error)
+	CreateOrganizationDepartment(department common.OrganizationCreateDepartmentInput) (*common.Organization, error)
+	DeleteOrganizations(organizationsIDs []string) error
+	GetOrganizationByID(organizationID string) (*common.Organization, error)
+	GetOrganizationsByIDs(organizationsIDs []string) (*[]common.Organization, error)
+	UpdateOrganization(organization common.OrganizationUpdateInput) (*common.Organization, error)
+	RestoreDeletedOrganizations(organizationsIDs []string) error
+	GetOrganizationDepartmentsByID(parentOrganizationID string) (*[]common.Organization, error)
 	GetAllOrganizationDepartments(rootOrganizationID string) ([]common.Organization, error)
-	GetArchivedOrganizationDepartmentsByID(parentOrganizationID *string) (*[]common.Organization, error)
-	GetAllArchivedOrganizationDepartments(rootOrganizationID *string) (*[]common.Organization, error)
+	GetArchivedOrganizationDepartmentsByID(parentOrganizationID string) (*[]common.Organization, error)
+	GetAllArchivedOrganizationDepartments(rootOrganizationID string) (*[]common.Organization, error)
 }
 
 // Repositories

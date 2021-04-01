@@ -21,24 +21,24 @@ func NewOrganizationRepository(db *sqlx.DB) *OrganizationRepository {
 }
 
 // CreateOrganization
-func (or *OrganizationRepository) CreateOrganization(organization *common.OrganizationCreateInput) (*common.Organization, error) {
+func (or *OrganizationRepository) CreateOrganization(organization common.OrganizationCreateInput) (*common.Organization, error) {
 	return nil, nil
 }
 
 // CreateOrganizationDepartment
-func (or OrganizationRepository) CreateOrganizationDepartment(department *common.OrganizationCreateDepartmentInput) (*common.Organization, error) {
+func (or OrganizationRepository) CreateOrganizationDepartment(department common.OrganizationCreateDepartmentInput) (*common.Organization, error) {
 	return nil, nil
 }
 
 // DeleteOrganizations
-func (or *OrganizationRepository) DeleteOrganizations(organizationsIDs *[]string) error {
+func (or *OrganizationRepository) DeleteOrganizations(organizationsIDs []string) error {
 	query, args, err := sqlx.In(`
 		update
 			organizations 
 		set
 			entry_deleted_date_time = now()
 		where
-			organization_id in (?);`, *organizationsIDs)
+			organization_id in (?);`, organizationsIDs)
 	if err != nil {
 		return err
 	}
@@ -53,7 +53,7 @@ func (or *OrganizationRepository) DeleteOrganizations(organizationsIDs *[]string
 }
 
 // GetOrganizationByID
-func (or *OrganizationRepository) GetOrganizationByID(organizationID *string) (*common.Organization, error) {
+func (or *OrganizationRepository) GetOrganizationByID(organizationID string) (*common.Organization, error) {
 	var organization common.Organization
 	err := or.db.Get(&organization, `
 		select
@@ -71,7 +71,7 @@ func (or *OrganizationRepository) GetOrganizationByID(organizationID *string) (*
 		from
 			organizations
 		where
-			root_organization_id = $1;`, *organizationID)
+			organization_id = $1;`, organizationID)
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +81,7 @@ func (or *OrganizationRepository) GetOrganizationByID(organizationID *string) (*
 
 // GetOrganizationsByIDs
 // Queries organizations by IDs from database.
-func (or *OrganizationRepository) GetOrganizationsByIDs(organizationsIDs *[]string) (*[]common.Organization, error) {
+func (or *OrganizationRepository) GetOrganizationsByIDs(organizationsIDs []string) (*[]common.Organization, error) {
 	query, args, err := sqlx.In(`
 		select 
 		    organization_id,
@@ -98,7 +98,7 @@ func (or *OrganizationRepository) GetOrganizationsByIDs(organizationsIDs *[]stri
 		from 
 		    organizations
 		where 
-			organization_id in (?);`, *organizationsIDs)
+			organization_id in (?);`, organizationsIDs)
 	if err != nil {
 		return nil, err
 	}
@@ -132,19 +132,19 @@ func (or *OrganizationRepository) GetOrganizationsByIDs(organizationsIDs *[]stri
 }
 
 // UpdateOrganization
-func (or *OrganizationRepository) UpdateOrganization(organization *common.OrganizationUpdateInput) (*common.Organization, error) {
+func (or *OrganizationRepository) UpdateOrganization(organization common.OrganizationUpdateInput) (*common.Organization, error) {
 	return nil, nil
 }
 
 // RestoreDeletedOrganizations
-func (or *OrganizationRepository) RestoreDeletedOrganizations(organizationsIDs *[]string) error {
+func (or *OrganizationRepository) RestoreDeletedOrganizations(organizationsIDs []string) error {
 	query, args, err := sqlx.In(`
 		update
 			organizations 
 		set
 			entry_deleted_date_time = null
 		where
-			organization_id in (?);`, *organizationsIDs)
+			organization_id in (?);`, organizationsIDs)
 	if err != nil {
 		return err
 	}
@@ -159,7 +159,7 @@ func (or *OrganizationRepository) RestoreDeletedOrganizations(organizationsIDs *
 }
 
 // GetOrganizationDepartmentsByID
-func (or *OrganizationRepository) GetOrganizationDepartmentsByID(parentOrganizationID *string) (*[]common.Organization, error) {
+func (or *OrganizationRepository) GetOrganizationDepartmentsByID(parentOrganizationID string) (*[]common.Organization, error) {
 	var organizationDepartments []common.Organization
 	err := or.db.Select(&organizationDepartments, `
 		select
@@ -178,7 +178,7 @@ func (or *OrganizationRepository) GetOrganizationDepartmentsByID(parentOrganizat
 			organizations
 		where
 			parent_organization_id = $1
-			and entry_deleted_date_time is null;`, *parentOrganizationID)
+			and entry_deleted_date_time is null;`, parentOrganizationID)
 	if err != nil {
 		return nil, err
 	}
@@ -215,7 +215,7 @@ func (or *OrganizationRepository) GetAllOrganizationDepartments(rootOrganization
 }
 
 // GetArchivedOrganizationDepartmentsByID
-func (or *OrganizationRepository) GetArchivedOrganizationDepartmentsByID(parentOrganizationID *string) (*[]common.Organization, error) {
+func (or *OrganizationRepository) GetArchivedOrganizationDepartmentsByID(parentOrganizationID string) (*[]common.Organization, error) {
 	var archivedOrganizationDepartments []common.Organization
 	err := or.db.Select(&archivedOrganizationDepartments, `
 		select
@@ -234,7 +234,7 @@ func (or *OrganizationRepository) GetArchivedOrganizationDepartmentsByID(parentO
 			organizations
 		where
 			parent_organization_id = $1
-			and entry_deleted_date_time is not null;`, *parentOrganizationID)
+			and entry_deleted_date_time is not null;`, parentOrganizationID)
 	if err != nil {
 		return nil, err
 	}
@@ -243,7 +243,7 @@ func (or *OrganizationRepository) GetArchivedOrganizationDepartmentsByID(parentO
 }
 
 // GetAllArchivedOrganizationDepartments
-func (or OrganizationRepository) GetAllArchivedOrganizationDepartments(rootOrganizationID *string) (*[]common.Organization, error) {
+func (or OrganizationRepository) GetAllArchivedOrganizationDepartments(rootOrganizationID string) (*[]common.Organization, error) {
 	var archivedOrganizationDepartments []common.Organization
 	err := or.db.Select(&archivedOrganizationDepartments, `
 		select
@@ -262,7 +262,7 @@ func (or OrganizationRepository) GetAllArchivedOrganizationDepartments(rootOrgan
 			organizations
 		where
 			root_organization_id = $1
-			and entry_deleted_date_time is not null;`, *rootOrganizationID)
+			and entry_deleted_date_time is not null;`, rootOrganizationID)
 	if err != nil {
 		return nil, err
 	}

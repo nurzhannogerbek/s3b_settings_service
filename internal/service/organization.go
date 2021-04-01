@@ -40,7 +40,7 @@ func (os *OrganizationService) DeleteOrganizations(organizationsIDs *[]string) e
 		return err
 	}
 
-	err := os.repository.DeleteOrganizations(organizationsIDs)
+	err := os.repository.DeleteOrganizations(*organizationsIDs)
 	if err != nil {
 		return err
 	}
@@ -58,7 +58,7 @@ func (os *OrganizationService) GetOrganizationByID(organizationID *string) (*com
 		return nil, err
 	}
 
-	organization, err := os.repository.GetOrganizationByID(organizationID)
+	organization, err := os.repository.GetOrganizationByID(*organizationID)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func (os *OrganizationService) GetOrganizationsByIDs(organizationsIDs *[]string)
 		return nil, err
 	}
 
-	organizations, err := os.repository.GetOrganizationsByIDs(organizationsIDs)
+	organizations, err := os.repository.GetOrganizationsByIDs(*organizationsIDs)
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +100,7 @@ func (os *OrganizationService) RestoreDeletedOrganizations(organizationsIDs *[]s
 		return err
 	}
 
-	err := os.repository.RestoreDeletedOrganizations(organizationsIDs)
+	err := os.repository.RestoreDeletedOrganizations(*organizationsIDs)
 	if err != nil {
 		return err
 	}
@@ -118,7 +118,7 @@ func (os *OrganizationService) GetOrganizationDepartmentsByID(parentOrganization
 		return nil, err
 	}
 
-	organizationDepartments, err := os.repository.GetOrganizationDepartmentsByID(parentOrganizationID)
+	organizationDepartments, err := os.repository.GetOrganizationDepartmentsByID(*parentOrganizationID)
 	if err != nil {
 		return nil, err
 	}
@@ -154,7 +154,7 @@ func (os *OrganizationService) GetArchivedOrganizationDepartmentsByID(parentOrga
 		return nil, err
 	}
 
-	archivedOrganizationDepartments, err := os.repository.GetArchivedOrganizationDepartmentsByID(parentOrganizationID)
+	archivedOrganizationDepartments, err := os.repository.GetArchivedOrganizationDepartmentsByID(*parentOrganizationID)
 	if err != nil {
 		return nil, err
 	}
@@ -172,7 +172,7 @@ func (os OrganizationService) GetAllArchivedOrganizationDepartments(rootOrganiza
 		return nil, err
 	}
 
-	archivedOrganizationDepartments, err := os.repository.GetAllArchivedOrganizationDepartments(rootOrganizationID)
+	archivedOrganizationDepartments, err := os.repository.GetAllArchivedOrganizationDepartments(*rootOrganizationID)
 	if err != nil {
 		return nil, err
 	}
