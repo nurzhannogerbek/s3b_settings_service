@@ -187,7 +187,7 @@ func (or *OrganizationRepository) GetOrganizationDepartmentsByID(parentOrganizat
 }
 
 // GetAllOrganizationDepartments
-func (or *OrganizationRepository) GetAllOrganizationDepartments(rootOrganizationID *string) (*[]common.Organization, error) {
+func (or *OrganizationRepository) GetAllOrganizationDepartments(rootOrganizationID string) ([]common.Organization, error) {
 	var organizationDepartments []common.Organization
 	err := or.db.Select(&organizationDepartments, `
 		select
@@ -206,12 +206,12 @@ func (or *OrganizationRepository) GetAllOrganizationDepartments(rootOrganization
 			organizations
 		where
 			root_organization_id = $1
-			and entry_deleted_date_time is null;`, *rootOrganizationID)
+			and entry_deleted_date_time is null;`, rootOrganizationID)
 	if err != nil {
 		return nil, err
 	}
 
-	return &organizationDepartments, nil
+	return organizationDepartments, nil
 }
 
 // GetArchivedOrganizationDepartmentsByID

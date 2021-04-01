@@ -127,7 +127,7 @@ func (os *OrganizationService) GetOrganizationDepartmentsByID(parentOrganization
 }
 
 // GetAllOrganizationDepartments
-func (os *OrganizationService) GetAllOrganizationDepartments(rootOrganizationID *string) (*[]common.Organization, error) {
+func (os *OrganizationService) GetAllOrganizationDepartments(rootOrganizationID *string) ([]common.Organization, error) {
 	if rootOrganizationID == nil {
 		return nil, nil
 	}
@@ -136,7 +136,7 @@ func (os *OrganizationService) GetAllOrganizationDepartments(rootOrganizationID 
 		return nil, err
 	}
 
-	organizationDepartments, err := os.repository.GetAllOrganizationDepartments(rootOrganizationID)
+	organizationDepartments, err := os.repository.GetAllOrganizationDepartments(*rootOrganizationID)
 	if err != nil {
 		return nil, err
 	}
