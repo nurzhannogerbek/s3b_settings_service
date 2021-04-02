@@ -201,7 +201,7 @@ Resources:
     Type: 'AWS::Serverless::Function'
     Properties:
       FunctionName:
-        'Fn::Sub': '${EnvironmentName}GetAllOrganizationDepartments'
+        'Fn::Sub': '${EnvironmentName}GetAllOrganizationDepartmentsPublic'
       CodeUri: bin/organization/getallorganizationdepartmentspublic.zip
       Handler: bin/organization/getallorganizationdepartmentspublic
       Events:
