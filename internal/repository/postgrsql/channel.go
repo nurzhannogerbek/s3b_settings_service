@@ -51,7 +51,6 @@ func (cr *ChannelRepository) CreateChannel(c *common.Channel) error {
 			return err
 		}
 	}
-
 	c.ChannelId = &lastInsertedID
 
 	return nil
@@ -59,13 +58,60 @@ func (cr *ChannelRepository) CreateChannel(c *common.Channel) error {
 
 // GetChannels
 // Get the list of all channels of the specific organization.
-func (cr *ChannelRepository) GetChannels(rootOrganizationId *string) (*[]common.Channel, error) {
-	return nil, nil
+func (cr *ChannelRepository) GetChannels(organizationId *string) (*[]common.Channel, error) {
+	var channels []common.Channel
+
+	err := cr.db.Get(&channels, `
+		select
+			channels.channel_id,
+			channels.channel_name,
+			channels.channel_description,
+			channels.channel_type_id,
+			channels.channel_technical_id,
+			channels.channel_status_id,
+			array_agg (channels_organizations_relationship.organization_id) organization_ids
+		from
+			channels
+		left join channels_organizations_relationship on
+			channels.channel_id = channels_organizations_relationship.channel_id
+		where
+			channels_organizations_relationship.organization_id = $1
+		group by
+    		channels.channel_id;`, organizationId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &channels, nil
 }
 
-// GetChannels
+// GetChannel
 // Get the information about the specific channel.
 func (cr *ChannelRepository) GetChannel(channelId *string) (*common.Channel, error) {
-	return nil, nil
+	var channel common.Channel
+
+	err := cr.db.Get(&channel, `
+		select
+			channels.channel_id,
+			channels.channel_name,
+			channels.channel_description,
+			channels.channel_type_id,
+			channels.channel_technical_id,
+			channels.channel_status_id,
+			array_agg (distinct channels_organizations_relationship.organization_id) organization_ids
+		from
+			channels
+		left join channels_organizations_relationship on
+			channels.channel_id = channels_organizations_relationship.channel_id
+		where
+			channels.channel_id = $1
+		group by
+    		channels.channel_id
+		limit 1;`, channelId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &channel, nil
 }
 

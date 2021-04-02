@@ -178,7 +178,8 @@ func (or *OrganizationRepository) GetOrganizationDepartmentsByID(parentOrganizat
 			organizations
 		where
 			parent_organization_id = $1
-			and entry_deleted_date_time is null;`, parentOrganizationID)
+		and
+			entry_deleted_date_time is null;`, parentOrganizationID)
 	if err != nil {
 		return nil, err
 	}
@@ -206,7 +207,8 @@ func (or *OrganizationRepository) GetAllOrganizationDepartments(rootOrganization
 			organizations
 		where
 			root_organization_id = $1
-			and entry_deleted_date_time is null;`, rootOrganizationID)
+		and
+			entry_deleted_date_time is null;`, rootOrganizationID)
 	if err != nil {
 		return nil, err
 	}
@@ -234,7 +236,8 @@ func (or *OrganizationRepository) GetArchivedOrganizationDepartmentsByID(parentO
 			organizations
 		where
 			parent_organization_id = $1
-			and entry_deleted_date_time is not null;`, parentOrganizationID)
+		and
+			entry_deleted_date_time is not null;`, parentOrganizationID)
 	if err != nil {
 		return nil, err
 	}
@@ -262,7 +265,8 @@ func (or OrganizationRepository) GetAllArchivedOrganizationDepartments(rootOrgan
 			organizations
 		where
 			root_organization_id = $1
-			and entry_deleted_date_time is not null;`, rootOrganizationID)
+		and
+		    entry_deleted_date_time is not null;`, rootOrganizationID)
 	if err != nil {
 		return nil, err
 	}

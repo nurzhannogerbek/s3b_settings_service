@@ -35,7 +35,7 @@ func (cs *ChannelService) CreateChannel(c *common.Channel) error {
 
 // GetChannels
 // Get the list of all channels of the specific organization.
-func (cs *ChannelService) GetChannels(rootOrganizationId *string) (*[]common.Channel, error) {
+func (cs *ChannelService) GetChannels(organizationId *string) (*[]common.Channel, error) {
 	return nil, nil
 }
 

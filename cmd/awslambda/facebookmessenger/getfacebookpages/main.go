@@ -49,7 +49,7 @@ func handleRequest(e common.Event) (*common.FacebookPages, error) {
 	}
 
 	var user common.FacebookMessengerUser
-	if err := json.Unmarshal(body, &user); err != nil {
+	if err = json.Unmarshal(body, &user); err != nil {
 		return nil, err
 	}
 
@@ -75,7 +75,7 @@ func handleRequest(e common.Event) (*common.FacebookPages, error) {
 	}
 
 	var facebookPages *common.FacebookPages
-	if err := json.Unmarshal(body, &facebookPages); err != nil {
+	if err = json.Unmarshal(body, &facebookPages); err != nil {
 		return nil, err
 	}
 
