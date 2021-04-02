@@ -159,6 +159,20 @@ Resources:
         'Fn::Sub': '${EnvironmentName}CreateChannel'
       CodeUri: bin/channel/createchannel.zip
       Handler: bin/channel/createchannel
+  GetChannel:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName:
+        'Fn::Sub': '${EnvironmentName}GetChannel'
+      CodeUri: bin/channel/getchannel.zip
+      Handler: bin/channel/getchannel
+  GetChannels:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName:
+        'Fn::Sub': '${EnvironmentName}GetChannels'
+      CodeUri: bin/channel/getchannels.zip
+      Handler: bin/channel/getchannels
 
   GetAllOrganizationDepartmentsApiGateway:
     Type: 'AWS::Serverless::HttpApi'
@@ -286,6 +300,18 @@ Outputs:
     Export:
       Name:
         'Fn::Sub': '${AWS::StackName}:${EnvironmentName}CreateChannelARN'
+  GetChannelARN:
+    Value:
+      'Fn::GetAtt': GetChannel.Arn
+    Export:
+      Name:
+        'Fn::Sub': '${AWS::StackName}:${EnvironmentName}GetChannelARN'
+  GetChannelsARN:
+    Value:
+      'Fn::GetAtt': GetChannels.Arn
+    Export:
+      Name:
+        'Fn::Sub': '${AWS::StackName}:${EnvironmentName}GetChannelsARN'
 
   GetAllOrganizationDepartmentsAuthorizationARN:
     Value:
