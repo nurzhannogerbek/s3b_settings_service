@@ -5,9 +5,10 @@ import (
 	"bitbucket.org/3beep-workspace/3beep_settings_service/internal/environment"
 	"encoding/json"
 	"fmt"
-	"github.com/aws/aws-lambda-go/lambda"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/aws/aws-lambda-go/lambda"
 )
 
 const facebookGraphApiUrl string = "https://graph.facebook.com/v9.0"
@@ -48,11 +49,11 @@ func handleRequest(e common.Event) (*common.FacebookPages, error) {
 	}
 
 	var user common.FacebookMessengerUser
-	var longLivedUserAccessToken string
 	if err := json.Unmarshal(body, &user); err != nil {
 		return nil, err
 	}
-	longLivedUserAccessToken = user.AccessToken
+
+	longLivedUserAccessToken := user.AccessToken
 
 	request, err = http.NewRequest("GET", fmt.Sprintf("%s/%s/accounts", facebookGraphApiUrl, event.UserId), nil)
 	if err != nil {
