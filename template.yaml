@@ -100,8 +100,8 @@ Resources:
           Properties:
             ApiId:
               Ref: GetAllOrganizationDepartmentsApiGateway
-            Path: '/'
-            Method: GET
+            Path: '/organization/departments'
+            Method: POST
   GetArchivedOrganizationDepartmentsById:
     Type: 'AWS::Serverless::Function'
     Properties:
