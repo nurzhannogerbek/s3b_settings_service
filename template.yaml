@@ -94,6 +94,14 @@ Resources:
         'Fn::Sub': '${EnvironmentName}GetAllOrganizationDepartments'
       CodeUri: bin/organization/getallorganizationdepartments.zip
       Handler: bin/organization/getallorganizationdepartments
+      Events:
+        TelegramApiGatewayEvent:
+          Type: HttpApi
+          Properties:
+            ApiId:
+              Ref: GetAllOrganizationDepartmentsApiGateway
+            Path: '/'
+            Method: GET
   GetArchivedOrganizationDepartmentsById:
     Type: 'AWS::Serverless::Function'
     Properties:
@@ -151,6 +159,38 @@ Resources:
         'Fn::Sub': '${EnvironmentName}CreateChannel'
       CodeUri: bin/channel/createchannel.zip
       Handler: bin/channel/createchannel
+
+  GetAllOrganizationsApiGateway:
+    Type: 'AWS::Serverless::HttpApi'
+    Properties:
+      StageName:
+        'Fn::Sub': '${StageName}'
+      CorsConfiguration:
+        AllowMethods:
+          - GET
+        AllowHeaders:
+          - '*'
+        AllowOrigins:
+          - '*'
+      Auth:
+        DefaultAuthorizer: GetAllOrganizationsLambdaRequestAuthorizer
+        Authorizers:
+          MyLambdaRequestAuthorizer:
+            FunctionArn:
+              'Fn::GetAtt': GetAllOrganizationDepartmentsAuthorization.Arn
+            Identity:
+              Headers:
+                - Authorization
+            AuthorizerPayloadFormatVersion: 2.0
+            EnableSimpleResponses: true
+
+  GetAllOrganizationDepartmentsAuthorization:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName:
+        'Fn::Sub': '${EnvironmentName}GetAllOrganizationDepartmentsAuthorization'
+      CodeUri: bin/organization/getallorganizationdepartmentsauthorization.zip
+      Handler: bin/organization/getallorganizationdepartmentsauthorization
 
 Outputs:
   CreateOrganizationSettingsARN:
@@ -246,3 +286,10 @@ Outputs:
     Export:
       Name:
         'Fn::Sub': '${AWS::StackName}:${EnvironmentName}CreateChannelARN'
+
+  GetAllOrganizationDepartmentsAuthorizationARN:
+    Value:
+      'Fn::GetAtt': GetAllOrganizationDepartmentsAuthorization.Arn
+    Export:
+      Name:
+        'Fn::Sub': '${AWS::StackName}:${EnvironmentName}GetAllOrganizationDepartmentsAuthorizationARN'
