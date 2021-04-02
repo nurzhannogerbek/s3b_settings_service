@@ -95,7 +95,7 @@ Resources:
       CodeUri: bin/organization/getallorganizationdepartments.zip
       Handler: bin/organization/getallorganizationdepartments
       Events:
-        TelegramApiGatewayEvent:
+        GetAllOrganizationDepartmentsApiGatewayEvent:
           Type: HttpApi
           Properties:
             ApiId:
@@ -160,7 +160,7 @@ Resources:
       CodeUri: bin/channel/createchannel.zip
       Handler: bin/channel/createchannel
 
-  GetAllOrganizationsApiGateway:
+  GetAllOrganizationDepartmentsApiGateway:
     Type: 'AWS::Serverless::HttpApi'
     Properties:
       StageName:
@@ -173,9 +173,9 @@ Resources:
         AllowOrigins:
           - '*'
       Auth:
-        DefaultAuthorizer: GetAllOrganizationsLambdaRequestAuthorizer
+        DefaultAuthorizer: GetAllOrganizationDepartmentsLambdaRequestAuthorizer
         Authorizers:
-          MyLambdaRequestAuthorizer:
+          GetAllOrganizationDepartmentsLambdaRequestAuthorizer:
             FunctionArn:
               'Fn::GetAtt': GetAllOrganizationDepartmentsAuthorization.Arn
             Identity:
