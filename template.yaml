@@ -171,6 +171,7 @@ Resources:
     Properties:
       StageName:
         'Fn::Sub': 'TEST'
+      CorsConfiguration:
         AllowMethods:
           - ANY
         AllowHeaders:
