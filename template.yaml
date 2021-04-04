@@ -173,7 +173,7 @@ Resources:
         'Fn::Sub': 'TEST'
       CorsConfiguration:
         AllowMethods:
-          - POST
+          - GET
         AllowHeaders:
           - '*'
         AllowOrigins:
@@ -212,7 +212,7 @@ Resources:
             ApiId:
               Ref: GetAllOrganizationDepartmentsApiGateway
             Path: '/get_all_organization_departments'
-            Method: POST
+            Method: GET
             Auth:
               Authorizer: GetAllOrganizationDepartmentsAuthorizer
 
