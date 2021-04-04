@@ -34,18 +34,32 @@ type OrganizationEvent struct {
 	RootOrganizationID *string `json:"rootOrganizationId"`
 }
 
-func handleRequest(request events.APIGatewayProxyRequest) (interface{}, error) {
+func handleRequest(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	var organizationEvent OrganizationEvent
 	if err := json.Unmarshal([]byte(request.Body), &organizationEvent); err != nil {
-		return nil, err
+		return events.APIGatewayProxyResponse{
+			StatusCode: 404,
+			Body: err.Error(),
+		}, err
 	}
 
 	organizations, err := Services.Organization.GetAllOrganizationDepartments(organizationEvent.RootOrganizationID)
 	if err != nil {
-		return nil, err
+		return events.APIGatewayProxyResponse{
+			StatusCode: 404,
+			Body: err.Error(),
+		}, err
 	}
 
-	return organizations, nil
+	org, err := json.Marshal(&organizations)
+	if err != nil {
+		return events.APIGatewayProxyResponse{
+			StatusCode: 404,
+			Body: err.Error(),
+		}, err
+	}
+
+	return events.APIGatewayProxyResponse{Body: string(org), StatusCode: 200}, nil
 }
 
 func main() {

@@ -171,10 +171,17 @@ Resources:
     Properties:
       StageName:
         'Fn::Sub': 'TEST'
+      CorsConfiguration:
+        AllowMethods:
+          - POST
+        AllowHeaders:
+          - '*'
+        AllowOrigins:
+          - '*'
       Auth:
-        DefaultAuthorizer: GetAllOrganizationDepartmentsLambdaRequestAuthorizer
+        DefaultAuthorizer: GetAllOrganizationDepartmentsAuthorizer
         Authorizers:
-          GetAllOrganizationDepartmentsLambdaRequestAuthorizer:
+          GetAllOrganizationDepartmentsAuthorizer:
             FunctionArn:
               'Fn::GetAtt': GetAllOrganizationDepartmentsAuthorization.Arn
             Identity:
@@ -204,8 +211,10 @@ Resources:
           Properties:
             ApiId:
               Ref: GetAllOrganizationDepartmentsApiGateway
-            Path: '/'
-            Method: ANY
+            Path: '/get_all_organization_departments'
+            Method: POST
+            Auth:
+              Authorizer: GetAllOrganizationDepartmentsAuthorizer
 
 Outputs:
   CreateOrganizationSettingsARN:
