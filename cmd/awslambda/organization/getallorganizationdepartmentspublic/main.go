@@ -5,9 +5,8 @@ import (
 	"bitbucket.org/3beep-workspace/3beep_settings_service/internal/repository"
 	"bitbucket.org/3beep-workspace/3beep_settings_service/internal/service"
 	"bitbucket.org/3beep-workspace/3beep_settings_service/pkg/database/postgresql"
-	"bitbucket.org/3beep-workspace/3beep_settings_service/pkg/tool/uuid"
 	"encoding/json"
-	"errors"
+	"fmt"
 	"github.com/aws/aws-lambda-go/events"
 
 	"github.com/aws/aws-lambda-go/lambda"
@@ -32,78 +31,40 @@ func init() {
 	Services = service.NewServices(service.Dependencies{Repositories: repositories})
 }
 
+func createResponse(statusCode int, body string) events.APIGatewayProxyResponse {
+	return events.APIGatewayProxyResponse{
+		StatusCode:        statusCode,
+		Headers:           nil,
+		MultiValueHeaders: nil,
+		Body:              body,
+		IsBase64Encoded:   false,
+	}
+}
+
 func handleRequest(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	token, ok := request.Headers["Authorization"]
+	fmt.Println(request.Headers)
+	token, ok := request.Headers["authorization"]
 	if ok != true {
-		return events.APIGatewayProxyResponse{
-			StatusCode:        400,
-			Headers:           nil,
-			MultiValueHeaders: nil,
-			Body:              "",
-			IsBase64Encoded:   false,
-		}, errors.New("Unauthorized")
+		return createResponse(400, "Unauthorized"), nil
 	}
 
-	if token != "c10321f9-4574-47bc-a7b6-f101770dbd97" {
-		return events.APIGatewayProxyResponse{
-			StatusCode:        400,
-			Headers:           nil,
-			MultiValueHeaders: nil,
-			Body:              "",
-			IsBase64Encoded:   false,
-		}, errors.New("Invalid Token")
+	if token != "Bearer c10321f9-4574-47bc-a7b6-f101770dbd97" {
+		return createResponse(400, "Invalid Token"), nil
 	}
 
 	queryString, ok := request.QueryStringParameters["rootOrganizationId"]
 	if ok != true {
-		return events.APIGatewayProxyResponse{
-			StatusCode:        400,
-			Headers:           nil,
-			MultiValueHeaders: nil,
-			Body:              "",
-			IsBase64Encoded:   false,
-		}, errors.New("key does not exist")
-	}
-
-	if err := uuid.Validate(&queryString); err != nil {
-		return events.APIGatewayProxyResponse{
-			StatusCode:        400,
-			Headers:           nil,
-			MultiValueHeaders: nil,
-			Body:              "",
-			IsBase64Encoded:   false,
-		}, err
+		return createResponse(400, fmt.Sprintf("query string %+v does not exist, only rootOrganizationId", request.QueryStringParameters)), nil
 	}
 
 	organizations, err := Services.Organization.GetAllOrganizationDepartments(&queryString)
 	if err != nil {
-		return events.APIGatewayProxyResponse{
-			StatusCode:        400,
-			Headers:           nil,
-			MultiValueHeaders: nil,
-			Body:              "",
-			IsBase64Encoded:   false,
-		}, err
+		return createResponse(400, err.Error()), nil
 	}
 
-	org, err := json.Marshal(&organizations)
-	if err != nil {
-		return events.APIGatewayProxyResponse{
-			StatusCode:        400,
-			Headers:           nil,
-			MultiValueHeaders: nil,
-			Body:              "",
-			IsBase64Encoded:   false,
-		}, err
-	}
+	org, _ := json.Marshal(&organizations)
 
-	return events.APIGatewayProxyResponse{
-		StatusCode: 200,
-		Headers: nil,
-		MultiValueHeaders: nil,
-		Body: string(org),
-		IsBase64Encoded: false,
-	}, nil
+	return createResponse(200, string(org)), nil
 }
 
 func main() {
