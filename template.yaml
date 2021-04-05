@@ -302,12 +302,6 @@ Outputs:
       Name:
         'Fn::Sub': '${AWS::StackName}:${EnvironmentName}GetChannelsARN'
 
-  GetAllOrganizationDepartmentsAuthorizationARN:
-    Value:
-      'Fn::GetAtt': GetAllOrganizationDepartmentsAuthorization.Arn
-    Export:
-      Name:
-        'Fn::Sub': '${AWS::StackName}:${EnvironmentName}GetAllOrganizationDepartmentsAuthorizationARN'
   GetAllOrganizationDepartmentsPublicARN:
     Value:
       'Fn::GetAtt': GetAllOrganizationDepartmentsPublic.Arn
