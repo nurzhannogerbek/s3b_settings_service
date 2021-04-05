@@ -166,19 +166,6 @@ Resources:
       CodeUri: bin/channel/getchannels.zip
       Handler: bin/channel/getchannels
 
-  GetAllOrganizationDepartmentsApiGateway:
-    Type: 'AWS::Serverless::HttpApi'
-    Properties:
-      StageName:
-        'Fn::Sub': 'TEST'
-      CorsConfiguration:
-        AllowMethods:
-          - GET
-        AllowHeaders:
-          - '*'
-        AllowOrigins:
-          - '*'
-
   GetAllOrganizationDepartmentsPublic:
     Type: 'AWS::Serverless::Function'
     Properties:
@@ -191,7 +178,7 @@ Resources:
           Type: HttpApi
           Properties:
             ApiId:
-              Ref: GetAllOrganizationDepartmentsApiGateway
+              Ref: GetAllOrganizationDepartmentssApiGateway
             Path: '/get_all_organization_departments'
             Method: GET
 
