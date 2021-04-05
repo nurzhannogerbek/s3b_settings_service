@@ -171,16 +171,17 @@ Resources:
     Properties:
       StageName:
         'Fn::Sub': 'TEST'
+      CorsConfiguration:
         AllowMethods:
-          - ANY
+          - GET
         AllowHeaders:
           - '*'
         AllowOrigins:
           - '*'
       Auth:
-        DefaultAuthorizer: GetAllOrganizationDepartmentsLambdaRequestAuthorizer
+        DefaultAuthorizer: GetAllOrganizationDepartmentsAuthorizer
         Authorizers:
-          GetAllOrganizationDepartmentsLambdaRequestAuthorizer:
+          GetAllOrganizationDepartmentsAuthorizer:
             FunctionArn:
               'Fn::GetAtt': GetAllOrganizationDepartmentsAuthorization.Arn
             Identity:
@@ -201,7 +202,7 @@ Resources:
     Type: 'AWS::Serverless::Function'
     Properties:
       FunctionName:
-        'Fn::Sub': '${EnvironmentName}GetAllOrganizationDepartments'
+        'Fn::Sub': '${EnvironmentName}GetAllOrganizationDepartmentsPublic'
       CodeUri: bin/organization/getallorganizationdepartmentspublic.zip
       Handler: bin/organization/getallorganizationdepartmentspublic
       Events:
@@ -210,8 +211,10 @@ Resources:
           Properties:
             ApiId:
               Ref: GetAllOrganizationDepartmentsApiGateway
-            Path: '/'
-            Method: ANY
+            Path: '/get_all_organization_departments'
+            Method: GET
+            Auth:
+              Authorizer: GetAllOrganizationDepartmentsAuthorizer
 
 Outputs:
   CreateOrganizationSettingsARN:
