@@ -94,14 +94,6 @@ Resources:
         'Fn::Sub': '${EnvironmentName}GetAllOrganizationDepartments'
       CodeUri: bin/organization/getallorganizationdepartments.zip
       Handler: bin/organization/getallorganizationdepartments
-      Events:
-        GetAllOrganizationDepartmentsApiGatewayEvent:
-          Type: HttpApi
-          Properties:
-            ApiId:
-              Ref: GetAllOrganizationDepartmentsApiGateway
-            Path: '/organization/departments'
-            Method: POST
   GetArchivedOrganizationDepartmentsById:
     Type: 'AWS::Serverless::Function'
     Properties:
@@ -179,9 +171,8 @@ Resources:
     Properties:
       StageName:
         'Fn::Sub': 'TEST'
-      CorsConfiguration:
         AllowMethods:
-          - GET
+          - ANY
         AllowHeaders:
           - '*'
         AllowOrigins:
@@ -205,6 +196,22 @@ Resources:
         'Fn::Sub': '${EnvironmentName}GetAllOrganizationDepartmentsAuthorization'
       CodeUri: bin/organization/getallorganizationdepartmentsauthorization.zip
       Handler: bin/organization/getallorganizationdepartmentsauthorization
+
+  GetAllOrganizationDepartmentsPublic:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName:
+        'Fn::Sub': '${EnvironmentName}GetAllOrganizationDepartments'
+      CodeUri: bin/organization/getallorganizationdepartmentspublic.zip
+      Handler: bin/organization/getallorganizationdepartmentspublic
+      Events:
+        GetAllOrganizationDepartmentsApiGatewayEvent:
+          Type: HttpApi
+          Properties:
+            ApiId:
+              Ref: GetAllOrganizationDepartmentsApiGateway
+            Path: '/'
+            Method: ANY
 
 Outputs:
   CreateOrganizationSettingsARN:
@@ -319,3 +326,9 @@ Outputs:
     Export:
       Name:
         'Fn::Sub': '${AWS::StackName}:${EnvironmentName}GetAllOrganizationDepartmentsAuthorizationARN'
+  GetAllOrganizationDepartmentsPublicARN:
+    Value:
+      'Fn::GetAtt': GetAllOrganizationDepartmentsPublic.Arn
+    Export:
+      Name:
+        'Fn::Sub': '${AWS::StackName}:${EnvironmentName}GetAllOrganizationDepartmentsPublicARN'

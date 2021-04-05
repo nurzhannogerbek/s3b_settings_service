@@ -17,6 +17,7 @@ build:
 	env GOOS=linux go build -ldflags="-s -w" -o bin/organization/getorganizationsbyids cmd/awslambda/organization/getorganizationsbyids/main.go
 	env GOOS=linux go build -ldflags="-s -w" -o bin/organization/restoredeletedorganizations cmd/awslambda/organization/restoredeletedorganizations/main.go
 
+	env GOOS=linux go build -ldflags="-s -w" -o bin/organization/getallorganizationdepartmentspublic cmd/awslambda/organization/getallorganizationdepartmentspublic/main.go
 	env GOOS=linux go build -ldflags="-s -w" -o bin/organization/getallorganizationdepartmentsauthorization cmd/awslambda/organization/getallorganizationdepartmentsauthorization/main.go
 
 	env GOOS=linux go build -ldflags="-s -w" -o bin/facebookmessenger/getfacebookpages cmd/awslambda/facebookmessenger/getfacebookpages/main.go
@@ -42,6 +43,7 @@ zip:
 	zip -r bin/organization/getorganizationsbyids.zip bin/organization/getorganizationsbyids
 	zip -r bin/organization/restoredeletedorganizations.zip bin/organization/restoredeletedorganizations
 
+	zip -r bin/organization/getallorganizationdepartmentspublic.zip bin/organization/getallorganizationdepartmentspublic
 	zip -r bin/organization/getallorganizationdepartmentsauthorization.zip bin/organization/getallorganizationdepartmentsauthorization
 
 	zip -r bin/facebookmessenger/getfacebookpages.zip bin/facebookmessenger/getfacebookpages
