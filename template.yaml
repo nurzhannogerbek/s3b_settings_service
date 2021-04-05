@@ -178,25 +178,6 @@ Resources:
           - '*'
         AllowOrigins:
           - '*'
-      Auth:
-        DefaultAuthorizer: GetAllOrganizationDepartmentsAuthorizer
-        Authorizers:
-          GetAllOrganizationDepartmentsAuthorizer:
-            FunctionArn:
-              'Fn::GetAtt': GetAllOrganizationDepartmentsAuthorization.Arn
-            Identity:
-              Headers:
-                - Authorization
-            AuthorizerPayloadFormatVersion: 2.0
-            EnableSimpleResponses: true
-
-  GetAllOrganizationDepartmentsAuthorization:
-    Type: 'AWS::Serverless::Function'
-    Properties:
-      FunctionName:
-        'Fn::Sub': '${EnvironmentName}GetAllOrganizationDepartmentsAuthorization'
-      CodeUri: bin/organization/getallorganizationdepartmentsauthorization.zip
-      Handler: bin/organization/getallorganizationdepartmentsauthorization
 
   GetAllOrganizationDepartmentsPublic:
     Type: 'AWS::Serverless::Function'
@@ -213,8 +194,6 @@ Resources:
               Ref: GetAllOrganizationDepartmentsApiGateway
             Path: '/get_all_organization_departments'
             Method: GET
-            Auth:
-              Authorizer: GetAllOrganizationDepartmentsAuthorizer
 
 Outputs:
   CreateOrganizationSettingsARN:

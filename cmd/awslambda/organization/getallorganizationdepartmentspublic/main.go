@@ -7,6 +7,7 @@ import (
 	"bitbucket.org/3beep-workspace/3beep_settings_service/pkg/database/postgresql"
 	"bitbucket.org/3beep-workspace/3beep_settings_service/pkg/tool/uuid"
 	"encoding/json"
+	"errors"
 	"github.com/aws/aws-lambda-go/events"
 
 	"github.com/aws/aws-lambda-go/lambda"
@@ -32,15 +33,36 @@ func init() {
 }
 
 func handleRequest(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	token, ok := request.Headers["Authorization"]
+	if ok != true {
+		return events.APIGatewayProxyResponse{
+			StatusCode:        400,
+			Headers:           nil,
+			MultiValueHeaders: nil,
+			Body:              "",
+			IsBase64Encoded:   false,
+		}, errors.New("Unauthorized")
+	}
+
+	if token != "c10321f9-4574-47bc-a7b6-f101770dbd97" {
+		return events.APIGatewayProxyResponse{
+			StatusCode:        400,
+			Headers:           nil,
+			MultiValueHeaders: nil,
+			Body:              "",
+			IsBase64Encoded:   false,
+		}, errors.New("Invalid Token")
+	}
+
 	queryString, ok := request.QueryStringParameters["rootOrganizationId"]
 	if ok != true {
 		return events.APIGatewayProxyResponse{
 			StatusCode:        400,
 			Headers:           nil,
 			MultiValueHeaders: nil,
-			Body:              "key does not exist",
+			Body:              "",
 			IsBase64Encoded:   false,
-		}, nil
+		}, errors.New("key does not exist")
 	}
 
 	if err := uuid.Validate(&queryString); err != nil {
@@ -48,9 +70,9 @@ func handleRequest(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 			StatusCode:        400,
 			Headers:           nil,
 			MultiValueHeaders: nil,
-			Body:              err.Error(),
+			Body:              "",
 			IsBase64Encoded:   false,
-		}, nil
+		}, err
 	}
 
 	organizations, err := Services.Organization.GetAllOrganizationDepartments(&queryString)
@@ -59,7 +81,7 @@ func handleRequest(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 			StatusCode:        400,
 			Headers:           nil,
 			MultiValueHeaders: nil,
-			Body:              err.Error(),
+			Body:              "",
 			IsBase64Encoded:   false,
 		}, err
 	}
@@ -70,12 +92,18 @@ func handleRequest(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 			StatusCode:        400,
 			Headers:           nil,
 			MultiValueHeaders: nil,
-			Body:              err.Error(),
+			Body:              "",
 			IsBase64Encoded:   false,
 		}, err
 	}
 
-	return events.APIGatewayProxyResponse{Body: string(org), StatusCode: 200}, nil
+	return events.APIGatewayProxyResponse{
+		StatusCode: 200,
+		Headers: nil,
+		MultiValueHeaders: nil,
+		Body: string(org),
+		IsBase64Encoded: false,
+	}, nil
 }
 
 func main() {
