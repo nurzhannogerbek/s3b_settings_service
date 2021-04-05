@@ -5,6 +5,8 @@ import (
 	"bitbucket.org/3beep-workspace/3beep_settings_service/internal/repository"
 	"bitbucket.org/3beep-workspace/3beep_settings_service/internal/service"
 	"bitbucket.org/3beep-workspace/3beep_settings_service/pkg/database/postgresql"
+	"bitbucket.org/3beep-workspace/3beep_settings_service/pkg/tool/uuid"
+	"encoding/json"
 	"github.com/aws/aws-lambda-go/events"
 
 	"github.com/aws/aws-lambda-go/lambda"
@@ -29,36 +31,51 @@ func init() {
 	Services = service.NewServices(service.Dependencies{Repositories: repositories})
 }
 
-type OrganizationEvent struct {
-	RootOrganizationID *string `json:"rootOrganizationId"`
-}
-
 func handleRequest(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	//var organizationEvent OrganizationEvent
-	//if err := json.Unmarshal([]byte(request.Body), &organizationEvent); err != nil {
-	//	return events.APIGatewayProxyResponse{
-	//		StatusCode: 404,
-	//		Body: err.Error(),
-	//	}, err
-	//}
-	//
-	//organizations, err := Services.Organization.GetAllOrganizationDepartments(organizationEvent.RootOrganizationID)
-	//if err != nil {
-	//	return events.APIGatewayProxyResponse{
-	//		StatusCode: 404,
-	//		Body: err.Error(),
-	//	}, err
-	//}
-	//
-	//org, err := json.Marshal(&organizations)
-	//if err != nil {
-	//	return events.APIGatewayProxyResponse{
-	//		StatusCode: 404,
-	//		Body: err.Error(),
-	//	}, err
-	//}
+	queryString, ok := request.QueryStringParameters["rootOrganizationId"]
+	if ok != true {
+		return events.APIGatewayProxyResponse{
+			StatusCode:        400,
+			Headers:           nil,
+			MultiValueHeaders: nil,
+			Body:              "key does not exist",
+			IsBase64Encoded:   false,
+		}, nil
+	}
 
-	return events.APIGatewayProxyResponse{Body: "asdsdaasd", StatusCode: 200}, nil
+	if err := uuid.Validate(&queryString); err != nil {
+		return events.APIGatewayProxyResponse{
+			StatusCode:        400,
+			Headers:           nil,
+			MultiValueHeaders: nil,
+			Body:              err.Error(),
+			IsBase64Encoded:   false,
+		}, nil
+	}
+
+	organizations, err := Services.Organization.GetAllOrganizationDepartments(&queryString)
+	if err != nil {
+		return events.APIGatewayProxyResponse{
+			StatusCode:        400,
+			Headers:           nil,
+			MultiValueHeaders: nil,
+			Body:              err.Error(),
+			IsBase64Encoded:   false,
+		}, err
+	}
+
+	org, err := json.Marshal(&organizations)
+	if err != nil {
+		return events.APIGatewayProxyResponse{
+			StatusCode:        400,
+			Headers:           nil,
+			MultiValueHeaders: nil,
+			Body:              err.Error(),
+			IsBase64Encoded:   false,
+		}, err
+	}
+
+	return events.APIGatewayProxyResponse{Body: string(org), StatusCode: 200}, nil
 }
 
 func main() {

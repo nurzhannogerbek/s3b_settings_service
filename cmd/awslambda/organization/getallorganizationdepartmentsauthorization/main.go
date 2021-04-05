@@ -7,7 +7,7 @@ import (
 
 func handleRequest(in interface{}) (interface{}, error) {
 	fmt.Println(in)
-	return false, nil
+	return true, nil
 }
 
 func main() {
