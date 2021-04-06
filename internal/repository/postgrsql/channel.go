@@ -79,7 +79,7 @@ func (cr *ChannelRepository) GetChannels(organizationId *string) (*[]common.Chan
 		where
 			organizations.tree_organization_id like concat( '%', '\', $1, '%' )
 		group by
-			channels.channel_id;`, organizationId)
+			channels.channel_id;`, *organizationId)
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +109,7 @@ func (cr *ChannelRepository) GetChannel(channelId *string) (*common.Channel, err
 			channels.channel_id = $1
 		group by
     		channels.channel_id
-		limit 1;`, channelId)
+		limit 1;`, *channelId)
 	if err != nil {
 		return nil, err
 	}
