@@ -61,7 +61,7 @@ func (cr *ChannelRepository) CreateChannel(c *common.Channel) error {
 func (cr *ChannelRepository) GetChannels(organizationId *string) (*[]common.Channel, error) {
 	var channels []common.Channel
 
-	err := cr.db.Get(&channels, `
+	err := cr.db.Select(&channels, `
 		select
 			channels.channel_id,
 			channels.channel_name,
