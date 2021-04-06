@@ -170,7 +170,7 @@ Resources:
     Type: 'AWS::Serverless::HttpApi'
     Properties:
       StageName:
-        'Fn::Sub': '$default'
+        'Fn::Sub': 'TEST'
       CorsConfiguration:
         AllowMethods:
           - GET
