@@ -3,6 +3,7 @@ package service
 import (
 	"bitbucket.org/3beep-workspace/3beep_settings_service/internal/common"
 	"bitbucket.org/3beep-workspace/3beep_settings_service/internal/repository"
+	"bitbucket.org/3beep-workspace/3beep_settings_service/pkg/tool/uuid"
 )
 
 // ChannelService
@@ -36,11 +37,29 @@ func (cs *ChannelService) CreateChannel(c *common.Channel) error {
 // GetChannels
 // Get the list of all channels of the specific organization.
 func (cs *ChannelService) GetChannels(organizationId *string) (*[]common.Channel, error) {
-	return nil, nil
+	if err := uuid.Validate(organizationId); err != nil {
+		return nil, err
+	}
+
+	channels, err := cs.repository.GetChannels(organizationId)
+	if err != nil {
+		return nil, err
+	}
+
+	return channels, nil
 }
 
 // GetChannels
 // Get the information about the specific channel.
 func (cs *ChannelService) GetChannel(channelId *string) (*common.Channel, error) {
-	return nil, nil
+	if err := uuid.Validate(channelId); err != nil {
+		return nil, err
+	}
+
+	channel, err := cs.repository.GetChannel(channelId)
+	if err != nil {
+		return nil, err
+	}
+
+	return channel, nil
 }
