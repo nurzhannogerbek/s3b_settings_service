@@ -11,7 +11,7 @@ type Channel struct {
 	ChannelTypeId      *string   `db:"channel_type_id" json:"channelTypeId"`
 	ChannelTechnicalId *string   `db:"channel_technical_id" json:"channelTechnicalId"`
 	ChannelStatusId    *string   `db:"channel_status_id" json:"channelStatusId"`
-	OrganizationIds    *[]*string `db:"organization_ids" json:"organizationIds"`
+	OrganizationIds    *[]string `db:"organization_ids" json:"organizationIds"`
 }
 
 // Validate

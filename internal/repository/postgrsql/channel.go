@@ -2,6 +2,7 @@ package postgrsql
 
 import (
 	"bitbucket.org/3beep-workspace/3beep_settings_service/internal/common"
+	"fmt"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -60,6 +61,8 @@ func (cr *ChannelRepository) CreateChannel(c *common.Channel) error {
 // Get the list of all channels of the specific organization.
 func (cr *ChannelRepository) GetChannels(organizationId *string) (*[]common.Channel, error) {
 	var channels []common.Channel
+
+	fmt.Println(*organizationId)
 
 	err := cr.db.Select(&channels, `
 		select
