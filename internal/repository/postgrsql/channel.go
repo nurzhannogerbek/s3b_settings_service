@@ -68,7 +68,7 @@ func (cr *ChannelRepository) GetChannels(organizationId *string) (*[]common.Chan
 			channels.channel_type_id,
 			channels.channel_technical_id,
 			channels.channel_status_id,
-			array_agg (channels_organizations_relationship.organization_id) organization_ids
+			array_agg(channels_organizations_relationship.organization_id)::text[] organization_ids
 		from
 			channels
 		left join channels_organizations_relationship on
@@ -115,7 +115,7 @@ func (cr *ChannelRepository) GetChannel(channelId *string) (*common.Channel, err
 			channels.channel_type_id,
 			channels.channel_technical_id,
 			channels.channel_status_id,
-			array_agg (distinct channels_organizations_relationship.organization_id) organization_ids
+			array_agg(distinct channels_organizations_relationship.organization_id)::text[] organization_ids
 		from
 			channels
 		left join channels_organizations_relationship on
