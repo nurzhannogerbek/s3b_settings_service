@@ -2,7 +2,8 @@ package common
 
 import (
 	"bitbucket.org/3beep-workspace/3beep_settings_service/pkg/tool/uuid"
-	"database/sql"
+
+	"github.com/lib/pq"
 )
 
 // Channel
@@ -14,7 +15,7 @@ type Channel struct {
 	ChannelTypeId      *string           `db:"channel_type_id" json:"channelTypeId"`
 	ChannelTechnicalId *string           `db:"channel_technical_id" json:"channelTechnicalId"`
 	ChannelStatusId    *string           `db:"channel_status_id" json:"channelStatusId"`
-	OrganizationIds    *[]sql.NullString `db:"organization_ids" json:"organizationIds"`
+	OrganizationIds    pq.StringArray    `db:"organization_ids" json:"organizationIds"`
 }
 
 // Validate

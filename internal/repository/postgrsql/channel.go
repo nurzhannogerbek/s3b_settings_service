@@ -107,7 +107,7 @@ func (cr *ChannelRepository) GetChannels(organizationId *string) (*[]common.Chan
 func (cr *ChannelRepository) GetChannel(channelId *string) (*common.Channel, error) {
 	var channel common.Channel
 
-	err := cr.db.QueryRowx(`
+	row := cr.db.QueryRow(`
 		select
 			channels.channel_id,
 			channels.channel_name,
@@ -124,8 +124,15 @@ func (cr *ChannelRepository) GetChannel(channelId *string) (*common.Channel, err
 			channels.channel_id = $1
 		group by
     		channels.channel_id
-		limit 1;`, *channelId).StructScan(&channel)
-	if err != nil {
+		limit 1;`, *channelId)
+
+	if err := row.Scan(&channel.ChannelId,
+		&channel.ChannelName,
+		&channel.ChannelDescription,
+		&channel.ChannelTypeId,
+		&channel.ChannelTechnicalId,
+		&channel.ChannelStatusId,
+		&channel.OrganizationIds); err != nil {
 		return nil, err
 	}
 
