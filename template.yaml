@@ -166,34 +166,34 @@ Resources:
       CodeUri: bin/channel/getchannels.zip
       Handler: bin/channel/getchannels
 
-  GetAllOrganizationDepartmentsApiGateway:
-    Type: 'AWS::Serverless::HttpApi'
-    Properties:
-      StageName:
-        'Fn::Sub': 'TEST'
-      CorsConfiguration:
-        AllowMethods:
-          - GET
-        AllowHeaders:
-          - '*'
-        AllowOrigins:
-          - '*'
+#  GetAllOrganizationDepartmentsApiGateway:
+#    Type: 'AWS::Serverless::HttpApi'
+#    Properties:
+#      StageName:
+#        'Fn::Sub': 'TEST'
+#      CorsConfiguration:
+#        AllowMethods:
+#          - GET
+#        AllowHeaders:
+#          - '*'
+#        AllowOrigins:
+#          - '*'
 
-  GetAllOrganizationDepartmentsPublic:
-    Type: 'AWS::Serverless::Function'
-    Properties:
-      FunctionName:
-        'Fn::Sub': '${EnvironmentName}GetAllOrganizationDepartmentsPublic'
-      CodeUri: bin/organization/getallorganizationdepartmentspublic.zip
-      Handler: bin/organization/getallorganizationdepartmentspublic
-      Events:
-        GetAllOrganizationDepartmentsApiGatewayEvent:
-          Type: HttpApi
-          Properties:
-            ApiId:
-              Ref: GetAllOrganizationDepartmentsApiGateway
-            Path: '/get_all_organization_departments'
-            Method: GET
+#  GetAllOrganizationDepartmentsPublic:
+#    Type: 'AWS::Serverless::Function'
+#    Properties:
+#      FunctionName:
+#        'Fn::Sub': '${EnvironmentName}GetAllOrganizationDepartmentsPublic'
+#      CodeUri: bin/organization/getallorganizationdepartmentspublic.zip
+#      Handler: bin/organization/getallorganizationdepartmentspublic
+#      Events:
+#        GetAllOrganizationDepartmentsApiGatewayEvent:
+#          Type: HttpApi
+#          Properties:
+#            ApiId:
+#              Ref: GetAllOrganizationDepartmentsApiGateway
+#            Path: '/get_all_organization_departments'
+#            Method: GET
 
 Outputs:
   CreateOrganizationSettingsARN:
@@ -302,9 +302,9 @@ Outputs:
       Name:
         'Fn::Sub': '${AWS::StackName}:${EnvironmentName}GetChannelsARN'
 
-  GetAllOrganizationDepartmentsPublicARN:
-    Value:
-      'Fn::GetAtt': GetAllOrganizationDepartmentsPublic.Arn
-    Export:
-      Name:
-        'Fn::Sub': '${AWS::StackName}:${EnvironmentName}GetAllOrganizationDepartmentsPublicARN'
+#  GetAllOrganizationDepartmentsPublicARN:
+#    Value:
+#      'Fn::GetAtt': GetAllOrganizationDepartmentsPublic.Arn
+#    Export:
+#      Name:
+#        'Fn::Sub': '${AWS::StackName}:${EnvironmentName}GetAllOrganizationDepartmentsPublicARN'
