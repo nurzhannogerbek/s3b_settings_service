@@ -76,9 +76,9 @@ func (cr *ChannelRepository) GetChannels(organizationId *string) (*[]common.Chan
 		left join organizations on
 			channels_organizations_relationship.organization_id = organizations.organization_id
 		where
-			organizations.tree_organization_id like ?
+			organizations.tree_organization_id like concat('%', '\', $1::text, '%')
 		group by
-			channels.channel_id;`, "%\\" + *organizationId + "%")
+			channels.channel_id;`, *organizationId)
 	if err != nil {
 		return nil, err
 	}
