@@ -14,7 +14,7 @@ type Channel struct {
 	ChannelTypeId       *string           `db:"channel_type_id" json:"channelTypeId"`
 	ChannelTechnicalId  *string           `db:"channel_technical_id" json:"channelTechnicalId"`
 	ChannelStatusId     *string           `db:"channel_status_id" json:"channelStatusId"`
-	OrganizationsIds    *[]sql.NullString   `db:"organizations_ids" json:"organizationsIds"`
+	OrganizationsIds    *[]string   `db:"organizations_ids" json:"organizationsIds"`
 }
 
 // Validate
