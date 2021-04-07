@@ -61,7 +61,7 @@ func (cr *ChannelRepository) GetChannels(organizationId *string) (*[]common.Chan
 	var channels []common.Channel
 
 	parameters := map[string]interface{}{
-		"organizationId": *organizationId,
+		"organization_id": *organizationId,
 	}
 
 	rows, err := cr.db.NamedQuery(`
@@ -80,7 +80,7 @@ func (cr *ChannelRepository) GetChannels(organizationId *string) (*[]common.Chan
 		left join organizations on
 			channels_organizations_relationship.organization_id = organizations.organization_id
 		where
-			organizations.tree_organization_id like concat( '%', '\', :city, '%' )
+			organizations.tree_organization_id like concat( '%', '\', :organization_id, '%' )
 		group by
 			channels.channel_id;`, parameters)
 	if err != nil {
