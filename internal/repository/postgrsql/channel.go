@@ -60,7 +60,7 @@ func (cr *ChannelRepository) CreateChannel(c *common.Channel) error {
 func (cr *ChannelRepository) GetChannels(organizationId *string) (*[]common.Channel, error) {
 	var channels []common.Channel
 
-	err := cr.db.Select(&channels, `
+	rows, err := cr.db.Query(`
 		select
 			channels.channel_id,
 			channels.channel_name,
@@ -68,7 +68,7 @@ func (cr *ChannelRepository) GetChannels(organizationId *string) (*[]common.Chan
 			channels.channel_type_id,
 			channels.channel_technical_id,
 			channels.channel_status_id,
-			array_agg (channels_organizations_relationship.organization_id)::text[] organization_ids
+			array_agg (channels_organizations_relationship.organization_id) organization_ids
 		from
 			channels
 		left join channels_organizations_relationship on
@@ -83,6 +83,22 @@ func (cr *ChannelRepository) GetChannels(organizationId *string) (*[]common.Chan
 		return nil, err
 	}
 
+	for rows.Next() {
+		var channel common.Channel
+
+		if err = rows.Scan(&channel.ChannelId,
+			&channel.ChannelName,
+			&channel.ChannelDescription,
+			&channel.ChannelTypeId,
+			&channel.ChannelTechnicalId,
+			&channel.ChannelStatusId,
+			&channel.OrganizationIds); err != nil {
+			return nil, err
+		}
+
+		channels = append(channels, channel)
+	}
+
 	return &channels, nil
 }
 
@@ -91,7 +107,7 @@ func (cr *ChannelRepository) GetChannels(organizationId *string) (*[]common.Chan
 func (cr *ChannelRepository) GetChannel(channelId *string) (*common.Channel, error) {
 	var channel common.Channel
 
-	err := cr.db.Get(&channel, `
+	err := cr.db.QueryRowx(`
 		select
 			channels.channel_id,
 			channels.channel_name,
@@ -99,7 +115,7 @@ func (cr *ChannelRepository) GetChannel(channelId *string) (*common.Channel, err
 			channels.channel_type_id,
 			channels.channel_technical_id,
 			channels.channel_status_id,
-			array_agg (distinct channels_organizations_relationship.organization_id)::text[] organization_ids
+			array_agg (distinct channels_organizations_relationship.organization_id) organization_ids
 		from
 			channels
 		left join channels_organizations_relationship on
@@ -108,7 +124,7 @@ func (cr *ChannelRepository) GetChannel(channelId *string) (*common.Channel, err
 			channels.channel_id = $1
 		group by
     		channels.channel_id
-		limit 1;`, *channelId)
+		limit 1;`, *channelId).StructScan(&channel)
 	if err != nil {
 		return nil, err
 	}
