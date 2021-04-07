@@ -38,7 +38,7 @@ func (cr *ChannelRepository) CreateChannel(c *common.Channel) error {
 			:channel_status_id
 		)
 		returning
-			channel_id;
+			channel_id::text;
 	`, *c)
 	if err != nil {
 		return err
@@ -62,12 +62,12 @@ func (cr *ChannelRepository) GetChannels(organizationId *string) (*[]common.Chan
 
 	rows, err := cr.db.Query(`
 		select
-			channels.channel_id,
-			channels.channel_name,
-			channels.channel_description,
-			channels.channel_type_id,
-			channels.channel_technical_id,
-			channels.channel_status_id,
+			channels.channel_id::text,
+			channels.channel_name::text,
+			channels.channel_description::text,
+			channels.channel_type_id::text,
+			channels.channel_technical_id::text,
+			channels.channel_status_id::text,
 			array_agg(channels_organizations_relationship.organization_id)::text[] organization_ids
 		from
 			channels
@@ -109,12 +109,12 @@ func (cr *ChannelRepository) GetChannel(channelId *string) (*common.Channel, err
 
 	row := cr.db.QueryRow(`
 		select
-			channels.channel_id,
-			channels.channel_name,
-			channels.channel_description,
-			channels.channel_type_id,
-			channels.channel_technical_id,
-			channels.channel_status_id,
+			channels.channel_id::text,
+			channels.channel_name::text,
+			channels.channel_description::text,
+			channels.channel_type_id::text,
+			channels.channel_technical_id::text,
+			channels.channel_status_id::text,
 			array_agg(distinct channels_organizations_relationship.organization_id)::text[] organization_ids
 		from
 			channels
