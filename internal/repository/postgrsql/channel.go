@@ -60,7 +60,11 @@ func (cr *ChannelRepository) CreateChannel(c *common.Channel) error {
 func (cr *ChannelRepository) GetChannels(organizationId *string) (*[]common.Channel, error) {
 	var channels []common.Channel
 
-	rows, err := cr.db.Query(`
+	parameters := map[string]interface{}{
+		"organizationId": *organizationId,
+	}
+
+	rows, err := cr.db.NamedQuery(`
 		select
 			channels.channel_id::text,
 			channels.channel_name::text,
@@ -76,9 +80,9 @@ func (cr *ChannelRepository) GetChannels(organizationId *string) (*[]common.Chan
 		left join organizations on
 			channels_organizations_relationship.organization_id = organizations.organization_id
 		where
-			organizations.tree_organization_id like concat( '%', '\', $1, '%' )
+			organizations.tree_organization_id like concat( '%', '\', :city, '%' )
 		group by
-			channels.channel_id;`, *organizationId)
+			channels.channel_id;`, parameters)
 	if err != nil {
 		return nil, err
 	}
