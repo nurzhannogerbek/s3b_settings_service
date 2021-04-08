@@ -40,11 +40,12 @@ func handleRequest(e common.Event) (interface{}, error) {
 		return nil, err
 	}
 
-	if err := Services.Channel.CreateChannel(&channelEvent.Channel); err != nil {
+	channel, err := Services.Channel.CreateChannel(&channelEvent.Channel)
+	if err != nil {
 		return nil, err
 	}
 
-	return channelEvent, nil
+	return channel, nil
 }
 
 func main() {

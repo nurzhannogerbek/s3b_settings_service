@@ -22,8 +22,8 @@ func NewChannelRepository(db *sqlx.DB) *ChannelRepository {
 
 // CreateChannel
 // Creates new channel record in database.
-func (cr *ChannelRepository) CreateChannel(c *common.Channel) error {
-	rows, err := cr.db.NamedQuery(`
+func (cr *ChannelRepository) CreateChannel(c *common.Channel) (*common.Channel, error) {
+	err := cr.db.QueryRowx(`
 		insert into channels (
 			channel_name,
 			channel_description,
@@ -39,21 +39,38 @@ func (cr *ChannelRepository) CreateChannel(c *common.Channel) error {
 			:channel_status_id
 		)
 		returning
-			channel_id::text;
-	`, *c)
+			channel_id::text;`,
+			&c.ChannelName,
+			&c.ChannelDescription,
+			&c.ChannelTypeId,
+			&c.ChannelTechnicalId,
+			&c.ChannelStatusId).StructScan(&c.ChannelId)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	var lastInsertedID string
-	for rows.Next() {
-		if err := rows.Scan(&lastInsertedID); err != nil {
-			return err
-		}
+	query, args, err := sqlx.In(`
+		insert into channels_organizations_relationship(
+			channel_id,
+			organization_id
+		)
+		select
+			$1 channel_id,
+			organizations_ids
+		from
+			unnest($2) organizations_ids;`,
+			c.ChannelId,
+			c.OrganizationsIds)
+	if err != nil {
+		return nil, err
 	}
-	c.ChannelId = &lastInsertedID
+	query = cr.db.Rebind(query)
+	_, err = cr.db.Queryx(query, args...)
+	if err != nil {
+		return nil, err
+	}
 
-	return nil
+	return c, nil
 }
 
 // GetChannels
