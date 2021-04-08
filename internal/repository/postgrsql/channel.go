@@ -69,7 +69,7 @@ func (cr *ChannelRepository) GetChannels(organizationId *string) (*[]common.Chan
 			channels.channel_type_id::text,
 			channels.channel_technical_id::text,
 			channels.channel_status_id::text,
-			array_remove(array_agg(distinct channels_organizations_relationship.organization_id), null)::text[] organizations_ids
+		    array_agg(distinct channels_organizations_relationship.organization_id) filter (where channels_organizations_relationship.organization_id is not null)
 		from
 			channels
 		left join channels_organizations_relationship on
@@ -116,7 +116,7 @@ func (cr *ChannelRepository) GetChannel(channelId *string) (*common.Channel, err
 			channels.channel_type_id::text,
 			channels.channel_technical_id::text,
 			channels.channel_status_id::text,
-			array_remove(array_agg(distinct channels_organizations_relationship.organization_id), null)::text[] organizations_ids
+			array_agg(distinct channels_organizations_relationship.organization_id) filter (where channels_organizations_relationship.organization_id is not null)
 		from
 			channels
 		left join channels_organizations_relationship on
