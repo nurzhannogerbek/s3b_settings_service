@@ -56,8 +56,8 @@ Resources:
     Properties:
       FunctionName:
         'Fn::Sub': '${EnvironmentName}GetOrganizationSettings'
-      CodeUri: bin/organizationsettings/getorganizationsettings.zip
-      Handler: bin/organizationsettings/getorganizationsettings
+      CodeUri: bin/organizationsettings/getorganizationsettingsbyid.zip
+      Handler: bin/organizationsettings/getorganizationsettingsbyid
   UpdateOrganizationSettings:
     Type: 'AWS::Serverless::Function'
     Properties:

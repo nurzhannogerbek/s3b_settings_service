@@ -34,18 +34,27 @@ type OrganizationSettingsEvent struct {
 	OrganizationID string `json:"organizationId"`
 }
 
+type OrganizationSettingsResponse struct {
+	OrganizationSettingsEvent
+	Restored bool `json:"restored"`
+}
+
 func handleRequest(e common.Event) (interface{}, error) {
 	var organizationSettingsEvent OrganizationSettingsEvent
 	if err := json.Unmarshal(e.Arguments, &organizationSettingsEvent); err != nil {
 		return nil, err
 	}
 
-	organizationSettings, err := Services.OrganizationSettings.GetByID(&organizationSettingsEvent.OrganizationID)
-	if err != nil {
+	if err := Services.OrganizationSettings.RestoreDeletedOrganizationSettings(&organizationSettingsEvent.OrganizationID); err != nil {
 		return nil, err
 	}
 
-	return organizationSettings, nil
+	organizationSettingsResponse := OrganizationSettingsResponse{
+		OrganizationSettingsEvent: organizationSettingsEvent,
+		Restored:                   true,
+	}
+
+	return organizationSettingsResponse, nil
 }
 
 func main() {

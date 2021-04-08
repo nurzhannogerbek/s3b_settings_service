@@ -14,11 +14,11 @@ import (
 // OrganizationSettings
 // Organization settings repository interface.
 type OrganizationSettings interface {
-	Create(organization *common.OrganizationSettings) error
-	Delete(organizationID *string) error
-	GetByID(organizationID *string) (*common.OrganizationSettings, error)
-	Update(organization *common.OrganizationSettings) (*common.OrganizationSettings, error)
-	RestoreDeleted(organizationID *string) error
+	CreateOrganizationSettings(organization common.OrganizationSettings) error
+	DeleteOrganizationSettings(organizationID string) error
+	GetOrganizationSettingsByID(organizationID string) (*common.OrganizationSettings, error)
+	UpdateOrganizationSettings(organization common.OrganizationSettings) (*common.OrganizationSettings, error)
+	RestoreDeletedOrganizationSettings(organizationID string) error
 }
 
 // Channel

@@ -20,42 +20,42 @@ func NewOrganizationSettingsService(os repository.OrganizationSettings) *Organiz
 	}
 }
 
-// Create
+// CreateOrganizationSettings
 // Validates and Creates new organization settings record in database.
-func (oss *OrganizationSettingsService) Create(os *common.OrganizationSettings) error {
+func (oss *OrganizationSettingsService) CreateOrganizationSettings(os *common.OrganizationSettings) error {
 	if err := os.Validate(); err != nil {
 		return err
 	}
 
-	if err := oss.repository.Create(os); err != nil {
+	if err := oss.repository.CreateOrganizationSettings(*os); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-// Delete
+// DeleteOrganizationSettings
 // Validates and Deletes organization settings record by ID in database.
-func (oss *OrganizationSettingsService) Delete(organizationID *string) error {
+func (oss *OrganizationSettingsService) DeleteOrganizationSettings(organizationID *string) error {
 	if err := uuid.Validate(organizationID); err != nil {
 		return err
 	}
 
-	if err := oss.repository.Delete(organizationID); err != nil {
+	if err := oss.repository.DeleteOrganizationSettings(*organizationID); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-// GetById
+// GetOrganizationSettingsById
 // Validates and Queries organization settings record by ID from database.
-func (oss *OrganizationSettingsService) GetByID(organizationID *string) (*common.OrganizationSettings, error) {
+func (oss *OrganizationSettingsService) GetOrganizationSettingsByID(organizationID *string) (*common.OrganizationSettings, error) {
 	if err := uuid.Validate(organizationID); err != nil {
 		return nil, err
 	}
 
-	organizationSettings, err := oss.repository.GetByID(organizationID)
+	organizationSettings, err := oss.repository.GetOrganizationSettingsByID(*organizationID)
 	if err != nil {
 		return nil, err
 	}
@@ -63,14 +63,14 @@ func (oss *OrganizationSettingsService) GetByID(organizationID *string) (*common
 	return organizationSettings, nil
 }
 
-// Update
+// UpdateOrganizationSettings
 // Validates and updates organization settings record by ID in database.
-func (oss *OrganizationSettingsService) Update(os *common.OrganizationSettings) (*common.OrganizationSettings, error) {
+func (oss *OrganizationSettingsService) UpdateOrganizationSettings(os *common.OrganizationSettings) (*common.OrganizationSettings, error) {
 	if err := os.Validate(); err != nil {
 		return nil, err
 	}
 
-	organizationSettings, err := oss.repository.Update(os)
+	organizationSettings, err := oss.repository.UpdateOrganizationSettings(*os)
 	if err != nil {
 		return nil, err
 	}
@@ -78,14 +78,14 @@ func (oss *OrganizationSettingsService) Update(os *common.OrganizationSettings) 
 	return organizationSettings, nil
 }
 
-// RestoreDeleted
+// RestoreDeletedOrganizationSettings
 // Validates and Restores deleted organization settings record by ID in database.
-func (oss *OrganizationSettingsService) RestoreDeleted(organizationID *string) error {
+func (oss *OrganizationSettingsService) RestoreDeletedOrganizationSettings(organizationID *string) error {
 	if err := uuid.Validate(organizationID); err != nil {
 		return err
 	}
 
-	if err := oss.repository.RestoreDeleted(organizationID); err != nil {
+	if err := oss.repository.RestoreDeletedOrganizationSettings(*organizationID); err != nil {
 		return err
 	}
 

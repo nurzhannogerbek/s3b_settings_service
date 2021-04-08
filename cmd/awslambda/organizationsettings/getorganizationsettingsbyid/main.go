@@ -31,7 +31,7 @@ func init() {
 }
 
 type OrganizationSettingsEvent struct {
-	OrganizationSettings common.OrganizationSettings `json:"input"`
+	OrganizationID string `json:"organizationId"`
 }
 
 func handleRequest(e common.Event) (interface{}, error) {
@@ -40,11 +40,12 @@ func handleRequest(e common.Event) (interface{}, error) {
 		return nil, err
 	}
 
-	if err := Services.OrganizationSettings.Create(&organizationSettingsEvent.OrganizationSettings); err != nil {
+	organizationSettings, err := Services.OrganizationSettings.GetOrganizationSettingsByID(&organizationSettingsEvent.OrganizationID)
+	if err != nil {
 		return nil, err
 	}
 
-	return organizationSettingsEvent, nil
+	return organizationSettings, nil
 }
 
 func main() {

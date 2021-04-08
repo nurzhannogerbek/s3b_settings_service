@@ -36,7 +36,7 @@ type OrganizationSettingsEvent struct {
 
 type OrganizationSettingsResponse struct {
 	OrganizationSettingsEvent
-	Restored bool `json:"restored"`
+	Deleted bool `json:"deleted"`
 }
 
 func handleRequest(e common.Event) (interface{}, error) {
@@ -45,13 +45,13 @@ func handleRequest(e common.Event) (interface{}, error) {
 		return nil, err
 	}
 
-	if err := Services.OrganizationSettings.RestoreDeleted(&organizationSettingsEvent.OrganizationID); err != nil {
+	if err := Services.OrganizationSettings.DeleteOrganizationSettings(&organizationSettingsEvent.OrganizationID); err != nil {
 		return nil, err
 	}
 
 	organizationSettingsResponse := OrganizationSettingsResponse{
 		OrganizationSettingsEvent: organizationSettingsEvent,
-		Restored:                   true,
+		Deleted:                   true,
 	}
 
 	return organizationSettingsResponse, nil

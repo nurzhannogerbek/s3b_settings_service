@@ -31,12 +31,7 @@ func init() {
 }
 
 type OrganizationSettingsEvent struct {
-	OrganizationID string `json:"organizationId"`
-}
-
-type OrganizationSettingsResponse struct {
-	OrganizationSettingsEvent
-	Deleted bool `json:"deleted"`
+	OrganizationSettings common.OrganizationSettings `json:"input"`
 }
 
 func handleRequest(e common.Event) (interface{}, error) {
@@ -45,16 +40,12 @@ func handleRequest(e common.Event) (interface{}, error) {
 		return nil, err
 	}
 
-	if err := Services.OrganizationSettings.Delete(&organizationSettingsEvent.OrganizationID); err != nil {
+	newOrganizationSettings, err := Services.OrganizationSettings.UpdateOrganizationSettings(&organizationSettingsEvent.OrganizationSettings)
+	if err != nil {
 		return nil, err
 	}
 
-	organizationSettingsResponse := OrganizationSettingsResponse{
-		OrganizationSettingsEvent: organizationSettingsEvent,
-		Deleted:                   true,
-	}
-
-	return organizationSettingsResponse, nil
+	return newOrganizationSettings, nil
 }
 
 func main() {
