@@ -4,7 +4,6 @@ import (
 	"bitbucket.org/3beep-workspace/3beep_settings_service/internal/common"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/lib/pq"
 )
 
 // ChannelRepository
@@ -70,7 +69,7 @@ func (cr *ChannelRepository) GetChannels(organizationId *string) (*[]common.Chan
 			channels.channel_type_id::text,
 			channels.channel_technical_id::text,
 			channels.channel_status_id::text,
-			array_agg(channels_organizations_relationship.organization_id)::text[] organizations_ids
+			array_remove(array_agg(distinct channels_organizations_relationship.organization_id), null)::text[] organizations_ids
 		from
 			channels
 		left join channels_organizations_relationship on
@@ -94,7 +93,7 @@ func (cr *ChannelRepository) GetChannels(organizationId *string) (*[]common.Chan
 			&channel.ChannelTypeId,
 			&channel.ChannelTechnicalId,
 			&channel.ChannelStatusId,
-			(*pq.StringArray)(&channel.OrganizationsIds)); err != nil {
+			&channel.OrganizationsIds); err != nil {
 			return nil, err
 		}
 
@@ -117,7 +116,7 @@ func (cr *ChannelRepository) GetChannel(channelId *string) (*common.Channel, err
 			channels.channel_type_id::text,
 			channels.channel_technical_id::text,
 			channels.channel_status_id::text,
-			array_agg(distinct channels_organizations_relationship.organization_id)::text[] organizations_ids
+			array_remove(array_agg(distinct channels_organizations_relationship.organization_id), null)::text[] organizations_ids
 		from
 			channels
 		left join channels_organizations_relationship on
@@ -134,7 +133,7 @@ func (cr *ChannelRepository) GetChannel(channelId *string) (*common.Channel, err
 		&channel.ChannelTypeId,
 		&channel.ChannelTechnicalId,
 		&channel.ChannelStatusId,
-		(*pq.StringArray)(&channel.OrganizationsIds)); err != nil {
+		&channel.OrganizationsIds); err != nil {
 		return nil, err
 	}
 

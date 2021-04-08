@@ -2,18 +2,20 @@ package common
 
 import (
 	"bitbucket.org/3beep-workspace/3beep_settings_service/pkg/tool/uuid"
+
+	"github.com/lib/pq"
 )
 
 // Channel
 // Contains information about channel.
 type Channel struct {
-	ChannelId           *string           `db:"channel_id" json:"channelId"`
-	ChannelName         *string           `db:"channel_name" json:"channelName"`
-	ChannelDescription  *string           `db:"channel_description" json:"channelDescription"`
-	ChannelTypeId       *string           `db:"channel_type_id" json:"channelTypeId"`
-	ChannelTechnicalId  *string           `db:"channel_technical_id" json:"channelTechnicalId"`
-	ChannelStatusId     *string           `db:"channel_status_id" json:"channelStatusId"`
-	OrganizationsIds    []string `db:"organizations_ids" json:"organizationsIds"`
+	ChannelId           *string        `db:"channel_id" json:"channelId"`
+	ChannelName         *string        `db:"channel_name" json:"channelName"`
+	ChannelDescription  *string        `db:"channel_description" json:"channelDescription"`
+	ChannelTypeId       *string        `db:"channel_type_id" json:"channelTypeId"`
+	ChannelTechnicalId  *string        `db:"channel_technical_id" json:"channelTechnicalId"`
+	ChannelStatusId     *string        `db:"channel_status_id" json:"channelStatusId"`
+	OrganizationsIds    pq.StringArray `db:"organizations_ids" json:"organizationsIds"`
 }
 
 // Validate
