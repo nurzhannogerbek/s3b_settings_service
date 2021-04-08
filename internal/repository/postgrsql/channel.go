@@ -2,8 +2,8 @@ package postgrsql
 
 import (
 	"bitbucket.org/3beep-workspace/3beep_settings_service/internal/common"
+
 	"github.com/jmoiron/sqlx"
-	"github.com/lib/pq"
 )
 
 // ChannelRepository
@@ -93,7 +93,7 @@ func (cr *ChannelRepository) GetChannels(organizationId *string) (*[]common.Chan
 			&channel.ChannelTypeId,
 			&channel.ChannelTechnicalId,
 			&channel.ChannelStatusId,
-			pq.Array(&channel.OrganizationsIds)); err != nil {
+			&channel.OrganizationsIds); err != nil {
 			return nil, err
 		}
 
@@ -133,7 +133,7 @@ func (cr *ChannelRepository) GetChannel(channelId *string) (*common.Channel, err
 		&channel.ChannelTypeId,
 		&channel.ChannelTechnicalId,
 		&channel.ChannelStatusId,
-		pq.Array(&channel.OrganizationsIds)); err != nil {
+		&channel.OrganizationsIds); err != nil {
 		return nil, err
 	}
 
