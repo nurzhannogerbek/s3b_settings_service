@@ -184,7 +184,7 @@ func (cr *ChannelRepository) CreateChannel(c *common.Channel) (*common.Channel, 
 			$1::uuid channel_id,
 			organizations_ids
 		from
-			unnest($2::text[]) organizations_ids;`,
+			unnest($2::uuid[]) organizations_ids;`,
 		&c.ChannelId,
 		&c.OrganizationsIds)
 	if err != nil {
