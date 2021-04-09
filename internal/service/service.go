@@ -30,8 +30,8 @@ type Channel interface {
 // Organization
 // Organization service interface.
 type Organization interface {
-	CreateOrganization(organization *common.OrganizationCreateInput) (*common.Organization, error)
-	CreateOrganizationDepartment(department *common.OrganizationCreateDepartmentInput) (*common.Organization, error)
+	CreateOrganization(newOrganization *common.OrganizationCreateInput) (*common.Organization, error)
+	CreateOrganizationDepartment(organizationName, parentOrganizationID *string) (*common.Organization, error)
 	DeleteOrganizations(organizationsIDs *[]string) error
 	GetOrganizationByID(organizationID *string) (*common.Organization, error)
 	GetOrganizationsByIDs(organizationsIDs *[]string) (*[]common.Organization, error)

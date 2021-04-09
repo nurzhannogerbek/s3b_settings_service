@@ -25,7 +25,7 @@ func NewOrganizationSettingsRepository(db *sqlx.DB) *OrganizationSettingsReposit
 // CreateOrganizationSettings
 // Creates new organization settings record in database.
 func (osr *OrganizationSettingsRepository) CreateOrganizationSettings(os common.OrganizationSettings) error {
-	rows, err := osr.db.NamedQuery(`
+	_, err := osr.db.NamedQuery(`
 		insert into organizations_settings (
 			organization_id,
 		    country_id,
@@ -51,15 +51,6 @@ func (osr *OrganizationSettingsRepository) CreateOrganizationSettings(os common.
 	if err != nil {
 		return err
 	}
-
-	var lastInsertedID string
-	for rows.Next() {
-		if err := rows.Scan(&lastInsertedID); err != nil {
-			return err
-		}
-	}
-
-	os.OrganizationID = &lastInsertedID
 
 	return nil
 }
@@ -111,7 +102,7 @@ func (osr *OrganizationSettingsRepository) GetOrganizationSettingsByID(organizat
 // UpdateOrganizationSettings
 // Updates organization settings record in database.
 func (osr *OrganizationSettingsRepository) UpdateOrganizationSettings(os common.OrganizationSettings) (*common.OrganizationSettings, error) {
-	updateCondition := postgresql.UpdateConditionFromStruct(os)
+	updateCondition := postgresql.UpdateConditionFromStruct(&os)
 	queryString := fmt.Sprintf(`
 		update 
 			organizations_settings

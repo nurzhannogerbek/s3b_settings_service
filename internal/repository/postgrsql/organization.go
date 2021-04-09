@@ -22,12 +22,75 @@ func NewOrganizationRepository(db *sqlx.DB) *OrganizationRepository {
 
 // CreateOrganization
 func (or *OrganizationRepository) CreateOrganization(organization common.OrganizationCreateInput) (*common.Organization, error) {
-	return nil, nil
+	rows, err := or.db.NamedQuery(`
+		insert into organizations (
+			organization_name,
+			parent_organization_id)
+		values (
+			:organization_name,
+			null)
+		returning organization_id,
+		    organization_name,
+			parent_organization_id,
+			parent_organization_name,
+			root_organization_id,
+			root_organization_name,
+			organization_level,
+			tree_organization_id,
+			tree_organization_name;`, organization)
+	if err != nil {
+		return nil, err
+	}
+
+	var newOrganization common.Organization
+	for rows.Next() {
+		if err := rows.StructScan(&newOrganization); err != nil {
+			return nil, err
+		}
+	}
+
+	return &newOrganization, nil
 }
 
 // CreateOrganizationDepartment
 func (or OrganizationRepository) CreateOrganizationDepartment(department common.OrganizationCreateDepartmentInput) (*common.Organization, error) {
-	return nil, nil
+	rows, err := or.db.NamedQuery(`
+		insert into organizations (
+			organization_name,
+			parent_organization_id)
+		values (
+			:organization_name,
+			:parent_organization_id)
+		returning organization_id,
+		    organization_name,
+			parent_organization_id,
+			parent_organization_name,
+			root_organization_id,
+			root_organization_name,
+			organization_level,
+			tree_organization_id,
+			tree_organization_name;`, department)
+	if err != nil {
+		return nil, err
+	}
+
+	var newDepartment common.Organization
+	for rows.Next() {
+		if err := rows.Scan(&newDepartment.OrganizationID,
+			&newDepartment.OrganizationName,
+			&newDepartment.ParentOrganizationID,
+			&newDepartment.ParentOrganizationName,
+			&newDepartment.RootOrganizationID,
+			&newDepartment.RootOrganizationName,
+			&newDepartment.RootOrganizationLevel,
+			&newDepartment.OrganizationLevel,
+			&newDepartment.TreeOrganizationID,
+			&newDepartment.TreeOrganizationName); err != nil {
+			return nil, err
+		}
+	}
+
+	return &newDepartment, nil
 }
 
 // DeleteOrganizations
@@ -132,8 +195,50 @@ func (or *OrganizationRepository) GetOrganizationsByIDs(organizationsIDs []strin
 }
 
 // UpdateOrganization
-func (or *OrganizationRepository) UpdateOrganization(organization common.OrganizationUpdateInput) (*common.Organization, error) {
-	return nil, nil
+func (or *OrganizationRepository) UpdateOrganization(organizationID, organizationName string) error {
+	_, err := or.db.Query(`
+		update 
+		    organizations
+		set entry_updated_date_time = now(),
+		    organization_name = $1
+		where organization_id = $2;`, organizationName, organizationID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// UpdateOrganizations
+func (or *OrganizationRepository) UpdateTreeOrganizationName(organizationID, treeOrganizationName string) error {
+	_, err := or.db.Query(`
+		update 
+		    organizations
+		set entry_updated_date_time = now(),
+		    tree_organization_name = $1
+		where organization_id = $2;`, treeOrganizationName, organizationID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (or *OrganizationRepository) GetUpdateTreeOrganizations(organizationID, organizationName string) (*[]common.Organization, error) {
+	var organizations []common.Organization
+	err := or.db.Select(&organizations, `
+		select organization_id,
+			tree_organization_id
+		from organizations
+		where root_organization_id = (select root_organization_id 
+							  		  from organizations 
+							          where organization_id = $1::uuid)
+		and tree_organization_name like '%' || '\' || $2::text || '%';`, organizationID, organizationName)
+	if err != nil {
+		return nil, err
+	}
+
+	return &organizations, nil
 }
 
 // RestoreDeletedOrganizations

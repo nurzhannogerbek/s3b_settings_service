@@ -37,7 +37,9 @@ type Organization interface {
 	DeleteOrganizations(organizationsIDs []string) error
 	GetOrganizationByID(organizationID string) (*common.Organization, error)
 	GetOrganizationsByIDs(organizationsIDs []string) (*[]common.Organization, error)
-	UpdateOrganization(organization common.OrganizationUpdateInput) (*common.Organization, error)
+	UpdateOrganization(organizationID, organizationName string) error
+	UpdateTreeOrganizationName(organizationID, treeOrganizationName string) error
+	GetUpdateTreeOrganizations(organizationID, OrganizationName string) (*[]common.Organization, error)
 	RestoreDeletedOrganizations(organizationsIDs []string) error
 	GetOrganizationDepartmentsByID(parentOrganizationID string) (*[]common.Organization, error)
 	GetAllOrganizationDepartments(rootOrganizationID string) ([]common.Organization, error)

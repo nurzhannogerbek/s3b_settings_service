@@ -22,12 +22,33 @@ func NewOrganizationService(os repository.Organization) *OrganizationService {
 
 // CreateOrganization
 func (os *OrganizationService) CreateOrganization(organization *common.OrganizationCreateInput) (*common.Organization, error) {
-	return nil, nil
+	if organization.OrganizationName == nil {
+		return nil, nil
+	}
+
+	newOrganization, err := os.repository.CreateOrganization(*organization)
+	if err != nil {
+		return nil, err
+	}
+
+	return newOrganization, nil
 }
 
 // CreateOrganizationDepartment
-func (os OrganizationService) CreateOrganizationDepartment(department *common.OrganizationCreateDepartmentInput) (*common.Organization, error) {
-	return nil, nil
+func (os OrganizationService) CreateOrganizationDepartment(organizationName, parentOrganizationID *string) (*common.Organization, error) {
+	if organizationName == nil || parentOrganizationID == nil {
+		return nil, nil
+	}
+
+	department, err := os.repository.CreateOrganizationDepartment(common.OrganizationCreateDepartmentInput{
+		OrganizationName: organizationName,
+		ParentOrganizationID: parentOrganizationID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return department, nil
 }
 
 // DeleteOrganizations
@@ -87,7 +108,12 @@ func (os *OrganizationService) GetOrganizationsByIDs(organizationsIDs *[]string)
 
 // UpdateOrganization
 func (os *OrganizationService) UpdateOrganization(organization *common.OrganizationUpdateInput) (*common.Organization, error) {
-	return nil, nil
+	organizationInformation, err := os.repository.GetOrganizationByID(*organization.OrganizationID)
+	if err != nil {
+		return nil, err
+	}
+
+	return organizationInformation, nil
 }
 
 // RestoreDeletedOrganizations

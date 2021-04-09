@@ -65,7 +65,32 @@ func (o *OrganizationCreateDepartmentInput) Validate() error {
 
 // UpdateOrganization
 type OrganizationUpdateInput struct {
+	OrganizationID   *string `db:"organization_id" json:"organizationId"`
+	OrganizationName *string `db:"organization_name" json:"organizationName"`
+}
+
+func (oui OrganizationUpdateInput) Validate() error {
+	if oui.OrganizationID != nil {
+		if err := uuid.Validate(oui.OrganizationID); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// UpdateOrganization
+type OrganizationsUpdateInput struct {
 	OrganizationID       *string `db:"organization_id" json:"organizationId"`
-	OrganizationName     *string `db:"organization_name" json:"organizationName"`
-	ParentOrganizationID *string `db:"parent_organization_id" json:"parentOrganizationId"`
+	TreeOrganizationName *string `db:"tree_organization_name" json:"treeOrganizationName"`
+}
+
+func (oui OrganizationsUpdateInput) Validate() error {
+	if oui.OrganizationID != nil {
+		if err := uuid.Validate(oui.OrganizationID); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
