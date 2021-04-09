@@ -115,7 +115,7 @@ func SetWebhookToFacebookMessenger () error {
 
 // SetInstagramPrivateSession
 // Set session of the private instagram chat bot.
-func (cr *ChannelRepository) SetInstagramPrivateSession (channelId string, channelStatusId string) error {
+func (cr *ChannelRepository) SetInstagramPrivateSession () error {
 	return nil
 }
 
@@ -175,16 +175,19 @@ func (cr *ChannelRepository) CreateChannel(c *common.Channel) (*common.Channel, 
 		return nil, fmt.Errorf("failed to create a channel, err: %q", err.Error())
 	}
 
+	fmt.Println(c.OrganizationsIds)
+	fmt.Println(&c.OrganizationsIds)
+
 	_, err = cr.db.Exec(`
 		insert into channels_organizations_relationship(
 			channel_id,
 			organization_id
 		)
 		select
-			$1 channel_id,
+			$1::text channel_id,
 			organizations_ids
 		from
-			unnest($2) organizations_ids;`,
+			unnest($2::text[]) organizations_ids;`,
 		&c.ChannelId,
 		&c.OrganizationsIds)
 	if err != nil {
@@ -262,10 +265,10 @@ func (cr *ChannelRepository) UpdateChannel(c *common.Channel) (*common.Channel, 
 			organization_id
 		)
 		select
-			$1 channel_id,
+			$1::text channel_id,
 			organizations_ids
 		from
-			unnest($2) organizations_ids;`,
+			unnest($2::text[]) organizations_ids;`,
 			&c.ChannelId,
 			&c.OrganizationsIds)
 	if err != nil {
