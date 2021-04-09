@@ -55,8 +55,20 @@ definitions:
                     "ParameterValue": "${POSTGRESQL_DB_NAME}"
                   },
                   {
-                    'ParameterKey': 'EnvironmentName',
-                    'ParameterValue': '${ENVIRONMENT_NAME}'
+                    "ParameterKey": "EnvironmentName",
+                    "ParameterValue": "${ENVIRONMENT_NAME}"
+                  },
+                  {
+                    "ParameterKey": "TelegramBotURL",
+                    "ParameterValue": "${TELEGRAM_BOT_URL}"
+                  },
+                  {
+                    "ParameterKey": "FacebookMessengerBotURL",
+                    "ParameterValue": "${FACEBOOK_MESSENGER_BOT_URL}"
+                  },
+                  {
+                    "ParameterKey": "FacebookMessengerBotVerifyToken",
+                    "ParameterValue": "${FACEBOOK_MESSENGER_BOT_VERIFY_TOKEN}"
                   },
                   {
                     "ParameterKey": "FacebookAppId",

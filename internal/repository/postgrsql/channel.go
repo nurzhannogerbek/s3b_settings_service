@@ -2,6 +2,11 @@ package postgrsql
 
 import (
 	"bitbucket.org/3beep-workspace/3beep_settings_service/internal/common"
+	"bitbucket.org/3beep-workspace/3beep_settings_service/internal/environment"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"net/http"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -20,10 +25,129 @@ func NewChannelRepository(db *sqlx.DB) *ChannelRepository {
 	}
 }
 
+// SetWebhookToTelegram
+// Set webhook to the telegram chat bot.
+func SetWebhookToTelegram (channelName string, channelTechnicalId string) error {
+	client := &http.Client{}
+
+	request, err := http.NewRequest("GET", fmt.Sprintf("https://api.telegram.org/bot%s/setWebhook", channelTechnicalId), nil)
+	if err != nil {
+		return err
+	}
+
+	query := request.URL.Query()
+	query.Add("url", fmt.Sprintf("%s/send_message_from_telegram/%s", environment.TelegramBotURL, channelName))
+	request.URL.RawQuery = query.Encode()
+
+	response, err := client.Do(request)
+	if err != nil {
+		return err
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode != http.StatusOK {
+		return fmt.Errorf("couldn't install webhook via Telegram API, response status code: %q", response.StatusCode)
+	}
+
+	return nil
+}
+
+// SetWebhookToFacebookMessenger
+// Set webhook to the facebook messenger chat bot.
+func SetWebhookToFacebookMessenger () error {
+	client := &http.Client{}
+
+	request, err := http.NewRequest("GET", "https://graph.facebook.com/oauth/access_token", nil)
+	if err != nil {
+		return err
+	}
+
+	query := request.URL.Query()
+	query.Add("client_id", environment.FacebookAppId)
+	query.Add("client_secret", environment.FacebookAppSecret)
+	query.Add("grant_type", "client_credentials")
+	request.URL.RawQuery = query.Encode()
+
+	response, err := client.Do(request)
+	if err != nil {
+		return err
+	}
+	defer response.Body.Close()
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return err
+	}
+
+	type FacebookAppToken struct {
+		AccessToken string `json:"access_token"`
+		TokenType   string `json:"token_type"`
+	}
+	var facebookAppToken common.FacebookMessengerUser
+	if err = json.Unmarshal(body, &facebookAppToken); err != nil {
+		return err
+	}
+
+	request, err = http.NewRequest("GET", fmt.Sprintf("https://graph.facebook.com/v9.0/%s/subscriptions", environment.FacebookAppId), nil)
+	if err != nil {
+		return err
+	}
+
+	query = request.URL.Query()
+	query.Add("access_token", facebookAppToken.AccessToken)
+	query.Add("object", "page")
+	query.Add("callback_url", environment.FacebookMessengerBotURL)
+	query.Add("fields", "messages,messaging_postbacks,messaging_optins,message_deliveries,message_reads,messaging_payments,messaging_pre_checkouts,messaging_checkout_updates,messaging_account_linking,messaging_referrals,message_echoes,messaging_game_plays,standby,messaging_handovers,messaging_policy_enforcement,message_reactions,inbox_labels")
+	query.Add("include_values", "true")
+	query.Add("verify_token", environment.FacebookMessengerBotVerifyToken)
+	request.URL.RawQuery = query.Encode()
+
+	response, err = client.Do(request)
+	if err != nil {
+		return err
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode != http.StatusOK {
+		return fmt.Errorf("couldn't install webhook via Facebook Graph API, response status code: %q", response.StatusCode)
+	}
+
+	return nil
+}
+
 // CreateChannel
 // Creates new channel record in database.
 func (cr *ChannelRepository) CreateChannel(c *common.Channel) (*common.Channel, error) {
+	var channelTypeName string
 	err := cr.db.QueryRowx(`
+		select
+			lower(channel_type_name) as channel_type_name
+		from
+			channel_types
+		where
+			channel_type_id = $1
+		limit 1;`, &c.ChannelTypeId).StructScan(&channelTypeName)
+	if err != nil {
+		return nil, err
+	}
+
+	switch channelTypeName {
+		case "telegram":
+			err = SetWebhookToTelegram(*c.ChannelName, *c.ChannelTechnicalId)
+			if err != nil {
+				return nil, err
+			}
+		case "facebook_messenger":
+			err = SetWebhookToFacebookMessenger()
+			if err != nil {
+				return nil, err
+			}
+		case "whatsapp":
+			// pass
+		default:
+			return nil, fmt.Errorf("creating a channel for the %q type is currently not possible", channelTypeName)
+	}
+
+	err = cr.db.QueryRowx(`
 		insert into channels (
 			channel_name,
 			channel_description,
@@ -32,19 +156,19 @@ func (cr *ChannelRepository) CreateChannel(c *common.Channel) (*common.Channel, 
 			channel_status_id
 		)
 		values (
-			:channel_name,
-			:channel_description,
-			:channel_type_id,
-			:channel_technical_id,
-			:channel_status_id
+			$1,
+			$2,
+			$3,
+			$4,
+			$5
 		)
 		returning
 			channel_id::text;`,
-			&c.ChannelName,
-			&c.ChannelDescription,
-			&c.ChannelTypeId,
-			&c.ChannelTechnicalId,
-			&c.ChannelStatusId).StructScan(&c.ChannelId)
+		&c.ChannelName,
+		&c.ChannelDescription,
+		&c.ChannelTypeId,
+		&c.ChannelTechnicalId,
+		&c.ChannelStatusId).StructScan(&c.ChannelId)
 	if err != nil {
 		return nil, err
 	}
@@ -59,8 +183,91 @@ func (cr *ChannelRepository) CreateChannel(c *common.Channel) (*common.Channel, 
 			organizations_ids
 		from
 			unnest($2) organizations_ids;`,
-			c.ChannelId,
-			c.OrganizationsIds)
+			&c.ChannelId,
+			&c.OrganizationsIds)
+	if err != nil {
+		return nil, err
+	}
+	query = cr.db.Rebind(query)
+	_, err = cr.db.Queryx(query, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	return c, nil
+}
+
+// UpdateChannel
+// Updates the specific channel information in database.
+func (cr *ChannelRepository) UpdateChannel(c *common.Channel) (*common.Channel, error) {
+	var channelTypeName string
+	err := cr.db.QueryRowx(`
+		select
+			lower(channel_type_name) as channel_type_name
+		from
+			channel_types
+		where
+			channel_type_id = $1
+		limit 1;`, &c.ChannelTypeId).StructScan(&channelTypeName)
+	if err != nil {
+		return nil, err
+	}
+
+	switch channelTypeName {
+	case "telegram":
+		err = SetWebhookToTelegram(*c.ChannelName, *c.ChannelTechnicalId)
+		if err != nil {
+			return nil, err
+		}
+	case "facebook_messenger":
+		err = SetWebhookToFacebookMessenger()
+		if err != nil {
+			return nil, err
+		}
+	case "whatsapp":
+		// pass
+	default:
+		return nil, fmt.Errorf("creating a channel for the %q type is currently not possible", channelTypeName)
+	}
+
+	_, err = cr.db.Exec(`
+		update
+	    	channels
+		set
+	    	channel_name = $2,
+			channel_description = $3,
+			channel_type_id = $4,
+			channel_technical_id = $5,
+			channel_status_id = $6
+		where
+			channel_id = $1;`,
+			&c.ChannelId,
+			&c.ChannelName,
+			&c.ChannelDescription,
+			&c.ChannelTypeId,
+			&c.ChannelTechnicalId,
+			&c.ChannelStatusId)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = cr.db.Exec(`delete from channels_organizations_relationship where channel_id = $1;`, &c.ChannelId)
+	if err != nil {
+		return nil, err
+	}
+
+	query, args, err := sqlx.In(`
+		insert into channels_organizations_relationship(
+			channel_id,
+			organization_id
+		)
+		select
+			$1 channel_id,
+			organizations_ids
+		from
+			unnest($2) organizations_ids;`,
+		&c.ChannelId,
+		&c.OrganizationsIds)
 	if err != nil {
 		return nil, err
 	}
