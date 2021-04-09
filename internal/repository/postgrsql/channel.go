@@ -2,8 +2,8 @@ package postgrsql
 
 import (
 	"bitbucket.org/3beep-workspace/3beep_settings_service/internal/common"
+
 	"github.com/jmoiron/sqlx"
-	"github.com/lib/pq"
 )
 
 // ChannelRepository
@@ -22,8 +22,8 @@ func NewChannelRepository(db *sqlx.DB) *ChannelRepository {
 
 // CreateChannel
 // Creates new channel record in database.
-func (cr *ChannelRepository) CreateChannel(c *common.Channel) error {
-	rows, err := cr.db.NamedQuery(`
+func (cr *ChannelRepository) CreateChannel(c *common.Channel) (*common.Channel, error) {
+	err := cr.db.QueryRowx(`
 		insert into channels (
 			channel_name,
 			channel_description,
@@ -39,21 +39,38 @@ func (cr *ChannelRepository) CreateChannel(c *common.Channel) error {
 			:channel_status_id
 		)
 		returning
-			channel_id::text;
-	`, *c)
+			channel_id::text;`,
+			&c.ChannelName,
+			&c.ChannelDescription,
+			&c.ChannelTypeId,
+			&c.ChannelTechnicalId,
+			&c.ChannelStatusId).StructScan(&c.ChannelId)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	var lastInsertedID string
-	for rows.Next() {
-		if err := rows.Scan(&lastInsertedID); err != nil {
-			return err
-		}
+	query, args, err := sqlx.In(`
+		insert into channels_organizations_relationship(
+			channel_id,
+			organization_id
+		)
+		select
+			$1 channel_id,
+			organizations_ids
+		from
+			unnest($2) organizations_ids;`,
+			c.ChannelId,
+			c.OrganizationsIds)
+	if err != nil {
+		return nil, err
 	}
-	c.ChannelId = &lastInsertedID
+	query = cr.db.Rebind(query)
+	_, err = cr.db.Queryx(query, args...)
+	if err != nil {
+		return nil, err
+	}
 
-	return nil
+	return c, nil
 }
 
 // GetChannels
@@ -69,7 +86,7 @@ func (cr *ChannelRepository) GetChannels(organizationId *string) (*[]common.Chan
 			channels.channel_type_id::text,
 			channels.channel_technical_id::text,
 			channels.channel_status_id::text,
-			array_agg(channels_organizations_relationship.organization_id)::text[] organizations_ids
+		    array_agg(distinct channels_organizations_relationship.organization_id) filter (where channels_organizations_relationship.organization_id is not null)
 		from
 			channels
 		left join channels_organizations_relationship on
@@ -93,7 +110,7 @@ func (cr *ChannelRepository) GetChannels(organizationId *string) (*[]common.Chan
 			&channel.ChannelTypeId,
 			&channel.ChannelTechnicalId,
 			&channel.ChannelStatusId,
-			pq.Array(&channel.OrganizationsIds)); err != nil {
+			&channel.OrganizationsIds); err != nil {
 			return nil, err
 		}
 
@@ -116,7 +133,7 @@ func (cr *ChannelRepository) GetChannel(channelId *string) (*common.Channel, err
 			channels.channel_type_id::text,
 			channels.channel_technical_id::text,
 			channels.channel_status_id::text,
-			array_agg(distinct channels_organizations_relationship.organization_id)::text[] organizations_ids
+			array_agg(distinct channels_organizations_relationship.organization_id) filter (where channels_organizations_relationship.organization_id is not null)
 		from
 			channels
 		left join channels_organizations_relationship on
@@ -133,7 +150,7 @@ func (cr *ChannelRepository) GetChannel(channelId *string) (*common.Channel, err
 		&channel.ChannelTypeId,
 		&channel.ChannelTechnicalId,
 		&channel.ChannelStatusId,
-		pq.Array(&channel.OrganizationsIds)); err != nil {
+		&channel.OrganizationsIds); err != nil {
 		return nil, err
 	}
 

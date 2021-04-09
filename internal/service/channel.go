@@ -22,16 +22,17 @@ func NewChannelService(c repository.Channel) *ChannelService {
 
 // CreateChannel
 // Validates and Creates new channel record in database.
-func (cs *ChannelService) CreateChannel(c *common.Channel) error {
+func (cs *ChannelService) CreateChannel(c *common.Channel) (*common.Channel, error) {
 	if err := c.Validate(); err != nil {
-		return err
+		return nil, err
 	}
 
-	if err := cs.repository.CreateChannel(c); err != nil {
-		return err
+	channel, err := cs.repository.CreateChannel(c)
+	if err != nil {
+		return nil, err
 	}
 
-	return nil
+	return channel, nil
 }
 
 // GetChannels
