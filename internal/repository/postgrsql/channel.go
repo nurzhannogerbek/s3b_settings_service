@@ -187,7 +187,7 @@ func (cr *ChannelRepository) CreateChannel(c *common.Channel) (*common.Channel, 
 	query = cr.db.Rebind(query)
 	_, err = cr.db.Queryx(query, args...)
 	if err != nil {
-		return nil, fmt.Errorf("сouldn't link channel to organization, err: %q", err.Error())
+		return nil, fmt.Errorf("сouldn't link channel to organizations, err: %q", err.Error())
 	}
 
 	switch channelTypeName {
@@ -221,24 +221,12 @@ func (cr *ChannelRepository) UpdateChannel(c *common.Channel) (*common.Channel, 
 			channel_type_id = $1
 		limit 1;`, &c.ChannelTypeId).StructScan(&channelTypeName)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unexpected channel type, err: %q", err.Error())
 	}
 
-	switch channelTypeName {
-	case "telegram":
-		err = SetWebhookToTelegram(*c.ChannelName, *c.ChannelTechnicalId)
-		if err != nil {
-			return nil, err
-		}
-	case "facebook_messenger":
-		err = SetWebhookToFacebookMessenger()
-		if err != nil {
-			return nil, err
-		}
-	case "whatsapp":
-		// pass
-	default:
-		return nil, fmt.Errorf("creating a channel for the %q type is currently not possible", channelTypeName)
+	availableChannelTypes := []string{"telegram", "facebook_messenger", "whatsapp", "instagram_private"}
+	if !stringExistsInArray(availableChannelTypes, channelTypeName) {
+		return nil, fmt.Errorf("updating the channel for the %q type is currently not possible", channelTypeName)
 	}
 
 	_, err = cr.db.Exec(`
@@ -259,12 +247,12 @@ func (cr *ChannelRepository) UpdateChannel(c *common.Channel) (*common.Channel, 
 			&c.ChannelTechnicalId,
 			&c.ChannelStatusId)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to update the channel information, err: %q", err.Error())
 	}
 
 	_, err = cr.db.Exec(`delete from channels_organizations_relationship where channel_id = $1;`, &c.ChannelId)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to delete the link between channel and organizations, err: %q", err.Error())
 	}
 
 	query, args, err := sqlx.In(`
@@ -285,7 +273,22 @@ func (cr *ChannelRepository) UpdateChannel(c *common.Channel) (*common.Channel, 
 	query = cr.db.Rebind(query)
 	_, err = cr.db.Queryx(query, args...)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("сouldn't link channel to organizations, err: %q", err.Error())
+	}
+
+	switch channelTypeName {
+		case "telegram":
+			err = SetWebhookToTelegram(*c.ChannelName, *c.ChannelTechnicalId)
+			if err != nil {
+				return nil, fmt.Errorf("couldn't set webhook via telegram api, err: %q", err.Error())
+			}
+		case "facebook_messenger":
+			err = SetWebhookToFacebookMessenger()
+			if err != nil {
+				return nil, fmt.Errorf("couldn't set webhook via facebook graph api, err: %q", err.Error())
+			}
+		default:
+			// pass
 	}
 
 	return c, nil
