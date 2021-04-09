@@ -20,6 +20,7 @@ build:
 	env GOOS=linux go build -ldflags="-s -w" -o bin/facebookmessenger/getfacebookpages cmd/awslambda/facebookmessenger/getfacebookpages/main.go
 
 	env GOOS=linux go build -ldflags="-s -w" -o bin/channel/createchannel cmd/awslambda/channel/createchannel/main.go
+	env GOOS=linux go build -ldflags="-s -w" -o bin/channel/updatechannel cmd/awslambda/channel/updatechannel/main.go
 	env GOOS=linux go build -ldflags="-s -w" -o bin/channel/getchannel cmd/awslambda/channel/getchannel/main.go
 	env GOOS=linux go build -ldflags="-s -w" -o bin/channel/getchannels cmd/awslambda/channel/getchannels/main.go
 
@@ -43,6 +44,7 @@ zip:
 	zip -r bin/facebookmessenger/getfacebookpages.zip bin/facebookmessenger/getfacebookpages
 
 	zip -r bin/channel/createchannel.zip bin/channel/createchannel
+	zip -r bin/channel/updatechannel.zip bin/channel/updatechannel
 	zip -r bin/channel/getchannel.zip bin/channel/getchannel
 	zip -r bin/channel/getchannels.zip bin/channel/getchannels
 

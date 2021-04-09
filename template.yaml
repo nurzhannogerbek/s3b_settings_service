@@ -13,6 +13,12 @@ Parameters:
     Type: String
   EnvironmentName:
     Type: String
+  TelegramBotURL:
+    Type: String
+  FacebookMessengerBotURL:
+    Type: String
+  FacebookMessengerBotVerifyToken:
+    Type: String
   FacebookAppId:
     Type: String
   FacebookAppSecret:
@@ -151,6 +157,37 @@ Resources:
         'Fn::Sub': '${EnvironmentName}CreateChannel'
       CodeUri: bin/channel/createchannel.zip
       Handler: bin/channel/createchannel
+      Environment:
+        Variables:
+          TELEGRAM_BOT_URL:
+            'Fn::Sub': '${TelegramBotURL}'
+          FACEBOOK_MESSENGER_BOT_URL:
+            'Fn::Sub': '${FacebookMessengerBotURL}'
+          FACEBOOK_MESSENGER_BOT_VERIFY_TOKEN:
+            'Fn::Sub': '${FacebookMessengerBotVerifyToken}'
+          FACEBOOK_APP_ID:
+            'Fn::Sub': '${FacebookAppId}'
+          FACEBOOK_APP_SECRET:
+            'Fn::Sub': '${FacebookAppSecret}'
+  UpdateChannel:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName:
+        'Fn::Sub': '${EnvironmentName}UpdateChannel'
+      CodeUri: bin/channel/updatechannel.zip
+      Handler: bin/channel/updatechannel
+      Environment:
+        Variables:
+          TELEGRAM_BOT_URL:
+            'Fn::Sub': '${TelegramBotURL}'
+          FACEBOOK_MESSENGER_BOT_URL:
+            'Fn::Sub': '${FacebookMessengerBotURL}'
+          FACEBOOK_MESSENGER_BOT_VERIFY_TOKEN:
+            'Fn::Sub': '${FacebookMessengerBotVerifyToken}'
+          FACEBOOK_APP_ID:
+            'Fn::Sub': '${FacebookAppId}'
+          FACEBOOK_APP_SECRET:
+            'Fn::Sub': '${FacebookAppSecret}'
   GetChannel:
     Type: 'AWS::Serverless::Function'
     Properties:
@@ -260,6 +297,12 @@ Outputs:
     Export:
       Name:
         'Fn::Sub': '${AWS::StackName}:${EnvironmentName}CreateChannelARN'
+  UpdateChannelARN:
+    Value:
+      'Fn::GetAtt': UpdateChannel.Arn
+    Export:
+      Name:
+        'Fn::Sub': '${AWS::StackName}:${EnvironmentName}UpdateChannelARN'
   GetChannelARN:
     Value:
       'Fn::GetAtt': GetChannel.Arn

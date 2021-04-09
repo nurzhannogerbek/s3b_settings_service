@@ -25,6 +25,8 @@ func NewChannelRepository(db *sqlx.DB) *ChannelRepository {
 	}
 }
 
+// SetWebhookToTelegram
+// Set webhook to the telegram chat bot.
 func SetWebhookToTelegram (channelName string, channelTechnicalId string) error {
 	client := &http.Client{}
 
@@ -50,6 +52,8 @@ func SetWebhookToTelegram (channelName string, channelTechnicalId string) error 
 	return nil
 }
 
+// SetWebhookToFacebookMessenger
+// Set webhook to the facebook messenger chat bot.
 func SetWebhookToFacebookMessenger () error {
 	client := &http.Client{}
 
@@ -196,7 +200,37 @@ func (cr *ChannelRepository) CreateChannel(c *common.Channel) (*common.Channel, 
 // UpdateChannel
 // Updates the specific channel information in database.
 func (cr *ChannelRepository) UpdateChannel(c *common.Channel) (*common.Channel, error) {
-	_, err := cr.db.Exec(`
+	var channelTypeName string
+	err := cr.db.QueryRowx(`
+		select
+			lower(channel_type_name) as channel_type_name
+		from
+			channel_types
+		where
+			channel_type_id = $1
+		limit 1;`, &c.ChannelTypeId).StructScan(&channelTypeName)
+	if err != nil {
+		return nil, err
+	}
+
+	switch channelTypeName {
+	case "telegram":
+		err = SetWebhookToTelegram(*c.ChannelName, *c.ChannelTechnicalId)
+		if err != nil {
+			return nil, err
+		}
+	case "facebook_messenger":
+		err = SetWebhookToFacebookMessenger()
+		if err != nil {
+			return nil, err
+		}
+	case "whatsapp":
+		// pass
+	default:
+		return nil, fmt.Errorf("creating a channel for the %q type is currently not possible", channelTypeName)
+	}
+
+	_, err = cr.db.Exec(`
 		update
 	    	channels
 		set
