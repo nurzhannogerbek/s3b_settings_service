@@ -175,23 +175,18 @@ func (cr *ChannelRepository) CreateChannel(c *common.Channel) (*common.Channel, 
 		return nil, fmt.Errorf("failed to create a channel, err: %q", err.Error())
 	}
 
-	query, args, err := sqlx.In(`
+	_, err = cr.db.Exec(`
 		insert into channels_organizations_relationship(
 			channel_id,
 			organization_id
 		)
 		select
-			? channel_id,
+			$1 channel_id,
 			organizations_ids
 		from
-			unnest(?) organizations_ids;`,
-			&c.ChannelId,
-			&c.OrganizationsIds)
-	if err != nil {
-		return nil, fmt.Errorf("сouldn't link channel to organizations, err: %q", err.Error())
-	}
-	query = cr.db.Rebind(query)
-	_, err = cr.db.Queryx(query, args...)
+			unnest($2) organizations_ids;`,
+		&c.ChannelId,
+		&c.OrganizationsIds)
 	if err != nil {
 		return nil, fmt.Errorf("сouldn't link channel to organizations, err: %q", err.Error())
 	}
@@ -261,23 +256,18 @@ func (cr *ChannelRepository) UpdateChannel(c *common.Channel) (*common.Channel, 
 		return nil, fmt.Errorf("failed to delete the link between channel and organizations, err: %q", err.Error())
 	}
 
-	query, args, err := sqlx.In(`
+	_, err = cr.db.Exec(`
 		insert into channels_organizations_relationship(
 			channel_id,
 			organization_id
 		)
 		select
-			? channel_id,
+			$1 channel_id,
 			organizations_ids
 		from
-			unnest(?) organizations_ids;`,
-		&c.ChannelId,
-		&c.OrganizationsIds)
-	if err != nil {
-		return nil, fmt.Errorf("сouldn't link channel to organizations, err: %q", err.Error())
-	}
-	query = cr.db.Rebind(query)
-	_, err = cr.db.Queryx(query, args...)
+			unnest($2) organizations_ids;`,
+			&c.ChannelId,
+			&c.OrganizationsIds)
 	if err != nil {
 		return nil, fmt.Errorf("сouldn't link channel to organizations, err: %q", err.Error())
 	}
