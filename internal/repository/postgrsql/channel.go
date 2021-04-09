@@ -175,9 +175,6 @@ func (cr *ChannelRepository) CreateChannel(c *common.Channel) (*common.Channel, 
 		return nil, fmt.Errorf("failed to create a channel, err: %q", err.Error())
 	}
 
-	fmt.Println(c.OrganizationsIds)
-	fmt.Println(&c.OrganizationsIds)
-
 	_, err = cr.db.Exec(`
 		insert into channels_organizations_relationship(
 			channel_id,
