@@ -79,6 +79,20 @@ Resources:
       CodeUri: bin/organizationsettings/restoredeletedorganizationsettings.zip
       Handler: bin/organizationsettings/restoredeletedorganizationsettings
 
+  CreateOrganization:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName:
+        'Fn::Sub': '${EnvironmentName}CreateOrganization'
+      CodeUri: bin/organization/createorganization.zip
+      Handler: bin/organization/createorganization
+  CreateOrganizationDepartment:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName:
+        'Fn::Sub': '${EnvironmentName}CreateOrganizationDepartment'
+      CodeUri: bin/organization/createorganizationdepartment.zip
+      Handler: bin/organization/createorganizationdepartment
   DeleteOrganizations:
     Type: 'AWS::Serverless::Function'
     Properties:
@@ -135,6 +149,13 @@ Resources:
         'Fn::Sub': '${EnvironmentName}RestoreDeletedOrganizations'
       CodeUri: bin/organization/restoredeletedorganizations.zip
       Handler: bin/organization/restoredeletedorganizations
+  UpdateOrganizationName:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName:
+        'Fn::Sub': '${EnvironmentName}UpdateOrganizationName'
+      CodeUri: bin/organization/updateorganizationname.zip
+      Handler: bin/organization/updateorganizationname
 
   GetFacebookPages:
     Type: 'AWS::Serverless::Function'
@@ -235,6 +256,18 @@ Outputs:
       Name:
         'Fn::Sub': '${AWS::StackName}:${EnvironmentName}RestoreDeletedOrganizationSettingsARN'
 
+  CreateOrganizationARN:
+    Value:
+      'Fn::GetAtt': CreateOrganization.Arn
+    Export:
+      Name:
+        'Fn::Sub': '${AWS::StackName}:${EnvironmentName}CreateOrganizationARN'
+  CreateOrganizationDepartmentARN:
+    Value:
+      'Fn::GetAtt': CreateOrganizationDepartment.Arn
+    Export:
+      Name:
+        'Fn::Sub': '${AWS::StackName}:${EnvironmentName}CreateOrganizationDepartmentARN'
   DeleteOrganizationsARN:
     Value:
       'Fn::GetAtt': DeleteOrganizations.Arn
@@ -283,6 +316,12 @@ Outputs:
     Export:
       Name:
         'Fn::Sub': '${AWS::StackName}:${EnvironmentName}RestoreDeletedOrganizationsARN'
+  UpdateOrganizationNameARN:
+    Value:
+      'Fn::GetAtt': UpdateOrganizationName.Arn
+    Export:
+      Name:
+        'Fn::Sub': '${AWS::StackName}:${EnvironmentName}UpdateOrganizationNameARN'
 
   GetFacebookPagesARN:
     Value:

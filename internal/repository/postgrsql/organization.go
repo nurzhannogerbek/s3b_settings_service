@@ -36,6 +36,8 @@ func (or *OrganizationRepository) CreateOrganization(organization common.Organiz
 			root_organization_id,
 			root_organization_name,
 			organization_level,
+		    parent_organization_level,
+		    root_organization_level
 			tree_organization_id,
 			tree_organization_name;`, organization)
 	if err != nil {
@@ -53,7 +55,7 @@ func (or *OrganizationRepository) CreateOrganization(organization common.Organiz
 }
 
 // CreateOrganizationDepartment
-func (or OrganizationRepository) CreateOrganizationDepartment(department common.OrganizationCreateDepartmentInput) (*common.Organization, error) {
+func (or OrganizationRepository) CreateOrganizationDepartment(department common.OrganizationDepartmentCreateInput) (*common.Organization, error) {
 	rows, err := or.db.NamedQuery(`
 		insert into organizations (
 			organization_name,
@@ -68,6 +70,8 @@ func (or OrganizationRepository) CreateOrganizationDepartment(department common.
 			root_organization_id,
 			root_organization_name,
 			organization_level,
+		    parent_organization_level,
+		    root_organization_level,
 			tree_organization_id,
 			tree_organization_name;`, department)
 	if err != nil {
@@ -76,16 +80,7 @@ func (or OrganizationRepository) CreateOrganizationDepartment(department common.
 
 	var newDepartment common.Organization
 	for rows.Next() {
-		if err := rows.Scan(&newDepartment.OrganizationID,
-			&newDepartment.OrganizationName,
-			&newDepartment.ParentOrganizationID,
-			&newDepartment.ParentOrganizationName,
-			&newDepartment.RootOrganizationID,
-			&newDepartment.RootOrganizationName,
-			&newDepartment.RootOrganizationLevel,
-			&newDepartment.OrganizationLevel,
-			&newDepartment.TreeOrganizationID,
-			&newDepartment.TreeOrganizationName); err != nil {
+		if err := rows.StructScan(&newDepartment); err != nil {
 			return nil, err
 		}
 	}
@@ -195,7 +190,7 @@ func (or *OrganizationRepository) GetOrganizationsByIDs(organizationsIDs []strin
 }
 
 // UpdateOrganization
-func (or *OrganizationRepository) UpdateOrganization(organizationID, organizationName string) error {
+func (or *OrganizationRepository) UpdateOrganizationName(organizationID, organizationName string) error {
 	_, err := or.db.Query(`
 		update 
 		    organizations

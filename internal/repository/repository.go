@@ -34,11 +34,11 @@ type Channel interface {
 // Organization repository interface.
 type Organization interface {
 	CreateOrganization(organization common.OrganizationCreateInput) (*common.Organization, error)
-	CreateOrganizationDepartment(department common.OrganizationCreateDepartmentInput) (*common.Organization, error)
+	CreateOrganizationDepartment(department common.OrganizationDepartmentCreateInput) (*common.Organization, error)
 	DeleteOrganizations(organizationsIDs []string) error
 	GetOrganizationByID(organizationID string) (*common.Organization, error)
 	GetOrganizationsByIDs(organizationsIDs []string) (*[]common.Organization, error)
-	UpdateOrganization(organizationID, organizationName string) error
+	UpdateOrganizationName(organizationID, organizationName string) error
 	UpdateTreeOrganizationName(organizationID, treeOrganizationName string) error
 	GetUpdateTreeOrganizations(organizationID, OrganizationName string) (*[]common.Organization, error)
 	RestoreDeletedOrganizations(organizationsIDs []string) error

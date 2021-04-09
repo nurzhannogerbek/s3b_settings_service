@@ -40,13 +40,13 @@ func (o *OrganizationCreateInput) Validate() error {
 }
 
 // OrganizationCreateDepartmentInput
-type OrganizationCreateDepartmentInput struct {
+type OrganizationDepartmentCreateInput struct {
 	OrganizationName     *string `db:"organization_name" json:"organizationName"`
 	ParentOrganizationID *string `dbg:"parent_organization_id" json:"parentOrganizationId"`
 }
 
 // Validate
-func (o *OrganizationCreateDepartmentInput) Validate() error {
+func (o *OrganizationDepartmentCreateInput) Validate() error {
 	if o.OrganizationName != nil {
 		organizationName := utf8.RuneCountInString(*o.OrganizationName)
 		if organizationName > 100 || organizationName < 5 {
@@ -63,34 +63,43 @@ func (o *OrganizationCreateDepartmentInput) Validate() error {
 	return nil
 }
 
-// UpdateOrganization
-type OrganizationUpdateInput struct {
+// OrganizationNameUpdateInput
+type OrganizationNameUpdateInput struct {
 	OrganizationID   *string `db:"organization_id" json:"organizationId"`
 	OrganizationName *string `db:"organization_name" json:"organizationName"`
 }
 
-func (oui OrganizationUpdateInput) Validate() error {
+// Validate
+// Validates OrganizationNameUpdateInput struct
+func (oui OrganizationNameUpdateInput) Validate() error {
 	if oui.OrganizationID != nil {
 		if err := uuid.Validate(oui.OrganizationID); err != nil {
 			return err
 		}
+	} else {
+		return errors.New("must have an ID")
 	}
 
 	return nil
 }
 
-// UpdateOrganization
-type OrganizationsUpdateInput struct {
+// TreeOrganizationNameUpdateInput
+type TreeOrganizationNameUpdateInput struct {
 	OrganizationID       *string `db:"organization_id" json:"organizationId"`
 	TreeOrganizationName *string `db:"tree_organization_name" json:"treeOrganizationName"`
 }
 
-func (oui OrganizationsUpdateInput) Validate() error {
+// Validate
+// Validates TreeOrganizationNameUpdateInput struct
+func (oui TreeOrganizationNameUpdateInput) Validate() error {
 	if oui.OrganizationID != nil {
 		if err := uuid.Validate(oui.OrganizationID); err != nil {
 			return err
 		}
+	} else {
+		return errors.New("must have an ID")
 	}
+
 
 	return nil
 }

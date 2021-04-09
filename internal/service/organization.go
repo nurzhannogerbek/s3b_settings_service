@@ -4,6 +4,7 @@ import (
 	"bitbucket.org/3beep-workspace/3beep_settings_service/internal/common"
 	"bitbucket.org/3beep-workspace/3beep_settings_service/internal/repository"
 	"bitbucket.org/3beep-workspace/3beep_settings_service/pkg/tool/uuid"
+	"strings"
 )
 
 // OrganizationService
@@ -26,6 +27,10 @@ func (os *OrganizationService) CreateOrganization(organization *common.Organizat
 		return nil, nil
 	}
 
+	if err := organization.Validate(); err != nil {
+		return nil, err
+	}
+
 	newOrganization, err := os.repository.CreateOrganization(*organization)
 	if err != nil {
 		return nil, err
@@ -35,15 +40,17 @@ func (os *OrganizationService) CreateOrganization(organization *common.Organizat
 }
 
 // CreateOrganizationDepartment
-func (os OrganizationService) CreateOrganizationDepartment(organizationName, parentOrganizationID *string) (*common.Organization, error) {
-	if organizationName == nil || parentOrganizationID == nil {
+func (os OrganizationService) CreateOrganizationDepartment(organization *common.OrganizationDepartmentCreateInput) (*common.Organization, error) {
+	if organization.OrganizationName == nil || organization.ParentOrganizationID == nil {
 		return nil, nil
 	}
 
-	department, err := os.repository.CreateOrganizationDepartment(common.OrganizationCreateDepartmentInput{
-		OrganizationName: organizationName,
-		ParentOrganizationID: parentOrganizationID,
-	})
+	if err := uuid.Validate(organization.ParentOrganizationID); err != nil {
+		return nil, err
+	}
+
+	department, err := os.repository.CreateOrganizationDepartment(*organization)
+
 	if err != nil {
 		return nil, err
 	}
@@ -107,11 +114,41 @@ func (os *OrganizationService) GetOrganizationsByIDs(organizationsIDs *[]string)
 }
 
 // UpdateOrganization
-func (os *OrganizationService) UpdateOrganization(organization *common.OrganizationUpdateInput) (*common.Organization, error) {
+func (os *OrganizationService) UpdateOrganizationName(organization *common.OrganizationNameUpdateInput) (*common.Organization, error) {
+	if err := organization.Validate(); err != nil {
+		return nil, err
+	}
+
 	organizationInformation, err := os.repository.GetOrganizationByID(*organization.OrganizationID)
 	if err != nil {
 		return nil, err
 	}
+
+	if err := os.repository.UpdateOrganizationName(*organization.OrganizationID, *organization.OrganizationName); err != nil {
+		return nil, err
+	}
+
+	organizations, err := os.repository.GetUpdateTreeOrganizations(*organization.OrganizationID, *organization.OrganizationName)
+	if err != nil {
+		return nil, err
+	}
+
+	organizationLevel := *organizationInformation.OrganizationLevel
+
+	for _, org := range *organizations {
+		a := strings.Split(*org.TreeOrganizationName, "\\")
+		a[organizationLevel] = strings.ReplaceAll(a[organizationLevel], a[organizationLevel], *organization.OrganizationName)
+		newTreeOrgName := strings.Join(a, "\\")
+		if err := os.repository.UpdateTreeOrganizationName(*org.OrganizationID, newTreeOrgName); err != nil {
+			return nil, err
+		}
+	}
+
+	a := strings.Split(*organizationInformation.TreeOrganizationName, "\\")
+	a[organizationLevel] = strings.ReplaceAll(a[organizationLevel], a[organizationLevel], *organization.OrganizationName)
+	newTreeOrgName := strings.Join(a, "\\")
+	organizationInformation.OrganizationName = organization.OrganizationName
+	organizationInformation.TreeOrganizationName = &newTreeOrgName
 
 	return organizationInformation, nil
 }
