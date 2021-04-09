@@ -114,7 +114,7 @@ func (os *OrganizationService) GetOrganizationsByIDs(organizationsIDs *[]string)
 }
 
 // UpdateOrganization
-func (os *OrganizationService) UpdateOrganization(organization *common.OrganizationNameUpdateInput) (*common.Organization, error) {
+func (os *OrganizationService) UpdateOrganizationName(organization *common.OrganizationNameUpdateInput) (*common.Organization, error) {
 	if err := organization.Validate(); err != nil {
 		return nil, err
 	}

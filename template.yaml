@@ -149,6 +149,13 @@ Resources:
         'Fn::Sub': '${EnvironmentName}RestoreDeletedOrganizations'
       CodeUri: bin/organization/restoredeletedorganizations.zip
       Handler: bin/organization/restoredeletedorganizations
+  UpdateOrganizationName:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName:
+        'Fn::Sub': '${EnvironmentName}UpdateOrganizationName'
+      CodeUri: bin/organization/updateorganizationname.zip
+      Handler: bin/organization/updateorganizationname
 
   GetFacebookPages:
     Type: 'AWS::Serverless::Function'
@@ -309,6 +316,12 @@ Outputs:
     Export:
       Name:
         'Fn::Sub': '${AWS::StackName}:${EnvironmentName}RestoreDeletedOrganizationsARN'
+  UpdateOrganizationNameARN:
+    Value:
+      'Fn::GetAtt': UpdateOrganizationName.Arn
+    Export:
+      Name:
+        'Fn::Sub': '${AWS::StackName}:${EnvironmentName}UpdateOrganizationNameARN'
 
   GetFacebookPagesARN:
     Value:
