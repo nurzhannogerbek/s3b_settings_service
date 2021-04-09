@@ -8,6 +8,8 @@ build:
 	env GOOS=linux go build -ldflags="-s -w" -o bin/organizationsettings/updateorganizationsettings cmd/awslambda/organizationsettings/updateorganizationsettings/main.go
 	env GOOS=linux go build -ldflags="-s -w" -o bin/organizationsettings/restoredeletedorganizationsettings cmd/awslambda/organizationsettings/restoredeletedorganizationsettings/main.go
 
+	env GOOS=linux go build -ldflags="-s -w" -o bin/organization/createorganization cmd/awslambda/organization/createorganization/main.go
+	env GOOS=linux go build -ldflags="-s -w" -o bin/organization/createorganizationdepartment cmd/awslambda/organization/createorganizationdepartment/main.go
 	env GOOS=linux go build -ldflags="-s -w" -o bin/organization/deleteorganizations cmd/awslambda/organization/deleteorganizations/main.go
 	env GOOS=linux go build -ldflags="-s -w" -o bin/organization/getallarchivedorganizationdepartments cmd/awslambda/organization/getallarchivedorganizationdepartments/main.go
 	env GOOS=linux go build -ldflags="-s -w" -o bin/organization/getallorganizationdepartments cmd/awslambda/organization/getallorganizationdepartments/main.go
@@ -31,6 +33,8 @@ zip:
 	zip -r bin/organizationsettings/updateorganizationsettings.zip bin/organizationsettings/updateorganizationsettings
 	zip -r bin/organizationsettings/restoredeletedorganizationsettings.zip bin/organizationsettings/restoredeletedorganizationsettings
 
+	zip -r bin/organization/createorganization.zip bin/organization/createorganization
+	zip -r bin/organization/createorganizationdepartment.zip bin/organization/createorganizationdepartment
 	zip -r bin/organization/deleteorganizations.zip bin/organization/deleteorganizations
 	zip -r bin/organization/getallarchivedorganizationdepartments.zip bin/organization/getallarchivedorganizationdepartments
 	zip -r bin/organization/getallorganizationdepartments.zip bin/organization/getallorganizationdepartments
