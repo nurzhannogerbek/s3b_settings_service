@@ -46,7 +46,7 @@ func SetWebhookToTelegram (channelName string, channelTechnicalId string) error 
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
-		return fmt.Errorf("couldn't install webhook via Telegram API, response status code: %q", response.StatusCode)
+		return fmt.Errorf("response status code: %q", response.StatusCode)
 	}
 
 	return nil
