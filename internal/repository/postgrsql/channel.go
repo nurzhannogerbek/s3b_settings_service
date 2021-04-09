@@ -193,7 +193,7 @@ func (cr *ChannelRepository) CreateChannel(c *common.Channel) (*common.Channel, 
 	return c, nil
 }
 
-// CreateChannel
+// UpdateChannel
 // Updates the specific channel information in database.
 func (cr *ChannelRepository) UpdateChannel(c *common.Channel) (*common.Channel, error) {
 	_, err := cr.db.Exec(`
