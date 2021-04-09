@@ -113,6 +113,12 @@ func SetWebhookToFacebookMessenger () error {
 	return nil
 }
 
+// SetInstagramPrivateSession
+// Set session of the private instagram chat bot.
+func (cr *ChannelRepository) SetInstagramPrivateSession (channelId string, channelStatusId string) error {
+	return nil
+}
+
 func stringExistsInArray(originalArray []string, originalString string) bool {
 	for _, value := range originalArray {
 		if value == originalString {
@@ -133,7 +139,7 @@ func (cr *ChannelRepository) CreateChannel(c *common.Channel) (*common.Channel, 
 			channel_types
 		where
 			channel_type_id = $1
-		limit 1;`, &c.ChannelTypeId).StructScan(&channelTypeName)
+		limit 1;`, &c.ChannelTypeId).Scan(&channelTypeName)
 	if err != nil {
 		return nil, fmt.Errorf("unexpected channel type, err: %q", err.Error())
 	}
@@ -164,7 +170,7 @@ func (cr *ChannelRepository) CreateChannel(c *common.Channel) (*common.Channel, 
 		&c.ChannelDescription,
 		&c.ChannelTypeId,
 		&c.ChannelTechnicalId,
-		&c.ChannelStatusId).StructScan(&c.ChannelId)
+		&c.ChannelStatusId).Scan(&c.ChannelId)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create a channel, err: %q", err.Error())
 	}
@@ -182,7 +188,7 @@ func (cr *ChannelRepository) CreateChannel(c *common.Channel) (*common.Channel, 
 			&c.ChannelId,
 			&c.OrganizationsIds)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("сouldn't link channel to organizations, err: %q", err.Error())
 	}
 	query = cr.db.Rebind(query)
 	_, err = cr.db.Queryx(query, args...)
@@ -219,7 +225,7 @@ func (cr *ChannelRepository) UpdateChannel(c *common.Channel) (*common.Channel, 
 			channel_types
 		where
 			channel_type_id = $1
-		limit 1;`, &c.ChannelTypeId).StructScan(&channelTypeName)
+		limit 1;`, &c.ChannelTypeId).Scan(&channelTypeName)
 	if err != nil {
 		return nil, fmt.Errorf("unexpected channel type, err: %q", err.Error())
 	}
@@ -268,7 +274,7 @@ func (cr *ChannelRepository) UpdateChannel(c *common.Channel) (*common.Channel, 
 		&c.ChannelId,
 		&c.OrganizationsIds)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("сouldn't link channel to organizations, err: %q", err.Error())
 	}
 	query = cr.db.Rebind(query)
 	_, err = cr.db.Queryx(query, args...)
