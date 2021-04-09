@@ -86,7 +86,7 @@ func SetWebhookToFacebookMessenger () error {
 		return err
 	}
 
-	request, err = http.NewRequest("GET", fmt.Sprintf("https://graph.facebook.com/v9.0/%s/subscriptions", environment.FacebookAppId), nil)
+	request, err = http.NewRequest("POST", fmt.Sprintf("https://graph.facebook.com/v9.0/%s/subscriptions", environment.FacebookAppId), nil)
 	if err != nil {
 		return err
 	}
@@ -107,7 +107,7 @@ func SetWebhookToFacebookMessenger () error {
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
-		return fmt.Errorf("couldn't install webhook via Facebook Graph API, response status code: %q", response.StatusCode)
+		return fmt.Errorf("response status code: %q", response.StatusCode)
 	}
 
 	return nil
