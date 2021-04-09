@@ -181,10 +181,10 @@ func (cr *ChannelRepository) CreateChannel(c *common.Channel) (*common.Channel, 
 			organization_id
 		)
 		select
-			$1 channel_id,
+			? channel_id,
 			organizations_ids
 		from
-			unnest($2) organizations_ids;`,
+			unnest(?) organizations_ids;`,
 			&c.ChannelId,
 			&c.OrganizationsIds)
 	if err != nil {
@@ -267,10 +267,10 @@ func (cr *ChannelRepository) UpdateChannel(c *common.Channel) (*common.Channel, 
 			organization_id
 		)
 		select
-			$1 channel_id,
+			? channel_id,
 			organizations_ids
 		from
-			unnest($2) organizations_ids;`,
+			unnest(?) organizations_ids;`,
 		&c.ChannelId,
 		&c.OrganizationsIds)
 	if err != nil {
