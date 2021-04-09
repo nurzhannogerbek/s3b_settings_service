@@ -35,6 +35,21 @@ func (cs *ChannelService) CreateChannel(c *common.Channel) (*common.Channel, err
 	return channel, nil
 }
 
+// UpdateChannel
+// Validates and updates the specific channel information in database.
+func (cs *ChannelService) UpdateChannel(c *common.Channel) (*common.Channel, error) {
+	if err := c.Validate(); err != nil {
+		return nil, err
+	}
+
+	channel, err := cs.repository.UpdateChannel(c)
+	if err != nil {
+		return nil, err
+	}
+
+	return channel, nil
+}
+
 // GetChannels
 // Get the list of all channels of the specific organization.
 func (cs *ChannelService) GetChannels(organizationId *string) (*[]common.Channel, error) {

@@ -152,11 +152,11 @@ func (cr *ChannelRepository) CreateChannel(c *common.Channel) (*common.Channel, 
 			channel_status_id
 		)
 		values (
-			:channel_name,
-			:channel_description,
-			:channel_type_id,
-			:channel_technical_id,
-			:channel_status_id
+			$1,
+			$2,
+			$3,
+			$4,
+			$5
 		)
 		returning
 			channel_id::text;`,
@@ -179,8 +179,61 @@ func (cr *ChannelRepository) CreateChannel(c *common.Channel) (*common.Channel, 
 			organizations_ids
 		from
 			unnest($2) organizations_ids;`,
-			c.ChannelId,
-			c.OrganizationsIds)
+			&c.ChannelId,
+			&c.OrganizationsIds)
+	if err != nil {
+		return nil, err
+	}
+	query = cr.db.Rebind(query)
+	_, err = cr.db.Queryx(query, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	return c, nil
+}
+
+// CreateChannel
+// Updates the specific channel information in database.
+func (cr *ChannelRepository) UpdateChannel(c *common.Channel) (*common.Channel, error) {
+	_, err := cr.db.Exec(`
+		update
+	    	channels
+		set
+	    	channel_name = $2,
+			channel_description = $3,
+			channel_type_id = $4,
+			channel_technical_id = $5,
+			channel_status_id = $6
+		where
+			channel_id = $1;`,
+			&c.ChannelId,
+			&c.ChannelName,
+			&c.ChannelDescription,
+			&c.ChannelTypeId,
+			&c.ChannelTechnicalId,
+			&c.ChannelStatusId)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = cr.db.Exec(`delete from channels_organizations_relationship where channel_id = $1;`, &c.ChannelId)
+	if err != nil {
+		return nil, err
+	}
+
+	query, args, err := sqlx.In(`
+		insert into channels_organizations_relationship(
+			channel_id,
+			organization_id
+		)
+		select
+			$1 channel_id,
+			organizations_ids
+		from
+			unnest($2) organizations_ids;`,
+		&c.ChannelId,
+		&c.OrganizationsIds)
 	if err != nil {
 		return nil, err
 	}
