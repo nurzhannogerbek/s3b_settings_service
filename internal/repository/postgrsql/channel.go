@@ -36,7 +36,7 @@ func SetWebhookToTelegram (channelName string, channelTechnicalId string) error 
 	}
 
 	query := request.URL.Query()
-	query.Add("url", fmt.Sprintf("%s/send_message_from_telegram/%s", environment.TelegramBotURL, channelName))
+	query.Add("url", fmt.Sprintf("%ssend_message_from_telegram/%s", environment.TelegramBotURL, channelName))
 	request.URL.RawQuery = query.Encode()
 
 	response, err := client.Do(request)
