@@ -77,6 +77,10 @@ definitions:
                   {
                     "ParameterKey": "FacebookAppSecret",
                     "ParameterValue": "${FACEBOOK_APP_SECRET}"
+                  },
+                  {
+                    "ParameterKey": "InstagramPrivateBotURL",
+                    "ParameterValue": "${INSTAGRAM_PRIVATE_BOT_URL}"
                   }
                 ]
 
