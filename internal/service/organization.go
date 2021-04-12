@@ -137,7 +137,7 @@ func (os *OrganizationService) UpdateOrganizationName(organization common.Organi
 		return nil, err
 	}
 
-	organizations, err := os.repository.GetUpdateTreeOrganizations(*organization.OrganizationID, *organization.OrganizationName)
+	organizations, err := os.repository.GetUpdateTreeOrganizations(*organization.OrganizationID, *organizationInformation.OrganizationName)
 	if err != nil {
 		return nil, err
 	}
@@ -146,10 +146,12 @@ func (os *OrganizationService) UpdateOrganizationName(organization common.Organi
 
 	for _, org := range *organizations {
 		a := strings.Split(*org.TreeOrganizationName, "\\")
-		a[organizationLevel] = strings.ReplaceAll(a[organizationLevel], a[organizationLevel], *organization.OrganizationName)
-		newTreeOrgName := strings.Join(a, "\\")
-		if err := os.repository.UpdateTreeOrganizationName(*org.OrganizationID, newTreeOrgName); err != nil {
-			return nil, err
+		if len(a) >= organizationLevel {
+			a[organizationLevel] = strings.ReplaceAll(a[organizationLevel], a[organizationLevel], *organization.OrganizationName)
+			newTreeOrgName := strings.Join(a, "\\")
+			if err := os.repository.UpdateTreeOrganizationName(*org.OrganizationID, newTreeOrgName); err != nil {
+				return nil, err
+			}
 		}
 	}
 

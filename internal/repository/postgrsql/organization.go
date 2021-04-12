@@ -203,7 +203,7 @@ func (or *OrganizationRepository) GetUpdateTreeOrganizations(organizationID, org
 	var organizations []common.Organization
 	err := or.db.Select(&organizations, `
 		select organization_id,
-			tree_organization_id
+			tree_organization_name
 		from organizations
 		where root_organization_id = (select root_organization_id 
 							  		  from organizations 
