@@ -31,15 +31,15 @@ type Channel interface {
 // Organization
 // Organization service interface.
 type Organization interface {
-	CreateOrganization(newOrganization *common.OrganizationCreateInput) (*common.Organization, error)
+	CreateOrganization(newOrganization common.OrganizationCreateInput) (*common.Organization, error)
 	CreateOrganizationDepartment(organization common.OrganizationDepartmentCreateInput) (*common.Organization, error)
 	DeleteOrganizations(organizationsIDs *[]string) error
 	GetOrganizationByID(organizationID *string) (*common.Organization, error)
 	GetOrganizationsByIDs(organizationsIDs *[]string) (*[]common.Organization, error)
-	UpdateOrganizationName(organization *common.OrganizationNameUpdateInput) (*common.Organization, error)
+	UpdateOrganizationName(organization common.OrganizationNameUpdateInput) (*common.Organization, error)
 	RestoreDeletedOrganizations(organizationsIDs *[]string) error
 	GetOrganizationDepartmentsByID(parentOrganizationID *string) (*[]common.Organization, error)
-	GetAllOrganizationDepartments(rootOrganizationID *string) ([]common.Organization, error)
+	GetAllOrganizationDepartments(rootOrganizationID *string) (*[]common.Organization, error)
 	GetArchivedOrganizationDepartmentsByID(parentOrganizationID *string) (*[]common.Organization, error)
 	GetAllArchivedOrganizationDepartments(rootOrganizationID *string) (*[]common.Organization, error)
 }

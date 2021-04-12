@@ -22,7 +22,7 @@ func NewOrganizationService(os repository.Organization) *OrganizationService {
 }
 
 // CreateOrganization
-func (os *OrganizationService) CreateOrganization(organization *common.OrganizationCreateInput) (*common.Organization, error) {
+func (os *OrganizationService) CreateOrganization(organization common.OrganizationCreateInput) (*common.Organization, error) {
 	if organization.OrganizationName == nil {
 		return nil, nil
 	}
@@ -31,7 +31,12 @@ func (os *OrganizationService) CreateOrganization(organization *common.Organizat
 		return nil, err
 	}
 
-	newOrganization, err := os.repository.CreateOrganization(*organization)
+	organizationID, err := os.repository.CreateOrganization(organization)
+	if err != nil {
+		return nil, err
+	}
+
+	newOrganization, err := os.repository.GetOrganizationByID(*organizationID)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +54,12 @@ func (os OrganizationService) CreateOrganizationDepartment(organization common.O
 		return nil, err
 	}
 
-	department, err := os.repository.CreateOrganizationDepartment(organization)
+	departmentID, err := os.repository.CreateOrganizationDepartment(organization)
+	if err != nil {
+		return nil, err
+	}
+
+	department, err := os.repository.GetOrganizationByID(*departmentID)
 	if err != nil {
 		return nil, err
 	}
@@ -113,7 +123,7 @@ func (os *OrganizationService) GetOrganizationsByIDs(organizationsIDs *[]string)
 }
 
 // UpdateOrganization
-func (os *OrganizationService) UpdateOrganizationName(organization *common.OrganizationNameUpdateInput) (*common.Organization, error) {
+func (os *OrganizationService) UpdateOrganizationName(organization common.OrganizationNameUpdateInput) (*common.Organization, error) {
 	if err := organization.Validate(); err != nil {
 		return nil, err
 	}
@@ -127,7 +137,7 @@ func (os *OrganizationService) UpdateOrganizationName(organization *common.Organ
 		return nil, err
 	}
 
-	organizations, err := os.repository.GetUpdateTreeOrganizations(*organization.OrganizationID, *organization.OrganizationName)
+	organizations, err := os.repository.GetUpdateTreeOrganizations(*organization.OrganizationID, *organizationInformation.OrganizationName)
 	if err != nil {
 		return nil, err
 	}
@@ -136,10 +146,12 @@ func (os *OrganizationService) UpdateOrganizationName(organization *common.Organ
 
 	for _, org := range *organizations {
 		a := strings.Split(*org.TreeOrganizationName, "\\")
-		a[organizationLevel] = strings.ReplaceAll(a[organizationLevel], a[organizationLevel], *organization.OrganizationName)
-		newTreeOrgName := strings.Join(a, "\\")
-		if err := os.repository.UpdateTreeOrganizationName(*org.OrganizationID, newTreeOrgName); err != nil {
-			return nil, err
+		if len(a) >= organizationLevel {
+			a[organizationLevel] = strings.ReplaceAll(a[organizationLevel], a[organizationLevel], *organization.OrganizationName)
+			newTreeOrgName := strings.Join(a, "\\")
+			if err := os.repository.UpdateTreeOrganizationName(*org.OrganizationID, newTreeOrgName); err != nil {
+				return nil, err
+			}
 		}
 	}
 
@@ -189,7 +201,7 @@ func (os *OrganizationService) GetOrganizationDepartmentsByID(parentOrganization
 }
 
 // GetAllOrganizationDepartments
-func (os *OrganizationService) GetAllOrganizationDepartments(rootOrganizationID *string) ([]common.Organization, error) {
+func (os *OrganizationService) GetAllOrganizationDepartments(rootOrganizationID *string) (*[]common.Organization, error) {
 	if rootOrganizationID == nil {
 		return nil, nil
 	}
@@ -203,7 +215,7 @@ func (os *OrganizationService) GetAllOrganizationDepartments(rootOrganizationID 
 		return nil, err
 	}
 
-	return organizationDepartments, err
+	return &organizationDepartments, err
 }
 
 // GetArchivedOrganizationDepartmentsByID
