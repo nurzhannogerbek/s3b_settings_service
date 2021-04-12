@@ -13,4 +13,5 @@ var (
 	FacebookMessengerBotVerifyToken = os.Getenv("FACEBOOK_MESSENGER_BOT_VERIFY_TOKEN")
 	FacebookAppId                   = os.Getenv("FACEBOOK_APP_ID")
 	FacebookAppSecret               = os.Getenv("FACEBOOK_APP_SECRET")
+	InstagramPrivateBotURL          = os.Getenv("INSTAGRAM_PRIVATE_BOT_URL")
 )

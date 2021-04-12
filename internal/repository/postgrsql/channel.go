@@ -5,10 +5,12 @@ import (
 	"bitbucket.org/3beep-workspace/3beep_settings_service/internal/environment"
 	"encoding/json"
 	"fmt"
+	"github.com/jmoiron/sqlx"
 	"io/ioutil"
 	"net/http"
-
-	"github.com/jmoiron/sqlx"
+	"net/url"
+	"strings"
+	"time"
 )
 
 // ChannelRepository
@@ -115,7 +117,50 @@ func SetWebhookToFacebookMessenger () error {
 
 // SetInstagramPrivateSession
 // Set session of the private instagram chat bot.
-func (cr *ChannelRepository) SetInstagramPrivateSession () error {
+// Fire and forget.
+func (cr *ChannelRepository) SetInstagramPrivateSession (channelId string, channelStatusId string) error {
+	var channelStatusName string
+	err := cr.db.QueryRowx(`
+	select
+		channel_status_name
+	from
+		channel_statuses
+	where
+		channel_status_id = $1
+	limit 1;`, &channelStatusId).Scan(&channelStatusName)
+	if err != nil {
+		return err
+	}
+
+	var action string
+	switch channelStatusName {
+	case "active":
+		action = "true"
+	default:
+		action = "false"
+	}
+
+	client := &http.Client{}
+
+	data := url.Values{}
+	data.Set("channel_id", channelId)
+	data.Set("action", action)
+
+	urlAddress := fmt.Sprintf("%stoggle_session_for_instagram_private_channel", environment.InstagramPrivateBotURL)
+
+	request, err := http.NewRequest("POST", urlAddress, strings.NewReader(data.Encode()))
+	if err != nil {
+		return err
+	}
+
+	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	response, err := client.Do(request)
+	if err != nil {
+		return err
+	}
+	defer response.Body.Close()
+
 	return nil
 }
 
@@ -192,18 +237,21 @@ func (cr *ChannelRepository) CreateChannel(c *common.Channel) (*common.Channel, 
 	}
 
 	switch channelTypeName {
-		case "telegram":
-			err = SetWebhookToTelegram(*c.ChannelName, *c.ChannelTechnicalId)
-			if err != nil {
-				return nil, fmt.Errorf("couldn't set webhook via telegram api, err: %q", err.Error())
-			}
-		case "facebook_messenger":
-			err = SetWebhookToFacebookMessenger()
-			if err != nil {
-				return nil, fmt.Errorf("couldn't set webhook via facebook graph api, err: %q", err.Error())
-			}
-		default:
-			// pass
+	case "telegram":
+		err = SetWebhookToTelegram(*c.ChannelName, *c.ChannelTechnicalId)
+		if err != nil {
+			return nil, fmt.Errorf("couldn't set webhook via telegram api, err: %q", err.Error())
+		}
+	case "facebook_messenger":
+		err = SetWebhookToFacebookMessenger()
+		if err != nil {
+			return nil, fmt.Errorf("couldn't set webhook via facebook graph api, err: %q", err.Error())
+		}
+	case "instagram_private":
+		go cr.SetInstagramPrivateSession(*c.ChannelId, *c.ChannelStatusId)
+		time.Sleep(1)
+	default:
+		//
 	}
 
 	return c, nil
@@ -273,18 +321,21 @@ func (cr *ChannelRepository) UpdateChannel(c *common.Channel) (*common.Channel, 
 	}
 
 	switch channelTypeName {
-		case "telegram":
-			err = SetWebhookToTelegram(*c.ChannelName, *c.ChannelTechnicalId)
-			if err != nil {
-				return nil, fmt.Errorf("couldn't set webhook via telegram api, err: %q", err.Error())
-			}
-		case "facebook_messenger":
-			err = SetWebhookToFacebookMessenger()
-			if err != nil {
-				return nil, fmt.Errorf("couldn't set webhook via facebook graph api, err: %q", err.Error())
-			}
-		default:
-			// pass
+	case "telegram":
+		err = SetWebhookToTelegram(*c.ChannelName, *c.ChannelTechnicalId)
+		if err != nil {
+			return nil, fmt.Errorf("couldn't set webhook via telegram api, err: %q", err.Error())
+		}
+	case "facebook_messenger":
+		err = SetWebhookToFacebookMessenger()
+		if err != nil {
+			return nil, fmt.Errorf("couldn't set webhook via facebook graph api, err: %q", err.Error())
+		}
+	case "instagram_private":
+		go cr.SetInstagramPrivateSession(*c.ChannelId, *c.ChannelStatusId)
+		time.Sleep(1)
+	default:
+		//
 	}
 
 	return c, nil
