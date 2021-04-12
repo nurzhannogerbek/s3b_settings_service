@@ -31,7 +31,12 @@ func (os *OrganizationService) CreateOrganization(organization *common.Organizat
 		return nil, err
 	}
 
-	newOrganization, err := os.repository.CreateOrganization(*organization)
+	organizationID, err := os.repository.CreateOrganization(*organization)
+	if err != nil {
+		return nil, err
+	}
+
+	newOrganization, err := os.repository.GetOrganizationByID(*organizationID)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +54,12 @@ func (os OrganizationService) CreateOrganizationDepartment(organization common.O
 		return nil, err
 	}
 
-	department, err := os.repository.CreateOrganizationDepartment(organization)
+	departmentID, err := os.repository.CreateOrganizationDepartment(organization)
+	if err != nil {
+		return nil, err
+	}
+
+	department, err := os.repository.GetOrganizationByID(*departmentID)
 	if err != nil {
 		return nil, err
 	}

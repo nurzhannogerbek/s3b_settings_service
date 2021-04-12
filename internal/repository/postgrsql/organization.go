@@ -21,7 +21,7 @@ func NewOrganizationRepository(db *sqlx.DB) *OrganizationRepository {
 }
 
 // CreateOrganization
-func (or *OrganizationRepository) CreateOrganization(organization common.OrganizationCreateInput) (*common.Organization, error) {
+func (or *OrganizationRepository) CreateOrganization(organization common.OrganizationCreateInput) (*string, error) {
 	rows, err := or.db.NamedQuery(`
 		insert into organizations (
 			organization_name,
@@ -29,33 +29,23 @@ func (or *OrganizationRepository) CreateOrganization(organization common.Organiz
 		values (
 			:organization_name,
 			null)
-		returning organization_id,
-		    organization_name,
-			parent_organization_id,
-			parent_organization_name,
-			root_organization_id,
-			root_organization_name,
-			organization_level,
-		    parent_organization_level,
-		    root_organization_level
-			tree_organization_id,
-			tree_organization_name;`, organization)
+		returning organization_id;`, organization)
 	if err != nil {
 		return nil, err
 	}
 
-	var newOrganization common.Organization
+	var organizationID string
 	for rows.Next() {
-		if err := rows.StructScan(&newOrganization); err != nil {
+		if err := rows.Scan(&organizationID); err != nil {
 			return nil, err
 		}
 	}
 
-	return &newOrganization, nil
+	return &organizationID, nil
 }
 
 // CreateOrganizationDepartment
-func (or OrganizationRepository) CreateOrganizationDepartment(department common.OrganizationDepartmentCreateInput) (*common.Organization, error) {
+func (or OrganizationRepository) CreateOrganizationDepartment(department common.OrganizationDepartmentCreateInput) (*string, error) {
 	rows, err := or.db.NamedQuery(`
 		insert into organizations (
 			organization_name,
@@ -63,29 +53,19 @@ func (or OrganizationRepository) CreateOrganizationDepartment(department common.
 		values (
 			:organization_name,
 			:parent_organization_id)
-		returning organization_id,
-		    organization_name,
-			parent_organization_id,
-			parent_organization_name,
-			root_organization_id,
-			root_organization_name,
-			organization_level,
-		    parent_organization_level,
-		    root_organization_level,
-			tree_organization_id,
-			tree_organization_name;`, department)
+		returning organization_id;`, department)
 	if err != nil {
 		return nil, err
 	}
 
-	var newDepartment common.Organization
+	var departmentID string
 	for rows.Next() {
-		if err := rows.StructScan(&newDepartment); err != nil {
+		if err := rows.Scan(&departmentID); err != nil {
 			return nil, err
 		}
 	}
 
-	return &newDepartment, nil
+	return &departmentID, nil
 }
 
 // DeleteOrganizations
