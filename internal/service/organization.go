@@ -40,7 +40,7 @@ func (os *OrganizationService) CreateOrganization(organization *common.Organizat
 }
 
 // CreateOrganizationDepartment
-func (os OrganizationService) CreateOrganizationDepartment(organization *common.OrganizationDepartmentCreateInput) (*common.Organization, error) {
+func (os OrganizationService) CreateOrganizationDepartment(organization common.OrganizationDepartmentCreateInput) (*common.Organization, error) {
 	if organization.OrganizationName == nil || organization.ParentOrganizationID == nil {
 		return nil, nil
 	}
@@ -49,8 +49,7 @@ func (os OrganizationService) CreateOrganizationDepartment(organization *common.
 		return nil, err
 	}
 
-	department, err := os.repository.CreateOrganizationDepartment(*organization)
-
+	department, err := os.repository.CreateOrganizationDepartment(organization)
 	if err != nil {
 		return nil, err
 	}
