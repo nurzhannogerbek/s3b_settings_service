@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-	"time"
 )
 
 // ChannelRepository
@@ -238,18 +237,80 @@ func (cr *ChannelRepository) CreateChannel(c *common.Channel) (*common.Channel, 
 
 	switch channelTypeName {
 	case "telegram":
+		_, err = cr.db.Exec(`
+			insert into telegram_business_accounts (
+				business_account,
+				channel_id
+			)
+			values (
+				$1,
+				$2
+			);`,
+			&c.ChannelName,
+			&c.ChannelId)
+		if err != nil {
+			return nil, fmt.Errorf("сouldn't insert new value in the 'telegram_business_accounts' table, err: %q", err.Error())
+		}
+
 		err = SetWebhookToTelegram(*c.ChannelName, *c.ChannelTechnicalId)
 		if err != nil {
 			return nil, fmt.Errorf("couldn't set webhook via telegram api, err: %q", err.Error())
 		}
 	case "facebook_messenger":
+		_, err = cr.db.Exec(`
+			insert into facebook_messenger_business_accounts (
+				business_account,
+				channel_id
+			)
+			values (
+				$1,
+				$2
+			);`,
+			&c.ChannelName,
+			&c.ChannelId)
+		if err != nil {
+			return nil, fmt.Errorf("сouldn't insert new value in the 'facebook_messenger_business_accounts' table, err: %q", err.Error())
+		}
+
 		err = SetWebhookToFacebookMessenger()
 		if err != nil {
 			return nil, fmt.Errorf("couldn't set webhook via facebook graph api, err: %q", err.Error())
 		}
 	case "instagram_private":
-		go cr.SetInstagramPrivateSession(*c.ChannelId, *c.ChannelStatusId)
-		time.Sleep(1)
+		_, err = cr.db.Exec(`
+			insert into instagram_private_business_accounts (
+				business_account,
+				channel_id
+			)
+			values (
+				$1,
+				$2
+			);`,
+			&c.ChannelName,
+			&c.ChannelId)
+		if err != nil {
+			return nil, fmt.Errorf("сouldn't insert new value in the 'instagram_private_business_accounts' table, err: %q", err.Error())
+		}
+
+		err = cr.SetInstagramPrivateSession(*c.ChannelId, *c.ChannelStatusId)
+		if err != nil {
+			return nil, fmt.Errorf("couldn't set sessions in the private instagram, err: %q", err.Error())
+		}
+	case "whatsapp":
+		_, err = cr.db.Exec(`
+			insert into whatsapp_business_accounts (
+				business_account,
+				channel_id
+			)
+			values (
+				concat('+', $1),
+				$2
+			);`,
+			&c.ChannelName,
+			&c.ChannelId)
+		if err != nil {
+			return nil, fmt.Errorf("сouldn't insert new value in the 'whatsapp_business_accounts' table, err: %q", err.Error())
+		}
 	default:
 		//
 	}
@@ -332,8 +393,10 @@ func (cr *ChannelRepository) UpdateChannel(c *common.Channel) (*common.Channel, 
 			return nil, fmt.Errorf("couldn't set webhook via facebook graph api, err: %q", err.Error())
 		}
 	case "instagram_private":
-		go cr.SetInstagramPrivateSession(*c.ChannelId, *c.ChannelStatusId)
-		time.Sleep(1)
+		err = cr.SetInstagramPrivateSession(*c.ChannelId, *c.ChannelStatusId)
+		if err != nil {
+			return nil, fmt.Errorf("couldn't set sessions in the private instagram, err: %q", err.Error())
+		}
 	default:
 		//
 	}
