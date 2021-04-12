@@ -36,7 +36,7 @@ func handleRequest(e common.Event) (interface{}, error) {
 		return nil, err
 	}
 
-	organization, err := Services.Organization.CreateOrganization(&organizationEvent)
+	organization, err := Services.Organization.CreateOrganization(organizationEvent)
 	if err != nil {
 		return nil, err
 	}

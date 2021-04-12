@@ -36,7 +36,7 @@ func handleRequest(e common.Event) (interface{}, error) {
 		return nil, err
 	}
 
-	organization, err := Services.Organization.UpdateOrganizationName(&organizationEvent)
+	organization, err := Services.Organization.UpdateOrganizationName(organizationEvent)
 	if err != nil {
 		return nil, err
 	}

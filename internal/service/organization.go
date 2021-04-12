@@ -22,7 +22,7 @@ func NewOrganizationService(os repository.Organization) *OrganizationService {
 }
 
 // CreateOrganization
-func (os *OrganizationService) CreateOrganization(organization *common.OrganizationCreateInput) (*common.Organization, error) {
+func (os *OrganizationService) CreateOrganization(organization common.OrganizationCreateInput) (*common.Organization, error) {
 	if organization.OrganizationName == nil {
 		return nil, nil
 	}
@@ -31,7 +31,7 @@ func (os *OrganizationService) CreateOrganization(organization *common.Organizat
 		return nil, err
 	}
 
-	organizationID, err := os.repository.CreateOrganization(*organization)
+	organizationID, err := os.repository.CreateOrganization(organization)
 	if err != nil {
 		return nil, err
 	}
@@ -123,7 +123,7 @@ func (os *OrganizationService) GetOrganizationsByIDs(organizationsIDs *[]string)
 }
 
 // UpdateOrganization
-func (os *OrganizationService) UpdateOrganizationName(organization *common.OrganizationNameUpdateInput) (*common.Organization, error) {
+func (os *OrganizationService) UpdateOrganizationName(organization common.OrganizationNameUpdateInput) (*common.Organization, error) {
 	if err := organization.Validate(); err != nil {
 		return nil, err
 	}
@@ -199,7 +199,7 @@ func (os *OrganizationService) GetOrganizationDepartmentsByID(parentOrganization
 }
 
 // GetAllOrganizationDepartments
-func (os *OrganizationService) GetAllOrganizationDepartments(rootOrganizationID *string) ([]common.Organization, error) {
+func (os *OrganizationService) GetAllOrganizationDepartments(rootOrganizationID *string) (*[]common.Organization, error) {
 	if rootOrganizationID == nil {
 		return nil, nil
 	}
@@ -213,7 +213,7 @@ func (os *OrganizationService) GetAllOrganizationDepartments(rootOrganizationID 
 		return nil, err
 	}
 
-	return organizationDepartments, err
+	return &organizationDepartments, err
 }
 
 // GetArchivedOrganizationDepartmentsByID

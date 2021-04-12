@@ -42,7 +42,7 @@ func (o *OrganizationCreateInput) Validate() error {
 // OrganizationCreateDepartmentInput
 type OrganizationDepartmentCreateInput struct {
 	OrganizationName     *string `db:"organization_name" json:"organizationName"`
-	ParentOrganizationID *string `dbg:"parent_organization_id" json:"parentOrganizationId"`
+	ParentOrganizationID *string `db:"parent_organization_id" json:"parentOrganizationId"`
 }
 
 // Validate
