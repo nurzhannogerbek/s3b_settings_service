@@ -80,6 +80,11 @@ func (oui OrganizationNameUpdateInput) Validate() error {
 		return errors.New("must have an ID")
 	}
 
+	if oui.OrganizationName != nil && (utf8.RuneCountInString(*oui.OrganizationName) >= 255 || utf8.RuneCountInString(*oui.OrganizationName) <= 5) {
+
+		return errors.New("organizationName should be greater or equal to 5 and less or equal to 255 symbols in length")
+	}
+
 	return nil
 }
 
