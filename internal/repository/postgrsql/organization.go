@@ -199,6 +199,20 @@ func (or *OrganizationRepository) UpdateTreeOrganizationName(organizationID, tre
 	return nil
 }
 
+func (or *OrganizationRepository) UpdateRootOrganizationName(rootOrganizationID, rootOrganizationName string) error  {
+	_, err := or.db.Query(`
+		update 
+		    organizations
+		set entry_updated_date_time = now(),
+		    root_organization_name = $1
+		where root_organization_id = $2;`, rootOrganizationName, rootOrganizationID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (or *OrganizationRepository) GetUpdateTreeOrganizations(organizationID, organizationName string) (*[]common.Organization, error) {
 	var organizations []common.Organization
 	err := or.db.Select(&organizations, `

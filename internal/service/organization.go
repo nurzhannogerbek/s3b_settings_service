@@ -137,6 +137,12 @@ func (os *OrganizationService) UpdateOrganizationName(organization common.Organi
 		return nil, err
 	}
 
+	if *organization.OrganizationID == *organizationInformation.RootOrganizationID {
+		if err := os.repository.UpdateRootOrganizationName(*organizationInformation.RootOrganizationID, *organization.OrganizationName); err != nil {
+			return nil, err
+		}
+	}
+
 	organizations, err := os.repository.GetUpdateTreeOrganizations(*organization.OrganizationID, *organizationInformation.OrganizationName)
 	if err != nil {
 		return nil, err
