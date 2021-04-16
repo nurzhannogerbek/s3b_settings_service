@@ -303,8 +303,8 @@ func (cr *ChannelRepository) CreateChannel(c *common.Channel) (*common.Channel, 
 				channel_id
 			)
 			values (
-				concat('+', $1),
-				$2
+				concat('+', $1::text),
+				$2::uuid
 			);`,
 			&c.ChannelName,
 			&c.ChannelId)
