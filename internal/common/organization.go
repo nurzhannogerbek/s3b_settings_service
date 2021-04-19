@@ -31,8 +31,8 @@ type OrganizationCreateInput struct {
 func (o *OrganizationCreateInput) Validate() error {
 	if o.OrganizationName != nil {
 		organizationName := utf8.RuneCountInString(*o.OrganizationName)
-		if organizationName > 100 || organizationName < 5 {
-			return errors.New("organizationName length should be less than 50 and greater than 5")
+		if organizationName > 100 || organizationName < 1 {
+			return errors.New("organizationName length should be greater or equal to 1 and less or equal to 100 symbols in length")
 		}
 	}
 
@@ -49,8 +49,8 @@ type OrganizationDepartmentCreateInput struct {
 func (o *OrganizationDepartmentCreateInput) Validate() error {
 	if o.OrganizationName != nil {
 		organizationName := utf8.RuneCountInString(*o.OrganizationName)
-		if organizationName > 100 || organizationName < 5 {
-			return errors.New("organizationName length should be less than 50 and greater than 5")
+		if organizationName > 100 || organizationName < 1 {
+			return errors.New("organizationName length should be greater or equal to 1 and less or equal to 100 symbols in length")
 		}
 	}
 
@@ -80,9 +80,8 @@ func (oui OrganizationNameUpdateInput) Validate() error {
 		return errors.New("must have an ID")
 	}
 
-	if oui.OrganizationName != nil && (utf8.RuneCountInString(*oui.OrganizationName) >= 255 || utf8.RuneCountInString(*oui.OrganizationName) <= 5) {
-
-		return errors.New("organizationName should be greater or equal to 5 and less or equal to 255 symbols in length")
+	if oui.OrganizationName != nil && (utf8.RuneCountInString(*oui.OrganizationName) > 100 || utf8.RuneCountInString(*oui.OrganizationName) < 1) {
+		return errors.New("organizationName length should be greater or equal to 1 and less or equal to 100 symbols in length")
 	}
 
 	return nil
