@@ -47,29 +47,46 @@ create or replace function update_organization()
 returns trigger as
 $BODY$
 begin
-    if new.parent_organization_id is null then
-        update organizations set
-             parent_organization_name = new.organization_name,
-             parent_organization_id = new.organization_id,
-             root_organization_id = new.organization_id,
-             root_organization_name = new.organization_name,
-             organization_level = 1,
-             parent_organization_level = 1,
-             root_organization_level = 1,
-             tree_organization_id = '\' || new.organization_id::text,
-             tree_organization_name = '\' || new.organization_name::text
-        where organization_id = new.organization_id;
-    else
-        update organizations set
-             parent_organization_name = (select organization_name from organizations where organization_id = new.parent_organization_id),
-             root_organization_id = (select root_organization_id from organizations where organization_id = new.parent_organization_id),
-             root_organization_name = (select root_organization_name from organizations where organization_id = new.parent_organization_id),
-             organization_level = ((select organization_level from organizations where organization_id = new.parent_organization_id) + 1),
-             parent_organization_level = (select organization_level from organizations where organization_id = new.parent_organization_id),
-             root_organization_level = 1,
-             tree_organization_id = ((select tree_organization_id from organizations where organization_id = new.parent_organization_id) || '\' || new.organization_id::text),
-             tree_organization_name = ((select tree_organization_name from organizations where organization_id = new.parent_organization_id) || '\' || new.organization_name::text)
-        where organization_id = new.organization_id;
+update
+    organizations
+set
+    parent_organization_name =
+        case
+            when new.parent_organization_id is null then null
+            else (select organization_name from organizations where organization_id = new.parent_organization_id limit 1)
+        end,
+    root_organization_id =
+        case
+        	when new.parent_organization_id is null then new.organization_id
+        	else (select root_organization_id from organizations where organization_id = new.parent_organization_id limit 1)
+        end,
+    root_organization_name =
+        case
+        	when new.parent_organization_id is null then new.organization_name
+        	else (select root_organization_name from organizations where organization_id = new.parent_organization_id limit 1)
+        end,
+    organization_level =
+        case
+        	when new.parent_organization_id is null then 1
+        	else ((select organization_level from organizations where organization_id = new.parent_organization_id  limit 1) + 1)
+        end,
+    parent_organization_level =
+        case
+        	when new.parent_organization_id is null then null
+        	else (select organization_level from organizations where organization_id = new.parent_organization_id limit 1)
+        end,
+    root_organization_level = 1,
+    tree_organization_id =
+        case
+            when new.parent_organization_id is null then '\' || new.organization_id::text
+            else (select tree_organization_id from organizations where organization_id = new.parent_organization_id limit 1) || '\' || new.organization_id::text
+        end,
+	tree_organization_name =
+		case
+      		when new.parent_organization_id is null then '\' || new.organization_name::text
+      		else (select tree_organization_name from organizations where organization_id = new.parent_organization_id) || '\' || new.organization_name::text
+        end
+    where organization_id = new.organization_id;
     end if;
     return new;
 end;
