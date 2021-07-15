@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 )
 
@@ -202,7 +203,7 @@ func SetWebhookToVk (channelName string, channelTechnicalId string) error {
 
 	var result struct {
 		Response struct {
-			ServerId string `json:"server_id"`
+			ServerId int `json:"server_id"`
 		} `json:"response"`
 	}
 	if err = json.Unmarshal(body, &result); err != nil {
@@ -218,7 +219,7 @@ func SetWebhookToVk (channelName string, channelTechnicalId string) error {
 	query.Add("v", environment.VkApiVersion)
 	query.Add("group_id", channelName)
 	query.Add("access_token", channelTechnicalId)
-	query.Add("server_id", result.Response.ServerId)
+	query.Add("server_id", strconv.Itoa(result.Response.ServerId))
 	query.Add("message_new", "1")
 	query.Add("message_reply", "1")
 	request.URL.RawQuery = query.Encode()
