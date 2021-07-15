@@ -81,6 +81,14 @@ definitions:
                   {
                     "ParameterKey": "InstagramPrivateBotURL",
                     "ParameterValue": "${INSTAGRAM_PRIVATE_BOT_URL}"
+                  },
+                  {
+                    "ParameterKey": "VkApiVersion",
+                    "ParameterValue": "${VK_API_VERSION}"
+                  },
+                  {
+                    "ParameterKey": "VkBotURL",
+                    "ParameterValue": "${VK_BOT_URL}"
                   }
                 ]
 

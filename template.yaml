@@ -25,6 +25,10 @@ Parameters:
     Type: String
   InstagramPrivateBotURL:
     Type: String
+  VkApiVersion:
+    Type: String
+  VkBotURL:
+    Type: String
 
 Globals:
   Function:
@@ -192,8 +196,10 @@ Resources:
             'Fn::Sub': '${FacebookAppId}'
           FACEBOOK_APP_SECRET:
             'Fn::Sub': '${FacebookAppSecret}'
-          INSTAGRAM_PRIVATE_BOT_URL:
-            'Fn::Sub': '${InstagramPrivateBotURL}'
+          VK_API_VERSION:
+            'Fn::Sub': '${VkApiVersion}'
+          VK_BOT_URL:
+            'Fn::Sub': '${VkBotURL}'
   UpdateChannel:
     Type: 'AWS::Serverless::Function'
     Properties:

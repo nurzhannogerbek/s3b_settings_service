@@ -172,6 +172,70 @@ func stringExistsInArray(originalArray []string, originalString string) bool {
 	return false
 }
 
+// SetWebhookToVk
+// Set webhook to the vk chat bot.
+func SetWebhookToVk (channelName string, channelTechnicalId string) error {
+	client := &http.Client{}
+
+	request, err := http.NewRequest("POST", "https://api.vk.com/method/groups.addCallbackServer", nil)
+	if err != nil {
+		return err
+	}
+
+	query := request.URL.Query()
+	query.Add("v", environment.VkApiVersion)
+	query.Add("group_id", channelName)
+	query.Add("url", fmt.Sprintf("%s/send_message_from_vk/%s", environment.VkBotURL, channelName))
+	query.Add("access_token", channelTechnicalId)
+	query.Add("title", "3beep")
+	request.URL.RawQuery = query.Encode()
+
+	response, err := client.Do(request)
+	if err != nil {
+		return err
+	}
+	defer response.Body.Close()
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return err
+	}
+
+	var result struct {
+		Response struct {
+			ServerId string `json:"server_id"`
+		} `json:"response"`
+	}
+	if err = json.Unmarshal(body, &result); err != nil {
+		return err
+	}
+
+	request, err = http.NewRequest("POST", "https://api.vk.com/method/groups.setCallbackSettings", nil)
+	if err != nil {
+		return err
+	}
+
+	query = request.URL.Query()
+	query.Add("v", environment.VkApiVersion)
+	query.Add("group_id", channelName)
+	query.Add("access_token", channelTechnicalId)
+	query.Add("server_id", result.Response.ServerId)
+	query.Add("message_new", "1")
+	query.Add("message_reply", "1")
+	request.URL.RawQuery = query.Encode()
+
+	response, err = client.Do(request)
+	if err != nil {
+		return err
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode != http.StatusOK {
+		return fmt.Errorf("response status code: %q", response.StatusCode)
+	}
+
+	return nil
+}
+
 // CreateChannel
 // Creates new channel record in database.
 func (cr *ChannelRepository) CreateChannel(c *common.Channel) (*common.Channel, error) {
@@ -188,7 +252,7 @@ func (cr *ChannelRepository) CreateChannel(c *common.Channel) (*common.Channel, 
 		return nil, fmt.Errorf("unexpected channel type, err: %q", err.Error())
 	}
 
-	availableChannelTypes := []string{"telegram", "facebook_messenger", "whatsapp", "instagram_private"}
+	availableChannelTypes := []string{"telegram", "facebook_messenger", "whatsapp", "instagram_private", "vk"}
 	if !stringExistsInArray(availableChannelTypes, channelTypeName) {
 		return nil, fmt.Errorf("creating a channel for the %q type is currently not possible", channelTypeName)
 	}
@@ -310,6 +374,26 @@ func (cr *ChannelRepository) CreateChannel(c *common.Channel) (*common.Channel, 
 			&c.ChannelId)
 		if err != nil {
 			return nil, fmt.Errorf("сouldn't insert new value in the 'whatsapp_business_accounts' table, err: %q", err.Error())
+		}
+	case "vk":
+		_, err = cr.db.Exec(`
+			insert into vk_business_accounts (
+				business_account,
+				channel_id
+			)
+			values (
+				$1,
+				$2
+			);`,
+			&c.ChannelName,
+			&c.ChannelId)
+		if err != nil {
+			return nil, fmt.Errorf("сouldn't insert new value in the 'vk_business_accounts' table, err: %q", err.Error())
+		}
+
+		err = SetWebhookToVk(*c.ChannelName, *c.ChannelTechnicalId)
+		if err != nil {
+			return nil, fmt.Errorf("couldn't set webhook via vk api, err: %q", err.Error())
 		}
 	default:
 		//

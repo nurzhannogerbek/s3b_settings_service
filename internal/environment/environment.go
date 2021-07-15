@@ -14,4 +14,6 @@ var (
 	FacebookAppId                   = os.Getenv("FACEBOOK_APP_ID")
 	FacebookAppSecret               = os.Getenv("FACEBOOK_APP_SECRET")
 	InstagramPrivateBotURL          = os.Getenv("INSTAGRAM_PRIVATE_BOT_URL")
+	VkApiVersion                    = os.Getenv("VK_API_VERSION")
+	VkBotURL                        = os.Getenv("VK_BOT_URL")
 )
