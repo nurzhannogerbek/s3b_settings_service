@@ -575,24 +575,23 @@ func (cr *ChannelRepository) GetChannels(organizationId *string) (*[]common.Chan
 	var channels []common.Channel
 
 	rows, err := cr.db.Query(`
-		select
-			channels.channel_id::text,
-			channels.channel_name::text,
-			channels.channel_description::text,
-			channels.channel_type_id::text,
-			channels.channel_technical_id::text,
-			channels.channel_status_id::text,
-		    array_agg(distinct channels_organizations_relationship.organization_id) filter (where channels_organizations_relationship.organization_id is not null)
-		from
-			channels
-		left join channels_organizations_relationship on
-			channels.channel_id = channels_organizations_relationship.channel_id
-		left join organizations on
-			channels_organizations_relationship.organization_id = organizations.organization_id
-		where
-			organizations.tree_organization_id like concat('%', '\', $1::text, '%')
-		group by
-			channels.channel_id;`, *organizationId)
+	select
+		channels.channel_id::text,
+		channels.channel_name::text,
+		channels.channel_description::text,
+		channels.channel_type_id::text,
+		channels.channel_technical_id::text,
+		channels.channel_status_id::text,
+		channels.channel_mode_id::text,
+		array_agg(distinct channels_organizations_relationship.organization_id) filter (where channels_organizations_relationship.organization_id is not null)
+	from
+		channels_organizations_relationship
+	left join channels on
+		channels_organizations_relationship.channel_id = channels.channel_id
+	where
+		channels_organizations_relationship.organization_id = $1
+	group by
+		channels.channel_id;`, *organizationId)
 	if err != nil {
 		return nil, err
 	}
